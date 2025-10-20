@@ -1,15 +1,10 @@
-# Dockerfile.dev
 FROM node:22-alpine
 
-# Set working directory
-WORKDIR /app
+WORKDIR /
 
-# Install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
-# Copy all project files
 COPY . .
 
-# Start Vite dev server
 CMD ["npm", "start"] 
