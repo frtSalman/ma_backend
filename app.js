@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
     'https://mertaslanmatematik.com',
     'https://www.mertaslanmatematik.com',
+    'https://api.mertaslanmatematik.com',
     'http://127.0.0.1:5173',
 ];
 
@@ -65,9 +66,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/homeworks', homeworkRoutes);
 
 db.sync({ alter: true })
-    .then(results =>
-        app.listen(PORT, () => console.log(`Server is running on port:${PORT}`))
+    .then(() =>
+        app.listen(PORT, '0.0.0.0', () =>
+            console.log(`🚀 Server is running on port ${PORT}`)
+        )
     )
-    .catch(err => {
-        console.trace(err);
-    });
+    .catch(err => console.trace(err));
