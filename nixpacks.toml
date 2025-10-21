@@ -1,19 +1,14 @@
-# Force Node.js 22.2
 [build]
 builder = "nixpacks"
-buildImage = "ghcr.io/railwayapp/nixpacks:latest"
 
 [variables]
 NIXPACKS_NODE_VERSION = "22.2"
 
 [phases.setup]
-nixPkgs = ["nodejs_22", "npm"]
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
 cmds = ["npm install"]
-
-[phases.build]
-cmds = ["npm run build"]
 
 [start]
 cmd = "npm start"
