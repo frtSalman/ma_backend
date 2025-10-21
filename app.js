@@ -15,17 +15,17 @@ dotenv.config();
 const app = express();
 const PORT = 5000;
 
-/* const allowedOrigins = [
+const allowedOrigins = [
     'https://mertaslanmatematik.com',
     'https://www.mertaslanmatematik.com',
     'https://api.mertaslanmatematik.com',
-    'http://127.0.0.1:5173',
-]; */
+    'http://127.0.0.1:3000',
+];
 
 app.use(express.json()); // allow us to parse incoming request from req.body
 app.use(cookieParser()); // allow us to parse incoming cookies
 
-/* app.use(
+app.use(
     cors({
         origin: (origin, callback) => {
             // allow requests with no origin (mobile apps, curl, Postman)
@@ -47,7 +47,7 @@ app.use(cookieParser()); // allow us to parse incoming cookies
             'AccessKey',
         ],
     })
-); */
+);
 
 app.get('/', (req, res) => {
     return res.json({ message: 'Welcome To My API' });
