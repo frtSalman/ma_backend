@@ -20,6 +20,7 @@ const allowedOrigins = [
     'https://www.mertaslanmatematik.com',
     'https://api.mertaslanmatematik.com',
     'http://127.0.0.1:3000',
+    'http://192.168.1.52:3000',
 ];
 
 app.use(express.json()); // allow us to parse incoming request from req.body
