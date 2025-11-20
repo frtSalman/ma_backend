@@ -8,7 +8,7 @@ const Solution = db.define('Solution', {
         primaryKey: true,
     },
     path: { type: DataTypes.STRING, allowNull: true },
-    solution: { type: DataTypes.STRING, allowNull: true },
+    solution: { type: DataTypes.JSONB, allowNull: true },
 });
 
 export default Solution;
