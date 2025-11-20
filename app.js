@@ -10,6 +10,7 @@ import userRoutes from './routes/user.route.js';
 import homeworkRoutes from './routes/homework.route.js';
 import statisticRoutes from './routes/statistic.route.js';
 import uploadRoutes from './routes/upload.route.js';
+import solutionRoutes from './routes/solution.route.js';
 
 dotenv.config();
 const app = express();
@@ -20,7 +21,8 @@ const allowedOrigins = [
     'https://www.mertaslanmatematik.com',
     'https://api.mertaslanmatematik.com',
     'http://127.0.0.1:3000',
-    'http://192.168.1.52:3000',
+    'http://localhost:3000',
+    'http://192.168.1.114:3000',
 ];
 
 app.use(express.json()); // allow us to parse incoming request from req.body
@@ -65,6 +67,8 @@ app.use('/api/timetable', timeTableRoutes);
 app.use('/api/users', userRoutes);
 
 app.use('/api/homeworks', homeworkRoutes);
+
+app.use('/api/solution', solutionRoutes);
 
 db.sync({ alter: true })
     .then(() =>

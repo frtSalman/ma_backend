@@ -55,6 +55,8 @@ export const uploadUQURL = async (req, res) => {
     const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
     const pullZoneURL = `https://cdn.mertaslanmatematik.com/${uniqueName}`;
 
+    console.trace(uniqueName);
+
     try {
         await UnsolvedQuestion.create({
             imageUrl: pullZoneURL,
