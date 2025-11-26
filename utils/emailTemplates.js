@@ -9,7 +9,7 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 620px; margin: 0 auto; padding: 15px;">
   <div style="background: #ffffff; padding: 10px 10px; text-align: center; border-bottom: 1px solid #e2e8f0;">
     <!-- Replace YOUR_LOGO_URL with your actual logo URL -->
-    <img src="https://www.mertaslanmatematik.com/public/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
+    <img src="https://cdn.mertaslanmatematik.com/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
   </div>
   
   <div style="background-color: #ffffff; padding: 30px; margin-top: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -49,7 +49,7 @@ export const STUDENT_INV_TEMPLATE = `
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 620px; margin: 0 auto; padding: 15px;">
   <div style="background: #ffffff; padding: 10px 10px; text-align: center; border-bottom: 1px solid #e2e8f0;">
     <!-- Replace YOUR_LOGO_URL with your actual logo URL -->
-    <img src="https://www.mertaslanmatematik.com/public/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
+    <img src="https://cdn.mertaslanmatematik.com/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
   </div>
   
   <div style="background-color: #ffffff; padding: 30px; margin-top: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -88,7 +88,7 @@ export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background: #ffffff; padding: 10px 10px; text-align: center; border-bottom: 1px solid #e2e8f0;">
     <!-- Replace YOUR_LOGO_URL with your actual logo URL -->
-    <img src="https://www.mertaslanmatematik.com/public/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
+    <img src="https://cdn.mertaslanmatematik.com/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
   </div>
   <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">Password Reset Successful</h1>
@@ -129,7 +129,7 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background: #ffffff; padding: 10px 10px; text-align: center; border-bottom: 1px solid #e2e8f0;">
     <!-- Replace YOUR_LOGO_URL with your actual logo URL -->
-    <img src="https://www.mertaslanmatematik.com/public/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
+    <img src="https://cdn.mertaslanmatematik.com/logo/mert_aslan_logo.png" alt="Company Logo" style="max-width: 200px; height: auto;">
   </div>
   <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">Password Reset</h1>
