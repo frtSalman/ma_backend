@@ -20,8 +20,12 @@ const allowedOrigins = [
     'https://mertaslanmatematik.com',
     'https://www.mertaslanmatematik.com',
     'https://api.mertaslanmatematik.com',
+    'https://teachflow.net',
+    'https://app.teachflow.net',
+    'https://api.teachflow.net',
     'http://127.0.0.1:3000',
     'http://localhost:3000',
+    'http://localhost:3001',
     'http://192.168.1.114:3000',
 ];
 

@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 export const sendVerificationEmail = async (userEmail, verificationToken) => {
     try {
         const info = await transporter.sendMail({
-            from: `mertaslanmatematik@gmail.com`,
+            from: process.env.my_mail,
             to: userEmail,
             subject: 'Email Adresini Doğrula! ✅',
             html: VERIFICATION_EMAIL_TEMPLATE.replace(
@@ -37,12 +37,12 @@ export const sendVerificationEmail = async (userEmail, verificationToken) => {
 export const sendPasswordResetEmail = async (userEmail, resetPasswordToken) => {
     try {
         const info = await transporter.sendMail({
-            from: `mertaslanmatematik@gmail.com`,
+            from: process.env.my_mail,
             to: userEmail,
             subject: 'Parola Yenileme Linki 🎯',
             html: PASSWORD_RESET_REQUEST_TEMPLATE.replace(
                 '{resetURL}',
-                `https://www.mertaslanmatematik.com/reset-password/${resetPasswordToken}`
+                `https://app.teachflow.net/reset-password/${resetPasswordToken}`
             ),
         });
         console.log('Email sent:', info.messageId);
@@ -54,7 +54,7 @@ export const sendPasswordResetEmail = async (userEmail, resetPasswordToken) => {
 export const sendResetSuccessEmail = async userEmail => {
     try {
         const info = await transporter.sendMail({
-            from: `mertaslanmatematik@gmail.com`,
+            from: process.env.my_mail,
             to: userEmail,
             subject: 'Parola Yenileme İşlemi Başarılı 🙌',
             html: PASSWORD_RESET_SUCCESS_TEMPLATE,
@@ -68,12 +68,12 @@ export const sendResetSuccessEmail = async userEmail => {
 export const sendStudentInvitationEmail = async (userEmail, signupToken) => {
     try {
         const info = await transporter.sendMail({
-            from: `mertaslanmatematik@gmail.com`,
+            from: process.env.my_mail,
             to: userEmail,
             subject: 'Kayıt İşlemleri 🧾',
             html: STUDENT_INV_TEMPLATE.replace(
                 '{resetURL}',
-                `https://www.mertaslanmatematik.com/student-signup/${signupToken}`
+                `https://app.teachflow.net/student-signup/${signupToken}`
             ),
         });
         console.log('Email sent:', info.messageId);

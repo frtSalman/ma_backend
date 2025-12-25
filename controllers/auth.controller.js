@@ -340,6 +340,7 @@ export const resetPassword = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     const userId = req.userId;
+    console.trace(userId);
     try {
         const user = await Users.findOne({ where: { id: userId } });
 

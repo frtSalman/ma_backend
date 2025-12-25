@@ -2,7 +2,7 @@ import UnsolvedQuestion from '../models/unsolvedQuesiton.model.js';
 
 const KEY = process.env.BUNNY_KEY;
 
-const BUNNY_ZONE = 'mert-aslan-matematik';
+const BUNNY_ZONE = 'teachflow';
 
 const baseHost = 'storage.bunnycdn.com';
 
@@ -53,7 +53,7 @@ export const uploadUQURL = async (req, res) => {
     const uniqueName = `${Date.now()}-${safeFilename}.webp`;
 
     const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
-    const pullZoneURL = `https://cdn.mertaslanmatematik.com/${uniqueName}`;
+    const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
 
     console.trace(uniqueName);
 
@@ -90,7 +90,7 @@ export const deleteUQURL = async (req, res) => {
 
     try {
         await UnsolvedQuestion.destroy({
-            where: { imageUrl: `https://cdn.mertaslanmatematik.com/${path}` },
+            where: { imageUrl: `https://cdn.teachflow.net/${path}` },
         });
 
         res.json({

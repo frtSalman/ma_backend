@@ -7,7 +7,7 @@ const Solution = db.define('Solution', {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    path: { type: DataTypes.STRING, allowNull: true },
+    path: { type: DataTypes.STRING, allowNull: false },
     solution: { type: DataTypes.TEXT, allowNull: true },
 });
 

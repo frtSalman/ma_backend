@@ -1,15 +1,18 @@
 import models from '../models/index.model.js';
+import sequelize from '../utils/database.js';
 
 const { Homework, Users } = models;
 
-export const getHomeworks = async (req, res) => {
-    const { role, userId } = req.query;
+export const getStudentHomeworks = async (req, res) => {
+    const { role, userId, studentId } = req.query;
 
     try {
         let homeworks;
-        if (role === 'teacher') {
+
+        if (role === 'teacher' && studentId !== undefined) {
+            console.trace(studentId);
             homeworks = await Homework.findAll({
-                where: { teacherId: userId },
+                where: { teacherId: userId, studentId },
                 include: [
                     {
                         model: Users,
@@ -31,6 +34,35 @@ export const getHomeworks = async (req, res) => {
                 ],
             });
         }
+        return res.status(200).json({
+            success: true,
+            message: 'İlgili öğretmenin verdiği ödevler',
+            homeworks,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const getAllHomeworks = async (req, res) => {
+    const { teacherId } = req.params;
+
+    try {
+        const homeworks = await Homework.findAll({
+            where: { teacherId },
+            include: [
+                {
+                    model: Users,
+                    as: 'student',
+                    attributes: ['name'], // Select specific fields
+                },
+            ],
+        });
         return res.status(200).json({
             success: true,
             message: 'İlgili öğretmenin verdiği ödevler',
@@ -118,7 +150,7 @@ export const updateHomework = async (req, res) => {
                 homeworkFilePath: homework.homeworkFilePath,
                 teacherId: homework.teacherId,
             },
-            { where: { id: homework.homeworkId } }
+            { where: { id: homework.id } }
         );
 
         res.status(200).json({
@@ -135,18 +167,52 @@ export const updateHomework = async (req, res) => {
 };
 
 export const updateHomeworkStatus = async (req, res) => {
-    const homeworkId = req.params.id;
+    const { id: homeworkId, day } = req.params;
+
+    console.trace(homeworkId, day);
+
+    if (!day || typeof day !== 'string') {
+        return res.status(400).json({
+            success: false,
+            message: 'Güncellenecek gün belirtilmedi veya geçersiz.',
+        });
+    }
 
     try {
-        await Homework.update(
-            { homeworkStatus: true },
-            { where: { id: homeworkId } }
-        );
+        let affectedRows;
+        if (day === '***') {
+            affectedRows = await Homework.update(
+                {
+                    homeworkStatus: true,
+                },
+                {
+                    where: { id: homeworkId },
+                }
+            );
+        } else {
+            affectedRows = await Homework.update(
+                {
+                    program: sequelize.literal(
+                        `jsonb_set(program, '{${day}, checked}', 'true')`
+                    ),
+                },
+                {
+                    where: { id: homeworkId },
+                }
+            );
+        }
 
+        if (affectedRows[0] === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Belirtilen ID ile eşleşen ödev bulunamadı.',
+            });
+        }
+
+        // 5. Send a success response
         res.status(200).json({
             success: true,
-            message: 'Ödev tamamlanmıştır.',
-            homeworkId: homeworkId,
+            message: `"${day}" günü için ödev durumu başarıyla güncellendi.`,
         });
     } catch (error) {
         console.trace(error);
