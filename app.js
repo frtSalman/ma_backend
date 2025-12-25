@@ -17,8 +17,6 @@ const app = express();
 const PORT = 5000;
 
 const allowedOrigins = [
-    'https://www.teachflow.net',
-    'https://teachflow.net',
     'https://app.teachflow.net',
     'https://api.teachflow.net',
     'http://127.0.0.1:3000',
@@ -73,7 +71,7 @@ app.use('/api/homeworks', homeworkRoutes);
 
 app.use('/api/solution', solutionRoutes);
 
-db.sync({ alter: true })
+db.sync()
     .then(() =>
         app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)
