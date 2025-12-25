@@ -17,9 +17,7 @@ const app = express();
 const PORT = 5000;
 
 const allowedOrigins = [
-    'https://mertaslanmatematik.com',
-    'https://www.mertaslanmatematik.com',
-    'https://api.mertaslanmatematik.com',
+    'https://www.teachflow.net',
     'https://teachflow.net',
     'https://app.teachflow.net',
     'https://api.teachflow.net',
@@ -36,6 +34,7 @@ app.use(
     cors({
         origin: (origin, callback) => {
             // allow requests with no origin (mobile apps, curl, Postman)
+            console.log(origin);
             if (!origin) return callback(null, true);
 
             if (allowedOrigins.includes(origin)) {
@@ -76,7 +75,7 @@ app.use('/api/solution', solutionRoutes);
 
 db.sync({ alter: true })
     .then(() =>
-        app.listen(PORT, '0.0.0.0', () =>
+        app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)
         )
     )
