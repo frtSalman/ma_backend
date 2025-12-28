@@ -32,7 +32,6 @@ const Solution = db.define(
     },
     {
         timestamps: false, // 🔴 critical
-        freezeTableName: true,
     }
 );
 
