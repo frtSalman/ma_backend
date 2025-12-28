@@ -1,7 +1,7 @@
 import Solution from '../models/solution.model.js';
 
 export async function getSolution(req, res) {
-    const decodedPath = decodeURIComponent(req.params.path);
+    const decodedPath = decodeURIComponent(req.params.path).normalize('NFC');
 
     console.trace(decodedPath);
 
