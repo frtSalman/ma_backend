@@ -73,7 +73,7 @@ export const uploadUQURL = async (req, res) => {
             uploadUrl,
             filePath: uniqueName,
             key: KEY,
-            qId: unsolvedQuestion,
+            qId: unsolvedQuestion.id,
         });
     } catch (error) {
         console.trace(error.message);
