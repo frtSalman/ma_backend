@@ -1,18 +1,26 @@
 import Solution from '../models/solution.model.js';
 
 export async function getSolution(req, res) {
-    const { path } = req.params;
-    console.trace(path);
+    const decodedPath = decodeURIComponent(req.params.path);
 
     try {
-        const { solution } = await Solution.findOne({ where: { path: path } });
-        console.log(solution);
+        const record = await Solution.findOne({
+            where: { path: decodedPath },
+        });
+
+        if (!record) {
+            return res.status(404).json({
+                success: false,
+                message: 'Solution not found',
+            });
+        }
+
         return res.status(200).json({
-            data: solution,
+            data: record.solution,
         });
     } catch (error) {
-        console.trace(error.message);
-        res.status(500).json({
+        console.error(error);
+        return res.status(500).json({
             success: false,
             message: 'Sunucu hatası oluştu.',
         });
