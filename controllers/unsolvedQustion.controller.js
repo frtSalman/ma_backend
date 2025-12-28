@@ -58,7 +58,7 @@ export const uploadUQURL = async (req, res) => {
     console.trace(uniqueName);
 
     try {
-        await UnsolvedQuestion.create({
+        const unsolvedQuestion = await UnsolvedQuestion.create({
             imageUrl: pullZoneURL,
             homeworkId,
             studentId,
@@ -73,6 +73,7 @@ export const uploadUQURL = async (req, res) => {
             uploadUrl,
             filePath: uniqueName,
             key: KEY,
+            qId: unsolvedQuestion,
         });
     } catch (error) {
         console.trace(error.message);

@@ -1,13 +1,11 @@
 import Solution from '../models/solution.model.js';
 
 export async function getSolution(req, res) {
-    const decodedPath = decodeURIComponent(req.params.path).normalize('NFC');
-
-    console.trace(decodedPath);
+    const { id } = req.params;
 
     try {
         const record = await Solution.findOne({
-            where: { path: decodedPath },
+            where: { qId: id },
         });
 
         console.trace('Hata: ' + record);

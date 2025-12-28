@@ -14,6 +14,11 @@ const Solution = db.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        qId: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            allowNull: false,
+        },
 
         solution: {
             type: DataTypes.TEXT,

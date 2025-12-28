@@ -40,6 +40,10 @@ const Users = db.define(
                 key: 'id',
             },
         },
+        logo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         lastLogin: DataTypes.DATE,
         isVerified: DataTypes.BOOLEAN,
         resetPasswordToken: DataTypes.STRING,

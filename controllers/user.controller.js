@@ -1,6 +1,12 @@
 import models from '../models/index.model.js';
 const { Users } = models;
 
+const KEY = process.env.BUNNY_KEY;
+
+const BUNNY_ZONE = 'teachflow';
+
+const baseHost = 'storage.bunnycdn.com';
+
 export const getStudents = async (req, res) => {
     const { teacherId } = req.params;
     try {
@@ -37,6 +43,41 @@ export const deleteStudent = async (req, res) => {
             success: true,
             message: 'Öğrenci silindi.',
             student,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const addLogoPath = async (req, res) => {
+    const { id, name } = req.body;
+
+    const safeFilename = `${name}`.replace(/\s+/g, '-');
+
+    const uniqueName = `${Date.now()}-${safeFilename}-logo.webp`;
+
+    const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/logo/${name}/${uniqueName}`;
+    const pullZoneURL = `https://cdn.teachflow.net//logo/${name}/${uniqueName}`;
+
+    try {
+        await Users.update(
+            { logo: pullZoneURL },
+            {
+                where: { id },
+            }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Logo eklendi.',
+            uploadUrl,
+            filePath: uniqueName,
+            key: KEY,
         });
     } catch (error) {
         console.trace(error.message);
