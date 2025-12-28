@@ -3,6 +3,6 @@ import { getSolution } from '../controllers/solution.controller.js';
 
 const router = express.Router();
 
-router.get('/:path', getSolution);
+router.get('/:qId', getSolution);
 
 export default router;

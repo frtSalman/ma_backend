@@ -1,11 +1,11 @@
 import Solution from '../models/solution.model.js';
 
 export async function getSolution(req, res) {
-    const { id } = req.params;
+    const { qId } = req.params;
 
     try {
         const record = await Solution.findOne({
-            where: { qId: id },
+            where: { qId },
         });
 
         console.trace('Hata: ' + record);
