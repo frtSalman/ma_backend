@@ -71,7 +71,7 @@ app.use('/api/homeworks', homeworkRoutes);
 
 app.use('/api/solution', solutionRoutes);
 
-db.sync()
+db.sync(/* { alter: true } */)
     .then(() =>
         app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)

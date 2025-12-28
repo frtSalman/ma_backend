@@ -90,7 +90,7 @@ export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
     <!-- Replace YOUR_LOGO_URL with your actual logo URL -->
     <img src="https://cdn.teachflow.net/logo/teachflow.png" alt="Company Logo" style="max-width: 200px; height: auto;">
   </div>
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+  <div style="background: linear-gradient(to right,#60a5fa, #06b6d4); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">Password Reset Successful</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -131,8 +131,8 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
     <!-- Replace YOUR_LOGO_URL with your actual logo URL -->
     <img src="https://cdn.teachflow.net/logo/teachflow.png" alt="Company Logo" style="max-width: 200px; height: auto;">
   </div>
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Password Reset</h1>
+  <div style="background: linear-gradient(to right, #60a5fa, #06b6d4); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">Parola Güncelle</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p>Merhaba,</p>
