@@ -5,6 +5,7 @@ import {
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
     STUDENT_INV_TEMPLATE,
+    TEACHER_INV_TEMPLATE,
 } from './emailTemplates.js';
 
 dotenv.config();
@@ -74,6 +75,23 @@ export const sendStudentInvitationEmail = async (userEmail, signupToken) => {
             html: STUDENT_INV_TEMPLATE.replace(
                 '{resetURL}',
                 `https://app.teachflow.net/student-signup/${signupToken}`
+            ),
+        });
+        console.log('Email sent:', info.messageId);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+};
+
+export const sendTeacherInvitationEmail = async (userEmail, signupToken) => {
+    try {
+        const info = await transporter.sendMail({
+            from: process.env.my_mail,
+            to: userEmail,
+            subject: 'Kayıt İşlemleri 🧾',
+            html: TEACHER_INV_TEMPLATE.replace(
+                '{resetURL}',
+                `https://app.teachflow.net/teacher-signup/${signupToken}`
             ),
         });
         console.log('Email sent:', info.messageId);

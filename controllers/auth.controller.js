@@ -8,6 +8,7 @@ import {
     sendPasswordResetEmail,
     sendResetSuccessEmail,
     sendStudentInvitationEmail,
+    sendTeacherInvitationEmail,
 } from '../utils/sendEmail.js';
 
 const { Users, Invitation } = models;
@@ -98,6 +99,34 @@ export const sendInvitation = async (req, res) => {
     }
 };
 
+export const sendTeacherInvitation = async (req, res) => {
+    const { email, teacherId } = req.body;
+    try {
+        const ınvToken = generateToken();
+
+        await Invitation.create({
+            email,
+            teacherId: teacherId,
+            token: ınvToken,
+        });
+
+        await sendTeacherInvitationEmail(email, ınvToken);
+
+        res.status(200).json({
+            succes: true,
+            message:
+                'Öğretmen kayıt davetiyesi başarılı bir şekilde gönderildi. 🛩️',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
 export const studentSignup = async (req, res) => {
     const token = req.params.token;
     const { email, name, password, grade } = req.body;
@@ -130,6 +159,51 @@ export const studentSignup = async (req, res) => {
             message: 'Öğrenci başarılı bir şekilde kayıt edildi.',
             user: {
                 ...student.dataValues,
+                password: undefined,
+            },
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const teacherSignup = async (req, res) => {
+    const token = req.params.token;
+    const { email, name, password, grade } = req.body;
+
+    try {
+        const inv = await Invitation.findOne({ where: { token, email } });
+        if (!inv || inv.used) {
+            return res.status(401).json({
+                success: false,
+                message: 'Geçersiz veya kullanılmış link.',
+            });
+        }
+
+        inv.used = true;
+        await inv.save();
+
+        // İzin varsa:
+        const teacher = await Users.create({
+            name,
+            grade,
+            email,
+            password: password,
+            role: 'teacher',
+            isVerified: true,
+            teacherId: inv.teacherId,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Öğretmen başarılı bir şekilde kayıt edildi.',
+            user: {
+                ...teacher.dataValues,
                 password: undefined,
             },
         });
