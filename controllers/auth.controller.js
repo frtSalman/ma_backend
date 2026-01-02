@@ -191,7 +191,7 @@ export const teacherSignup = async (req, res) => {
         // İzin varsa:
         const teacher = await Users.create({
             name,
-            grade,
+            grade: String(grade).trim().toLowerCase(),
             email,
             password: password,
             role: 'teacher',
