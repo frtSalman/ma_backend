@@ -87,6 +87,12 @@ Homework.associate = models => {
         as: 'timetable',
         onDelete: 'CASCADE', // Optional: cascade delete
     });
+
+    Homework.belongsTo(models.Users, {
+        foreignKey: 'teacherId',
+        as: 'teacher',
+        onDelete: 'CASCADE',
+    });
 };
 
 export default Homework;

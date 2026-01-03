@@ -31,6 +31,11 @@ export const getStudentHomeworks = async (req, res) => {
                         as: 'student',
                         attributes: ['name'], // Select specific fields
                     },
+                    {
+                        model: Users,
+                        as: 'teacher',
+                        attributes: ['grade', 'name'], // Select specific fields
+                    },
                 ],
             });
         }
