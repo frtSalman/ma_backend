@@ -5,6 +5,7 @@ import {
     getUQURL,
     updateUQAppearance,
 } from '../controllers/unsolvedQustion.controller.js';
+import { uploadExamURL } from '../controllers/exam.controller.js';
 
 const router = express.Router();
 

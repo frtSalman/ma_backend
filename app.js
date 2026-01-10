@@ -11,6 +11,7 @@ import homeworkRoutes from './routes/homework.route.js';
 import statisticRoutes from './routes/statistic.route.js';
 import uploadRoutes from './routes/upload.route.js';
 import solutionRoutes from './routes/solution.route.js';
+import examRoutes from './routes/exam.route.js';
 
 dotenv.config();
 const app = express();
@@ -69,6 +70,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/homeworks', homeworkRoutes);
 
 app.use('/api/solution', solutionRoutes);
+
+app.use('/api/exam', examRoutes);
 
 db.sync({ alter: true })
     .then(() =>

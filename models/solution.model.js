@@ -35,4 +35,18 @@ const Solution = db.define(
     }
 );
 
+Solution.associate = models => {
+    Solution.belongsTo(models.Users, {
+        foreignKey: 'studentId',
+        as: 'student',
+        onDelete: 'CASCADE',
+    });
+
+    Solution.belongsTo(models.Users, {
+        foreignKey: 'teacherId',
+        as: 'teacher',
+        onDelete: 'CASCADE',
+    });
+};
+
 export default Solution;
