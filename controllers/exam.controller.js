@@ -6,16 +6,46 @@ const BUNNY_ZONE = 'teachflow';
 
 const baseHost = 'storage.bunnycdn.com';
 
-export const getExamResult = async (req, res) => {
-    const { id } = req.params;
+export const getExamResults = async (req, res) => {
+    const { role, userId, studentId } = req.query;
 
     try {
-        const examResult = await Exam.findOne({ where: { id } });
+        let exams;
 
-        res.json({
+        if (role === 'teacher' && studentId !== undefined) {
+            console.trace(studentId);
+            exams = await Exam.findAll({
+                where: { teacherId: userId, studentId },
+                include: [
+                    {
+                        model: Users,
+                        as: 'student',
+                        attributes: ['name'], // Select specific fields
+                    },
+                ],
+            });
+        }
+        if (role === 'student') {
+            exams = await Exam.findAll({
+                where: { studentId: userId },
+                include: [
+                    {
+                        model: Users,
+                        as: 'student',
+                        attributes: ['name'], // Select specific fields
+                    },
+                    {
+                        model: Users,
+                        as: 'teacher',
+                        attributes: ['grade', 'name'], // Select specific fields
+                    },
+                ],
+            });
+        }
+        return res.status(200).json({
             success: true,
-            message: 'Sınav Sonucu bulundu.',
-            examResult,
+            message: 'İlgili öğrencinin deneme sonuçları',
+            exams,
         });
     } catch (error) {
         console.trace(error.message);
@@ -57,8 +87,8 @@ export const uploadExamURL = async (req, res) => {
 };
 
 export const deleteExamURL = async (req, res) => {
-    const { path, id } = req.body;
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${path}`;
+    const { path, id, studentName } = req.body;
+    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${studentName}/${path}`;
 
     try {
         await Exam.destroy({

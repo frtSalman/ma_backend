@@ -42,7 +42,7 @@ const Exam = db.define(
             allowNull: true,
         },
         scoreSummary: {
-            type: DataTypes.ARRAY(DataTypes.JSON),
+            type: DataTypes.JSONB,
             allowNull: true,
         },
         analysis: {
