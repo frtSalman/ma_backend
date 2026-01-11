@@ -41,6 +41,10 @@ const Exam = db.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
+        totalPoint: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
         scoreSummary: {
             type: DataTypes.JSONB,
             allowNull: true,
