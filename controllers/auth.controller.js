@@ -271,8 +271,6 @@ export const logout = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
-    console.log(email);
-
     if (!email || !password) {
         return res.status(400).json({
             success: false,
@@ -292,8 +290,6 @@ export const login = async (req, res) => {
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-        console.log(isPasswordCorrect);
 
         if (!isPasswordCorrect) {
             return res.status(401).json({
@@ -414,7 +410,6 @@ export const resetPassword = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     const userId = req.userId;
-    console.trace(userId);
     try {
         const user = await Users.findOne({ where: { id: userId } });
 

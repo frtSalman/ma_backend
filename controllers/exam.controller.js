@@ -9,6 +9,8 @@ const baseHost = 'storage.bunnycdn.com';
 export const getExamResults = async (req, res) => {
     const { role, userId, studentId } = req.query;
 
+    console.log(role, userId, studentId);
+
     try {
         let exams;
 
