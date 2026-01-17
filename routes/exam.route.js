@@ -12,6 +12,6 @@ router.get('/get-exam-results', getExamResults);
 
 router.post('/add-exam-result-path', uploadExamURL);
 
-router.delete('/delete-exam-result/:id', deleteExamURL);
+router.delete('/delete-exam-result', deleteExamURL);
 
 export default router;
