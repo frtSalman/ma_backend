@@ -5,6 +5,7 @@ import Timetable from './timeTable.model.js';
 import StatEntry from './statistic.model.js';
 import UnsolvedQuestion from './unsolvedQuesiton.model.js';
 import Solution from './solution.model.js';
+import Exam from './exam.model.js';
 
 const models = {
     Users,
@@ -14,6 +15,7 @@ const models = {
     StatEntry,
     UnsolvedQuestion,
     Solution,
+    Exam,
 };
 
 Object.values(models).forEach(model => {
