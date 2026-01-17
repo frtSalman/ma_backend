@@ -102,6 +102,11 @@ Users.associate = models => {
         as: 'timetables',
         onDelete: 'CASCADE',
     });
+    Users.hasMany(models.Exam, {
+        foreignKey: 'studentId',
+        as: 'Exam',
+        onDelete: 'CASCADE',
+    });
 };
 
 export default Users;

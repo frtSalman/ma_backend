@@ -28,10 +28,6 @@ const Exam = db.define(
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             allowNull: false,
-            references: {
-                model: Users,
-                key: 'id',
-            },
         },
         examTitle: {
             type: DataTypes.STRING,
@@ -68,12 +64,6 @@ Exam.associate = models => {
     Exam.belongsTo(models.Users, {
         foreignKey: 'studentId',
         as: 'student',
-        onDelete: 'CASCADE',
-    });
-
-    Exam.belongsTo(models.Users, {
-        foreignKey: 'teacherId',
-        as: 'teacher',
         onDelete: 'CASCADE',
     });
 };
