@@ -79,7 +79,9 @@ export const uploadExamURL = async (req, res) => {
         res.status(500).json({
             // 500 Internal Server Error
             success: false,
-            message: 'Sunucu hatası oluştu.',
+            message: !studentName
+                ? 'Lütfen bir öğrenci seçiniz.'
+                : 'Sunucu hatası oluştu.',
         });
     }
 };
