@@ -1,4 +1,5 @@
 import Exam from '../models/exam.model.js';
+import Users from '../models/user.model.js';
 
 const KEY = process.env.BUNNY_KEY;
 
