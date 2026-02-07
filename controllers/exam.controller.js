@@ -10,13 +10,10 @@ const baseHost = 'storage.bunnycdn.com';
 export const getExamResults = async (req, res) => {
     const { role, userId, studentId } = req.query;
 
-    console.log(role, userId, studentId);
-
     try {
         let exams;
 
         if (role === 'teacher' && studentId !== undefined) {
-            console.trace(studentId);
             exams = await Exam.findAll({
                 where: { teacherId: userId, studentId },
                 include: [
@@ -105,6 +102,32 @@ export const deleteExamURL = async (req, res) => {
         console.trace(error.message);
         res.status(500).json({
             // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const updateExam = async (req, res) => {
+    const id = req.params.id;
+    const { analysis, scoreSummary } = req.body.data;
+
+    try {
+        await Exam.update(
+            {
+                analysis,
+                scoreSummary,
+            },
+            { where: { id: id } }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Deneme sonucu güncellenmiştir.',
+        });
+    } catch (error) {
+        console.trace(error);
+        return res.status(500).json({
             success: false,
             message: 'Sunucu hatası oluştu.',
         });
