@@ -110,13 +110,17 @@ export const deleteExamURL = async (req, res) => {
 
 export const updateExam = async (req, res) => {
     const id = req.params.id;
-    const { analysis, scoreSummary } = req.body.data;
+    const { analysis, scoreSummary, examTitle, examDate, totalPoint } =
+        req.body.data;
 
     try {
         await Exam.update(
             {
                 analysis,
                 scoreSummary,
+                examTitle,
+                examDate,
+                totalPoint,
             },
             { where: { id: id } }
         );
