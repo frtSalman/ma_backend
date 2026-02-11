@@ -23,7 +23,7 @@ export const getStudentHomeworks = async (req, res) => {
         }
         if (role === 'parent' && studentId !== undefined) {
             homeworks = await Homework.findAll({
-                where: { parentId: userId, studentId },
+                where: { studentId },
                 include: [
                     {
                         model: Users,
