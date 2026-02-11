@@ -2,15 +2,12 @@ import express from 'express';
 import {
     deleteStudent,
     getStudents,
-    getParentStudents,
     deleteParent,
 } from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-router.get('/students/:teacherId', getStudents);
-
-router.get('/parent/students', getParentStudents);
+router.get('/students/:role/:id', getStudents);
 
 router.delete('/students/:teacherId/:studentId', deleteStudent);
 
