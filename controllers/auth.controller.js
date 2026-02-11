@@ -9,7 +9,9 @@ import {
     sendResetSuccessEmail,
     sendStudentInvitationEmail,
     sendTeacherInvitationEmail,
+    sendParentInvitationEmail,
 } from '../utils/sendEmail.js';
+import passport from 'passport';
 
 const { Users, Invitation } = models;
 
@@ -73,17 +75,26 @@ export const signup = async (req, res) => {
 };
 
 export const sendInvitation = async (req, res) => {
-    const { email, teacherId } = req.body;
+    const { emails, teacherId } = req.body;
+
+    // emails = [{email:.......,role:student},{email:.......,role:parent}]
+
     try {
-        const ınvToken = generateToken();
+        for (let index = 0; index < emails.length; index++) {
+            const element = emails[index];
 
-        await Invitation.create({
-            email,
-            teacherId: teacherId,
-            token: ınvToken,
-        });
+            const ınvToken = generateToken();
 
-        await sendStudentInvitationEmail(email, ınvToken);
+            await Invitation.create({
+                email: element.email,
+                teacherId: teacherId,
+                token: ınvToken,
+            });
+
+            if (element.role === 'student')
+                await sendStudentInvitationEmail(element.email, ınvToken);
+            else await sendParentInvitationEmail(element.email, ınvToken);
+        }
 
         res.status(200).json({
             succes: true,
@@ -152,6 +163,7 @@ export const studentSignup = async (req, res) => {
             role: 'student',
             isVerified: true,
             teacherId: inv.teacherId,
+            parentId: null,
         });
 
         res.status(200).json({
@@ -159,6 +171,65 @@ export const studentSignup = async (req, res) => {
             message: 'Öğrenci başarılı bir şekilde kayıt edildi.',
             user: {
                 ...student.dataValues,
+                password: undefined,
+            },
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const parentSignup = async (req, res) => {
+    const token = req.params.token;
+    const { sEmail, pEmail, name, password, grade } = req.body;
+
+    try {
+        const student = await Users.findOne({ where: { email: sEmail } });
+
+        if (!student) {
+            return res.status(401).json({
+                // 401 Unauthorized
+                success: false, // success false olmalı
+                message:
+                    'Yazılan emaile ait öğrenci kaydı bulumanadı. Lütfen öğrenciniz kayıt olduktan sonra tekrar deneyiniz.',
+            });
+        }
+
+        const inv = await Invitation.findOne({ where: { token, pEmail } });
+        if (!inv || inv.used) {
+            return res.status(401).json({
+                success: false,
+                message: 'Geçersiz veya kullanılmış link.',
+            });
+        }
+
+        inv.used = true;
+        await inv.save();
+
+        // İzin varsa:
+        const parent = await Users.create({
+            name,
+            grade,
+            email: pEmail,
+            password: password,
+            role: 'parent',
+            isVerified: true,
+            teacherId: inv.teacherId,
+        });
+
+        student.parentId = parent.id;
+        await student.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Veli başarılı bir şekilde kayıt edildi.',
+            user: {
+                ...parent.dataValues,
                 password: undefined,
             },
         });

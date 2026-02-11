@@ -18,7 +18,7 @@ export const verifyToken = async (req, res, next) => {
         console.error(error.message);
         res.status(401).json({
             success: false,
-            message: 'Invalid or expired token',
+            message: 'Tekrar giriş yapın.',
         });
     }
 };

@@ -17,7 +17,7 @@ const Users = db.define(
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         name: {
             type: DataTypes.STRING,
@@ -28,7 +28,7 @@ const Users = db.define(
             allowNull: true,
         },
         role: {
-            type: DataTypes.ENUM('teacher', 'student', 'admin'),
+            type: DataTypes.ENUM('teacher', 'student', 'admin', 'parent'),
             allowNull: false,
             defaultValue: 'teacher',
         },
@@ -40,6 +40,15 @@ const Users = db.define(
                 key: 'id',
             },
         },
+        parentId: {
+            type: DataTypes.UUID,
+            allowNull: true,
+            references: {
+                model: 'users',
+                key: 'id',
+            },
+        },
+
         logo: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -72,7 +81,7 @@ const Users = db.define(
 );
 
 Users.associate = models => {
-    // Bir öğretmenin birden çok öğrencisi olur:
+    // A teacher can have many students
     Users.hasMany(models.Users, {
         as: 'students',
         foreignKey: 'teacherId',
@@ -80,13 +89,32 @@ Users.associate = models => {
         scope: { role: 'student' },
         onDelete: 'CASCADE',
     });
-    // Bir öğrenci tek bir öğretmene aittir:
+
+    // A parent can have many students (children)
+    Users.hasMany(models.Users, {
+        as: 'children',
+        foreignKey: 'parentId',
+        constraints: false,
+        scope: { role: 'student' },
+        onDelete: 'CASCADE', // When parent is deleted, children are deleted
+    });
+
+    // A student belongs to one parent
+    Users.belongsTo(models.Users, {
+        as: 'parent',
+        foreignKey: 'parentId',
+        constraints: false,
+        onDelete: 'SET NULL', // When student is deleted, don't delete parent
+    });
+
+    // A student belongs to one teacher
     Users.belongsTo(models.Users, {
         as: 'teacher',
         foreignKey: 'teacherId',
         constraints: false,
         onDelete: 'CASCADE',
     });
+
     Users.hasMany(models.Homework, {
         foreignKey: 'studentId',
         as: 'homeworks',
@@ -104,7 +132,7 @@ Users.associate = models => {
     });
     Users.hasMany(models.Exam, {
         foreignKey: 'studentId',
-        as: 'Exam',
+        as: 'exams',
         onDelete: 'CASCADE',
     });
 };
