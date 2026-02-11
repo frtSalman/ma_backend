@@ -200,7 +200,9 @@ export const parentSignup = async (req, res) => {
             });
         }
 
-        const inv = await Invitation.findOne({ where: { token, pEmail } });
+        const inv = await Invitation.findOne({
+            where: { token, email: pEmail },
+        });
         if (!inv || inv.used) {
             return res.status(401).json({
                 success: false,
