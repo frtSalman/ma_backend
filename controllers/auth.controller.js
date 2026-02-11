@@ -213,28 +213,43 @@ export const parentSignup = async (req, res) => {
         inv.used = true;
         await inv.save();
 
-        // İzin varsa:
-        const parent = await Users.create({
-            name,
-            grade,
-            email: pEmail,
-            password: password,
-            role: 'parent',
-            isVerified: true,
-            teacherId: inv.teacherId,
-        });
+        const parent = await Users.findOne({ where: { email: pEmail } });
 
-        student.parentId = parent.id;
-        await student.save();
+        if (parent) {
+            student.parentId = parent.id;
+            await student.save();
 
-        res.status(200).json({
-            success: true,
-            message: 'Veli başarılı bir şekilde kayıt edildi.',
-            user: {
-                ...parent.dataValues,
-                password: undefined,
-            },
-        });
+            res.status(200).json({
+                success: true,
+                message: 'Veli başarılı bir şekilde kayıt edildi.',
+                user: {
+                    ...parent.dataValues,
+                    password: undefined,
+                },
+            });
+        } else {
+            const parent = await Users.create({
+                name,
+                grade,
+                email: pEmail,
+                password: password,
+                role: 'parent',
+                isVerified: true,
+                teacherId: inv.teacherId,
+            });
+
+            student.parentId = parent.id;
+            await student.save();
+
+            res.status(200).json({
+                success: true,
+                message: 'Veli başarılı bir şekilde kayıt edildi.',
+                user: {
+                    ...parent.dataValues,
+                    password: undefined,
+                },
+            });
+        }
     } catch (error) {
         console.trace(error.message);
         res.status(500).json({
