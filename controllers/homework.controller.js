@@ -10,9 +10,20 @@ export const getStudentHomeworks = async (req, res) => {
         let homeworks;
 
         if (role === 'teacher' && studentId !== undefined) {
-            console.trace(studentId);
             homeworks = await Homework.findAll({
                 where: { teacherId: userId, studentId },
+                include: [
+                    {
+                        model: Users,
+                        as: 'student',
+                        attributes: ['name'], // Select specific fields
+                    },
+                ],
+            });
+        }
+        if (role === 'parent' && studentId !== undefined) {
+            homeworks = await Homework.findAll({
+                where: { parentId: userId, studentId },
                 include: [
                     {
                         model: Users,
@@ -39,6 +50,7 @@ export const getStudentHomeworks = async (req, res) => {
                 ],
             });
         }
+
         return res.status(200).json({
             success: true,
             message: 'İlgili öğretmenin verdiği ödevler',
