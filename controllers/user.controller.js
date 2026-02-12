@@ -44,19 +44,42 @@ export const getStudents = async (req, res) => {
     }
 };
 
+export const getParents = async (req, res) => {
+    const { teacherId } = req.params;
+
+    try {
+        const parents = await Users.findAll({
+            where: { role: 'parent', teacherId },
+            attributes: { exclude: ['password'] },
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Öğretmene kayıtlı tüm veliler.',
+            parents,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
 export const deleteParent = async (req, res) => {
     const { teacherId, parentId } = req.params;
     console.trace(req.params);
     try {
         const parent = await Users.findOne({
-            where: { role: 'student', id: parentId, teacherId },
+            where: { role: 'parent', id: parentId, teacherId },
         });
 
         await parent.destroy();
 
         return res.status(200).json({
             success: true,
-            message: 'Öğrenci silindi.',
+            message: 'Veli silindi.',
             parent,
         });
     } catch (error) {

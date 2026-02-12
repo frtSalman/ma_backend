@@ -3,11 +3,14 @@ import {
     deleteStudent,
     getStudents,
     deleteParent,
+    getParents,
 } from '../controllers/user.controller.js';
 
 const router = express.Router();
 
 router.get('/students/:role/:id', getStudents);
+
+router.get('/parents/:teacherId', getParents);
 
 router.delete('/students/:teacherId/:studentId', deleteStudent);
 

@@ -83,6 +83,8 @@ export const sendInvitation = async (req, res) => {
         for (let index = 0; index < emails.length; index++) {
             const element = emails[index];
 
+            if (!element.email) return;
+
             const ınvToken = generateToken();
 
             await Invitation.create({
