@@ -25,6 +25,18 @@ export const getExamResults = async (req, res) => {
                 ],
             });
         }
+        if (role === 'parent' && studentId !== undefined) {
+            exams = await Exam.findAll({
+                where: { studentId },
+                include: [
+                    {
+                        model: Users,
+                        as: 'student',
+                        attributes: ['name'], // Select specific fields
+                    },
+                ],
+            });
+        }
         if (role === 'student') {
             exams = await Exam.findAll({
                 where: { studentId: userId },
