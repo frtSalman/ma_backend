@@ -19,11 +19,21 @@ export const getUQURL = async (req, res) => {
                     teacherId: queries.teacherId,
                 },
             });
-        } else {
+        }
+
+        if (queries.role === 'teacher') {
             questions = await UnsolvedQuestion.findAll({
                 where: {
                     studentId: queries.studentId,
                     teacherId: queries.id,
+                },
+            });
+        }
+
+        if (queries.role === 'parent') {
+            questions = await UnsolvedQuestion.findAll({
+                where: {
+                    studentId: queries.studentId,
                 },
             });
         }
