@@ -49,6 +49,7 @@ export const getExamResults = async (req, res) => {
                 ],
             });
         }
+        console.trace(exams);
         return res.status(200).json({
             success: true,
             message: 'İlgili öğrencinin deneme sonuçları',
