@@ -77,8 +77,6 @@ export const signup = async (req, res) => {
 export const sendInvitation = async (req, res) => {
     const { emails, teacherId } = req.body;
 
-    // emails = [{email:.......,role:student},{email:.......,role:parent}]
-
     try {
         for (let index = 0; index < emails.length; index++) {
             const element = emails[index];

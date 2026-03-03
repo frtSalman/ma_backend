@@ -38,7 +38,8 @@ const StatEntry = db.define(
             defaultValue: false,
             allowNull: false,
         },
-        subject: { type: DataTypes.STRING, allowNull: false }, // e.g. "polinomlar"
+        topic: { type: DataTypes.STRING, allowNull: true }, // e.g. "polinomlar"
+        subject: { type: DataTypes.STRING, allowNull: true }, // e.g. "matematik"
         pages: { type: DataTypes.STRING, allowNull: false }, // e.g. "günlük yapılan sayfalar"
         day: { type: DataTypes.ENUM(...weekDays), allowNull: false },
         attempted: { type: DataTypes.INTEGER, allowNull: false }, // qN
