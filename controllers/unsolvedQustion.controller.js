@@ -53,8 +53,15 @@ export const getUQURL = async (req, res) => {
 };
 
 export const uploadUQURL = async (req, res) => {
-    const { homeworkId, studentId, teacherId, subject, studentName, pages } =
-        req.body;
+    const {
+        homeworkId,
+        studentId,
+        teacherId,
+        subject,
+        topic,
+        studentName,
+        pages,
+    } = req.body;
 
     const filename = `${studentName}-${subject}`;
 
@@ -74,6 +81,7 @@ export const uploadUQURL = async (req, res) => {
             studentId,
             teacherId,
             subject,
+            topic,
             pages,
         });
 
