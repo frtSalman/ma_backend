@@ -1,4 +1,26 @@
 import UnsolvedQuestion from '../models/unsolvedQuesiton.model.js';
+import PDFDocument from 'pdfkit';
+import axios from 'axios'; // Ensure axios is installed: npm install axios
+import sharp from 'sharp';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES Modülleri kullandığınız için __dirname tanımlayalım
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Denetleyici (controller) içinde font yolunu oluşturun
+// Eğer bu kod controllers klasöründeyse, bir üst klasöre çıkıp public/fonts'a giriyoruz
+const fontPath = path.join(__dirname, '..', 'public', 'font', 'Roboto.ttf');
+// Font yolunun altına ekleyin
+const logoPath = path.join(
+    __dirname,
+    '..',
+    'public',
+    'logo',
+    'teachflow-favicon-192.png'
+);
 
 const KEY = process.env.BUNNY_KEY;
 
@@ -146,5 +168,252 @@ export const updateUQAppearance = async (req, res) => {
             success: false,
             message: 'Sunucu hatası oluştu.',
         });
+    }
+};
+
+export const createTestPDF = async (req, res) => {
+    // İstekten test başlığını da alabiliriz (gelmezse varsayılan atarız)
+    const {
+        studentId,
+        teacherId,
+        criteria,
+        testTitle = 'Konu Tarama Testi',
+    } = req.body;
+
+    if (
+        !studentId ||
+        !teacherId ||
+        !Array.isArray(criteria) ||
+        criteria.length === 0
+    ) {
+        return res
+            .status(400)
+            .json({ success: false, message: 'Eksik bilgi gönderildi.' });
+    }
+
+    try {
+        const selectedQuestions = [];
+
+        // 1. Soruları Çek ve Karıştır
+        for (const item of criteria) {
+            const {
+                pickSubject: subject,
+                pickTopic: topic,
+                pickQNum: count,
+            } = item;
+
+            const questions = await UnsolvedQuestion.findAll({
+                where: { studentId, teacherId, subject, topic, show: true },
+            });
+
+            if (questions.length > 0) {
+                const shuffled = questions.sort(() => 0.5 - Math.random());
+                const picked = shuffled.slice(0, count);
+                selectedQuestions.push(...picked);
+            }
+        }
+
+        if (selectedQuestions.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Kriterlere uygun soru bulunamadı.',
+            });
+        }
+
+        // 3. PDF Dokümanını Başlat
+        const doc = new PDFDocument({
+            size: 'A4',
+            margins: { top: 40, bottom: 40, left: 40, right: 40 },
+        });
+
+        doc.registerFont('TurkishFont', fontPath);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename=test-${Date.now()}.pdf`
+        );
+
+        doc.pipe(res);
+
+        // --- SAYFA VE SÜTUN AYARLARI ---
+        const pageWidth = doc.page.width;
+        const pageHeight = doc.page.height;
+        const margin = 40;
+        const columnGap = 30; // İki sütun arasındaki boşluk
+        // Her bir sütunun genişliği: (Toplam Genişlik - Sol Marjin - Sağ Marjin - Orta Boşluk) / 2
+        const columnWidth = (pageWidth - margin * 2 - columnGap) / 2;
+        const gap = 20; // Sorular arası dikey boşluk
+
+        // --- BAŞLIK VE BİLGİ ALANI FONKSİYONU ---
+        const drawHeader = () => {
+            const dateStr = new Intl.DateTimeFormat('tr-TR').format(new Date());
+            const logoSize = 80; // Logonun boyutu
+
+            // 1. Logoyu Ekle (Sol Üst Köşe)
+            try {
+                doc.image(logoPath, margin, margin - 35, { width: logoSize });
+            } catch (err) {
+                console.error('Logo yüklenemedi:', err.message);
+            }
+
+            // 2. Ana Başlık (Logonun yanından başlayacak şekilde veya ortalı)
+            doc.fontSize(16)
+                .font('Helvetica-Bold')
+                .text(testTitle, margin, margin, { align: 'center' });
+
+            // 3. Alt Bilgi Satırı
+            const infoY = margin + 25;
+            doc.fontSize(10).font('Helvetica');
+
+            // SAĞDA: Tarih
+            doc.text(`Tarih: ${dateStr}`, margin, infoY, {
+                align: 'right',
+                width: pageWidth - margin * 2,
+            });
+
+            // 4. Ayraç Çizgisi
+            doc.moveTo(margin, infoY + 15)
+                .lineTo(pageWidth - margin, infoY + 15)
+                .lineWidth(1)
+                .stroke();
+
+            return infoY + 30;
+        };
+
+        // --- ORTA ÇİZGİ FONKSİYONU ---
+        const drawCenterLine = startY => {
+            doc.moveTo(pageWidth / 2, startY)
+                .lineTo(pageWidth / 2, pageHeight - margin)
+                .lineWidth(0.5)
+                .dash(5, { space: 5 }) // Kesik çizgiler (Örnekteki gibi)
+                .stroke();
+            doc.undash(); // Diğer çizimlerin kesik olmasını engellemek için
+        };
+
+        // Değişkenleri tanımla
+        let startY = drawHeader();
+        let currentY = startY;
+        let currentColumn = 0; // 0: Sol sütun, 1: Sağ sütun
+
+        drawCenterLine(startY);
+
+        // Yeni sayfa ekleme fonksiyonu
+        const addNewPageAndReset = () => {
+            doc.addPage({ margin: 40 });
+            startY = margin; // Yeni sayfada başlık yok, en üstten başla
+            currentY = startY;
+            currentColumn = 0;
+            drawCenterLine(startY);
+        };
+
+        function capitalizeFirstLetter(string) {
+            if (!string) return string;
+
+            return string
+                .split(' ')
+                .map(word => {
+                    if (word.length === 0) return word;
+                    // Türkçe yerel ayarını kullanarak büyütme yapıyoruz
+                    return (
+                        word.charAt(0).toLocaleUpperCase('tr-TR') +
+                        word.slice(1).toLowerCase()
+                    );
+                })
+                .join(' ');
+        }
+
+        // 4. İmajları İşle ve Sayfaya Yerleştir
+        for (let i = 0; i < selectedQuestions.length; i++) {
+            const question = selectedQuestions[i];
+
+            try {
+                const imageResponse = await axios.get(question.imageUrl, {
+                    responseType: 'arraybuffer',
+                    timeout: 5000,
+                });
+                const originalBuffer = Buffer.from(
+                    imageResponse.data,
+                    'binary'
+                );
+
+                const image = sharp(originalBuffer);
+                const metadata = await image.metadata();
+                const pngBuffer = await image.png().toBuffer();
+
+                const scaleFactor = metadata.width / metadata.height;
+                let renderWidth = columnWidth;
+                let renderHeight = renderWidth / scaleFactor;
+
+                // Metin için ek boşluk (Soru numarası yüksekliği)
+                const textHeight = 20;
+
+                // --- SAYFA / SÜTUN KONTROLÜ ---
+                // Soru metni + Görsel + Boşluk toplam yüksekliği kontrol ediyoruz
+                if (
+                    currentY + textHeight + renderHeight >
+                    pageHeight - margin
+                ) {
+                    if (currentColumn === 0) {
+                        currentColumn = 1;
+                        currentY = startY;
+                    } else {
+                        addNewPageAndReset();
+                    }
+                }
+
+                const currentX =
+                    currentColumn === 0
+                        ? margin
+                        : margin + columnWidth + columnGap;
+
+                // --- SORU NUMARASI YAZDIRMA ---
+                doc.fontSize(8)
+                    .font('TurkishFont')
+                    .fillColor('red')
+                    .text(
+                        `Soru ${i + 1}.   Ders: ${capitalizeFirstLetter(question.subject)}   Konu: ${capitalizeFirstLetter(question.topic)}`,
+                        currentX,
+                        currentY
+                    );
+
+                // Metinden sonra görsel için Y koordinatını kaydır
+                const imageY = currentY + 15;
+
+                // Görseli bas
+                doc.image(pngBuffer, currentX, imageY, {
+                    width: renderWidth,
+                });
+
+                // Bir sonraki soru için koordinatı güncelle (Metin + Görsel + Gap)
+                currentY = imageY + renderHeight + gap;
+            } catch (imgError) {
+                // Hata durumunda da numarayı basıp hata mesajı gösterelim ki sıra bozulmasın
+                const currentX =
+                    currentColumn === 0
+                        ? margin
+                        : margin + columnWidth + columnGap;
+                doc.fontSize(11)
+                    .font('Helvetica-Bold')
+                    .text(`Soru ${i + 1}.`, currentX, currentY);
+                doc.fontSize(10)
+                    .font('Helvetica')
+                    .fillColor('red')
+                    .text(` Görsel yüklenemedi.`, currentX + 40, currentY);
+                doc.fillColor('black');
+                currentY += 30 + gap;
+            }
+        }
+
+        // PDF'i bitir
+        doc.end();
+    } catch (error) {
+        console.trace('Kritik PDF Hatası:', error.message);
+        if (!res.headersSent) {
+            res.status(500).json({
+                success: false,
+                message: 'PDF oluşturulurken hata oluştu.',
+            });
+        }
     }
 };

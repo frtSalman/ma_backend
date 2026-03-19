@@ -4,8 +4,8 @@ import {
     deleteUQURL,
     getUQURL,
     updateUQAppearance,
+    createTestPDF,
 } from '../controllers/unsolvedQustion.controller.js';
-import { uploadExamURL } from '../controllers/exam.controller.js';
 
 const router = express.Router();
 
@@ -16,5 +16,7 @@ router.put('/update-unsolved-question-view', updateUQAppearance);
 router.get('/get-unsolved-question-path', getUQURL);
 
 router.delete('/delete-unsolved-question-path/:path', deleteUQURL);
+
+router.post('/create-test', createTestPDF);
 
 export default router;
