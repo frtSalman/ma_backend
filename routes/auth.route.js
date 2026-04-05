@@ -8,7 +8,8 @@ import {
     forgotPassword,
     resetPassword,
     checkAuth,
-    sendInvitation,
+    sendStudentInvitation,
+    sendParentInvitation,
     updateAccount,
     sendTeacherInvitation,
     teacherSignup,
@@ -28,7 +29,9 @@ router.post('/parent-signup/:token', parentSignup);
 
 router.post('/teacher-signup/:token', teacherSignup);
 
-router.post('/send-invitation', sendInvitation);
+router.post('/send-student-invitation', sendStudentInvitation);
+
+router.post('/send-parent-invitation', sendParentInvitation);
 
 router.post('/send-teacher-invitation', sendTeacherInvitation);
 

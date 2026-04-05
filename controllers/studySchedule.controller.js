@@ -40,8 +40,6 @@ export const createSchedule = async (req, res) => {
             tematic,
         } = req.body.schedules;
 
-        console.log(req.body);
-
         if (
             !teacherId ||
             !studentId ||

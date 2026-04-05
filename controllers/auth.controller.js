@@ -74,33 +74,53 @@ export const signup = async (req, res) => {
     }
 };
 
-export const sendInvitation = async (req, res) => {
-    const { emails, teacherId } = req.body;
+export const sendStudentInvitation = async (req, res) => {
+    const { email, teacherId } = req.body;
 
     try {
-        for (let index = 0; index < emails.length; index++) {
-            const element = emails[index];
+        const ınvToken = generateToken();
 
-            if (!element.email) continue;
+        await Invitation.create({
+            email,
+            teacherId: teacherId,
+            token: ınvToken,
+        });
 
-            console.log(element.email);
-
-            const ınvToken = generateToken();
-
-            await Invitation.create({
-                email: element.email,
-                teacherId: teacherId,
-                token: ınvToken,
-            });
-
-            if (element.role === 'student')
-                await sendStudentInvitationEmail(element.email, ınvToken);
-            else await sendParentInvitationEmail(element.email, ınvToken);
-        }
+        await sendStudentInvitationEmail(email, ınvToken);
 
         res.status(200).json({
             succes: true,
-            message: 'Kayıt davetiyesi başarılı bir şekilde gönderildi. 🛩️',
+            message:
+                'Öğrenci kayıt davetiyesi başarılı bir şekilde gönderildi. 🛩️',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const sendParentInvitation = async (req, res) => {
+    const { email, teacherId } = req.body;
+
+    try {
+        const ınvToken = generateToken();
+
+        await Invitation.create({
+            email,
+            teacherId: teacherId,
+            token: ınvToken,
+        });
+
+        await sendParentInvitationEmail(email, ınvToken);
+
+        res.status(200).json({
+            succes: true,
+            message:
+                'Velinin kayıt davetiyesi başarılı bir şekilde gönderildi. 🛩️',
         });
     } catch (error) {
         console.error(error);
