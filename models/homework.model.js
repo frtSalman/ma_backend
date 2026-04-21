@@ -35,7 +35,7 @@ const Homework = db.define(
         },
         homeworkContent: {
             type: DataTypes.JSON,
-            defaultValue: null,
+            defaultValue: {},
             allowNull: true,
         },
         program: {

@@ -1,5 +1,6 @@
 import Exam from '../models/exam.model.js';
 import Users from '../models/user.model.js';
+import axios from 'axios';
 
 const KEY = process.env.BUNNY_KEY;
 
@@ -65,24 +66,44 @@ export const getExamResults = async (req, res) => {
     }
 };
 
-export const uploadExamURL = async (req, res) => {
-    const { studentName, fileName } = req.body;
+export const uploadExam = async (req, res) => {
+    const { studentName } = req.body;
 
-    const uniqueName = `${Date.now()}-Exam_result-${fileName}`;
-
-    const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${studentName}/${uniqueName}`;
-    const pullZoneURL = `https://cdn.teachflow.net/examResults/${studentName}/${uniqueName}`;
-
-    console.trace(uniqueName);
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Herhangi bir dosya yüklenmedi.',
+        });
+    }
 
     try {
+        const uploadPromises = req.files.map(async file => {
+            // İsim çakışmasını önlemek için index'i de ekliyoruz
+            const originalName = file.originalname || file.name;
+            const fileName = `${studentName}/${Date.now()}-Exam_result-${originalName}`;
+            const safeFilename = fileName.replace(/\s+/g, '-');
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${safeFilename}`;
+            const pullZoneURL = `https://cdn.teachflow.net/examResults/${safeFilename}`;
+
+            // 1. BunnyCDN'e Yükle
+            await axios.put(uploadUrl, file.buffer, {
+                headers: {
+                    AccessKey: KEY,
+                    'Content-Type': file.mimetype,
+                },
+            });
+
+            // 3. Her bir dosya için path ve id döndür
+            return pullZoneURL;
+        });
+
+        // Tüm paralel işlemlerin bitmesini bekle
+        const pullZoneURLs = await Promise.all(uploadPromises);
+
         res.json({
             success: true,
             message: 'Deneme sonucu URL oluşturuldu.',
-            uploadUrl,
-            pullZoneURL,
-            filePath: uniqueName,
-            key: KEY,
+            filePaths: pullZoneURLs,
         });
     } catch (error) {
         console.trace(error.message);
@@ -105,11 +126,16 @@ export const deleteExamURL = async (req, res) => {
             where: { id },
         });
 
+        await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                AccessKey: KEY,
+            },
+        });
+
         res.json({
             success: true,
             message: 'Deneme sonucu silindi.',
-            deleteUrl,
-            key: KEY,
         });
     } catch (error) {
         console.trace(error.message);

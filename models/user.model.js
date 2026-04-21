@@ -48,7 +48,16 @@ const Users = db.define(
                 key: 'id',
             },
         },
-
+        books: {
+            type: DataTypes.JSONB,
+            defaultValue: {},
+            allowNull: true,
+        },
+        videos: {
+            type: DataTypes.JSONB,
+            defaultValue: {},
+            allowNull: true,
+        },
         logo: {
             type: DataTypes.STRING,
             allowNull: true,

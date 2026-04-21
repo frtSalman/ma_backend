@@ -151,3 +151,254 @@ export const addLogoPath = async (req, res) => {
         });
     }
 };
+
+export const uploadBookSourceURL = async (req, res) => {
+    // FIX: Pull sourceName from req.body
+    const { studentName, studentId, subject } = req.body;
+    const file = req.file;
+
+    try {
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+        });
+
+        if (!student) {
+            return res
+                .status(404)
+                .json({ success: false, message: 'Öğrenci bulunamadı.' });
+        }
+
+        let pullZoneURL = null;
+
+        // FIX: Only process file logic IF a file actually exists
+        if (file) {
+            // NOTE: If you use Multer, this should be file.originalname.
+            // If express-fileupload, file.name. I'll use file.originalname as it's standard for Multer buffer uploads.
+            const fileNameToUse = file.originalname || file.name;
+            const safeFileName = encodeURIComponent(
+                fileNameToUse.replace(/\s+/g, '-')
+            );
+            const uniqueName = `${Date.now()}-Book-source-${safeFileName}`;
+
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${uniqueName}`;
+            pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${uniqueName}`;
+
+            await fetch(uploadUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/pdf',
+                },
+                body: file.buffer,
+            });
+        }
+
+        const existingBooks = student.books || {};
+        const updatedBookSources = { ...existingBooks };
+
+        if (!updatedBookSources[subject]) {
+            updatedBookSources[subject] = [];
+        }
+
+        // FIX: Check against the sourceName provided by the frontend, not the file name
+        const isBookalreadyAdded = updatedBookSources[subject].some(
+            bookItem => bookItem.sourceName === file.originalname
+        );
+
+        if (isBookalreadyAdded) {
+            return res.json({
+                success: false,
+                message: 'Bu kitap kaynağı zaten eklenmiş.',
+            });
+        }
+
+        updatedBookSources[subject].push({
+            sourceName: file.originalname, // FIX: Use the actual file name
+            url: pullZoneURL, // Will be the URL or null if no file was uploaded
+        });
+
+        await Users.update(
+            { books: updatedBookSources },
+            { where: { id: studentId } }
+        );
+
+        res.json({
+            success: true,
+            message: 'Kitap kaynağı oluşturuldu.',
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            success: false,
+            // FIX: Prevent ReferenceError by not relying on studentName in the catch block if it failed early
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const deleteBookSourceURL = async (req, res) => {
+    const { path, studentName, studentId, pullZoneURL, subject } = req.body;
+    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${path}`;
+
+    try {
+        await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                AccessKey: KEY,
+            },
+        });
+
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+        });
+
+        if (!student) {
+            return res
+                .status(404)
+                .json({ success: false, message: 'Öğrenci bulunamadı.' });
+        }
+
+        const existingBooks = student.books || {};
+
+        let updatedBookSources = { ...existingBooks };
+
+        const updatedSubjectBooks = updatedBookSources[subject].filter(
+            bookItem => bookItem.url !== pullZoneURL
+        );
+
+        updatedBookSources[subject] = updatedSubjectBooks;
+
+        await Users.update(
+            {
+                books: updatedBookSources,
+            },
+            {
+                where: { id: studentId },
+            }
+        );
+
+        res.json({
+            success: true,
+            message: 'Kitap kaynağı silindi.',
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const uploadVideoSourceURL = async (req, res) => {
+    const { studentId, subject, videoName, url } = req.body;
+
+    try {
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+        });
+
+        if (!student) {
+            return res
+                .status(404)
+                .json({ success: false, message: 'Öğrenci bulunamadı.' });
+        }
+
+        const existingVideos = student.videos || {};
+
+        const updatedVideoSources = { ...existingVideos };
+
+        if (!updatedVideoSources[subject]) {
+            updatedVideoSources[subject] = [];
+        }
+
+        const isVideoAlreadyAdded = updatedVideoSources[subject].some(
+            videoItem => videoItem.url === url
+        );
+
+        if (isVideoAlreadyAdded) {
+            console.log(isVideoAlreadyAdded);
+            return res.json({
+                success: false,
+                message: 'Bu video kaynağı zaten eklenmiş.',
+            });
+        }
+
+        updatedVideoSources[subject].push({
+            sourceName: videoName,
+            url: url,
+            isWatched: false,
+            percentage: 0,
+            lastMoment: 0,
+        });
+
+        await Users.update(
+            {
+                videos: updatedVideoSources,
+            },
+            {
+                where: { id: studentId },
+            }
+        );
+
+        res.json({
+            success: true,
+            message: 'Video kaynağı oluşturuldu.',
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const deleteVideoSourceURL = async (req, res) => {
+    const { url, videoSubject, studentId } = req.body;
+
+    try {
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+        });
+
+        if (!student) {
+            return res
+                .status(404)
+                .json({ success: false, message: 'Öğrenci bulunamadı.' });
+        }
+
+        const existingVideos = student.videos || {};
+
+        const updatedSubjectVideos = existingVideos[videoSubject].filter(
+            videoItem => videoItem.url !== url
+        );
+
+        const updatedVideoSources = {
+            ...existingVideos,
+            [videoSubject]: updatedSubjectVideos,
+        };
+
+        await Users.update(
+            {
+                videos: updatedVideoSources,
+            },
+            {
+                where: { id: studentId },
+            }
+        );
+
+        res.json({
+            success: true,
+            message: 'Video kaynağı silindi.',
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};

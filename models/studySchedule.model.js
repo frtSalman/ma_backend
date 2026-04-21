@@ -42,6 +42,22 @@ const StudySchedule = db.define(
             defaultValue: false,
             allowNull: false, // Optional as seen in your JSX conditionally rendering it
         },
+        generalRep: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
+        },
+        pageRanges: {
+            type: DataTypes.STRING,
+            defaultValue: '',
+            allowNull: true,
+        },
+        workType: {
+            type: DataTypes.STRING,
+            defaultValue: 'Konu Anlatımı',
+            allowNull: false,
+            enum: ['Konu Anlatımı', 'Soru Çözümü'],
+        },
     },
     {
         timestamps: true,

@@ -74,7 +74,7 @@ export const getUQURL = async (req, res) => {
     }
 };
 
-export const uploadUQURL = async (req, res) => {
+export const uploadUQ = async (req, res) => {
     const {
         homeworkId,
         studentId,
@@ -85,45 +85,145 @@ export const uploadUQURL = async (req, res) => {
         pages,
     } = req.body;
 
-    const filename = `${studentName}-${subject}`;
-
-    const safeFilename = filename.replace(/\s+/g, '-');
-
-    const uniqueName = `${Date.now()}-${safeFilename}.webp`;
-
-    const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
-    const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
-
-    console.trace(uniqueName);
+    // Çoklu dosya kontrolü (req.files array olarak gelir)
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Herhangi bir dosya yüklenmedi.',
+        });
+    }
 
     try {
-        const unsolvedQuestion = await UnsolvedQuestion.create({
-            imageUrl: pullZoneURL,
-            homeworkId,
-            studentId,
-            teacherId,
-            subject,
-            topic,
-            pages,
+        // Promise.all kullanarak tüm dosyaları BunnyCDN'e paralel olarak yüklüyoruz.
+        // Bu sayede 3 fotoğraf yüklemek 1 fotoğraf yüklemekle neredeyse aynı sürede biter.
+        const uploadPromises = req.files.map(async (file, index) => {
+            // İsim çakışmasını önlemek için index'i de ekliyoruz
+            const filename = `${studentName}-${subject}-${index}`;
+            const safeFilename = filename.replace(/\s+/g, '-');
+            const uniqueName = `${Date.now()}-${safeFilename}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
+
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
+            const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
+
+            // 1. BunnyCDN'e Yükle
+            await axios.put(uploadUrl, file.buffer, {
+                headers: {
+                    AccessKey: KEY,
+                    'Content-Type': file.mimetype,
+                },
+            });
+
+            // 2. Veritabanına Kaydet
+            const unsolvedQuestion = await UnsolvedQuestion.create({
+                imageUrl: pullZoneURL,
+                homeworkId,
+                studentId,
+                teacherId,
+                subject,
+                topic,
+                pages,
+            });
+
+            // 3. Her bir dosya için path ve id döndür
+            return {
+                filePath: uniqueName,
+                qId: unsolvedQuestion.id,
+            };
         });
 
+        // Tüm paralel işlemlerin bitmesini bekle
+        const uploadedData = await Promise.all(uploadPromises);
+
+        // Frontend'e yüklenen tüm dosyaların bilgilerini dizi (array) olarak dön
         res.json({
             success: true,
-            message: 'Fotoğraf oluşturuldu.',
-            uploadUrl,
-            filePath: uniqueName,
-            key: KEY,
-            qId: unsolvedQuestion.id,
+            message: `${uploadedData.length} fotoğraf başarıyla yüklendi.`,
+            data: uploadedData, // [{filePath, qId}, {filePath, qId}, ...]
         });
     } catch (error) {
-        console.trace(error.message);
+        console.error('Çoklu yükleme hatası:', error.message);
         res.status(500).json({
-            // 500 Internal Server Error
             success: false,
-            message: 'Sunucu hatası oluştu.',
+            message: 'Sunucu hatası oluştu veya BunnyCDN bağlantısı başarısız.',
         });
     }
 };
+
+/*
+export const uploadUQ = async (req, res) => {
+    const {
+        homeworkId,
+        studentId,
+        teacherId,
+        subject,
+        topic,
+        studentName,
+        pages,
+    } = req.body;
+
+    // Çoklu dosya kontrolü (req.files array olarak gelir)
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Herhangi bir dosya yüklenmedi.',
+        });
+    }
+
+    try {
+        const uploadedData = [];
+
+        // RAM şişmesini önlemek için Promise.all yerine for...of ile 
+        // dosyaları sırayla (sequential) işliyoruz.
+        for (const [index, file] of req.files.entries()) {
+            // İsim çakışmasını önlemek için index'i de ekliyoruz
+            const filename = `${studentName}-${subject}-${index}`;
+            const safeFilename = filename.replace(/\s+/g, '-');
+            const uniqueName = `${Date.now()}-${safeFilename}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
+
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
+            const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
+
+            // 1. BunnyCDN'e Yükle (Her dosya için bir öncekinin bitmesini bekler)
+            await axios.put(uploadUrl, file.buffer, {
+                headers: {
+                    AccessKey: KEY,
+                    'Content-Type': file.mimetype,
+                },
+            });
+
+            // 2. Veritabanına Kaydet
+            const unsolvedQuestion = await UnsolvedQuestion.create({
+                imageUrl: pullZoneURL,
+                homeworkId,
+                studentId,
+                teacherId,
+                subject,
+                topic,
+                pages,
+            });
+
+            // 3. Her bir dosya için path ve id bilgilerini diziye ekle
+            uploadedData.push({
+                filePath: uniqueName,
+                qId: unsolvedQuestion.id,
+            });
+        }
+
+        // Tüm dosyalar sırayla yüklendikten sonra frontend'e dön
+        res.json({
+            success: true,
+            message: `${uploadedData.length} fotoğraf başarıyla yüklendi.`,
+            data: uploadedData, // [{filePath, qId}, {filePath, qId}, ...]
+        });
+    } catch (error) {
+        console.error('Çoklu yükleme hatası:', error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Sunucu hatası oluştu veya BunnyCDN bağlantısı başarısız.',
+        });
+    }
+}; 
+*/
 
 export const deleteUQURL = async (req, res) => {
     const path = req.params.path;
@@ -134,11 +234,16 @@ export const deleteUQURL = async (req, res) => {
             where: { imageUrl: `https://cdn.teachflow.net/${path}` },
         });
 
+        await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                AccessKey: KEY,
+            },
+        });
+
         res.json({
             success: true,
             message: 'Fotoğraf silindi.',
-            deleteUrl,
-            key: KEY,
         });
     } catch (error) {
         console.trace(error.message);

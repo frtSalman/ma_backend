@@ -1,6 +1,7 @@
 import express from 'express';
+import multer from 'multer';
 import {
-    uploadUQURL,
+    uploadUQ,
     deleteUQURL,
     getUQURL,
     updateUQAppearance,
@@ -8,8 +9,9 @@ import {
 } from '../controllers/unsolvedQustion.controller.js';
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/add-unsolved-question-path', uploadUQURL);
+router.post('/add-unsolved-question-path', upload.array('files', 15), uploadUQ);
 
 router.put('/update-unsolved-question-view', updateUQAppearance);
 
