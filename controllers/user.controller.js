@@ -152,7 +152,7 @@ export const addLogoPath = async (req, res) => {
     }
 };
 
-export const uploadBookSourceURL = async (req, res) => {
+export const uploadBookSource = async (req, res) => {
     // FIX: Pull sourceName from req.body
     const { studentName, studentId, subject } = req.body;
     const file = req.file;
