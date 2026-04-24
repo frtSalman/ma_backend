@@ -98,7 +98,7 @@ export const uploadUQ = async (req, res) => {
         // Bu sayede 3 fotoğraf yüklemek 1 fotoğraf yüklemekle neredeyse aynı sürede biter.
         const uploadPromises = req.files.map(async (file, index) => {
             // İsim çakışmasını önlemek için index'i de ekliyoruz
-            const filename = `${studentName}-${subject}-${index}`;
+            const filename = `${studentName}-${subject}-${topic}-${index}`;
             const safeFilename = filename.replace(/\s+/g, '-');
             const uniqueName = `${Date.now()}-${safeFilename}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
 
