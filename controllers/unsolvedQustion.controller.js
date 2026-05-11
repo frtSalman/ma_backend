@@ -98,9 +98,7 @@ export const uploadUQ = async (req, res) => {
         // Bu sayede 3 fotoğraf yüklemek 1 fotoğraf yüklemekle neredeyse aynı sürede biter.
         const uploadPromises = req.files.map(async (file, index) => {
             // İsim çakışmasını önlemek için index'i de ekliyoruz
-            const filename = `${studentName}-${subject}-${topic}-${index}`;
-            const safeFilename = filename.replace(/\s+/g, '-');
-            const uniqueName = `${Date.now()}-${safeFilename}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
+            const uniqueName = `${studentName}/unsolved-questions/${subject}/${topic}/${Date.now()}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
 
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
             const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;

@@ -211,7 +211,7 @@ export const uploadBookSource = async (req, res) => {
             const safeFileName = encodeURIComponent(
                 fileNameToUse.replace(/\s+/g, '-')
             );
-            const uniqueName = `${Date.now()}-Book-source-${safeFileName}`;
+            const uniqueName = `${Date.now()}-${safeFileName}`;
 
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${uniqueName}`;
             pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${uniqueName}`;
