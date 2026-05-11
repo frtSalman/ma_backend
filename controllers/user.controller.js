@@ -125,7 +125,7 @@ export const addLogoPath = async (req, res) => {
     const uniqueName = `${Date.now()}-${safeFilename}-logo.webp`;
 
     const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/logo/${name}/${uniqueName}`;
-    const pullZoneURL = `https://cdn.teachflow.net//logo/${name}/${uniqueName}`;
+    const pullZoneURL = `https://cdn.teachflow.net/logo/${name}/${uniqueName}`;
 
     try {
         await Users.update(
@@ -213,8 +213,8 @@ export const uploadBookSource = async (req, res) => {
             );
             const uniqueName = `${Date.now()}-${safeFileName}`;
 
-            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${uniqueName}`;
-            pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${uniqueName}`;
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${subject}/${uniqueName}`;
+            pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${subject}/${uniqueName}`;
 
             await fetch(uploadUrl, {
                 method: 'PUT',
