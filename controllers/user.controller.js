@@ -185,10 +185,10 @@ export const getBookSources = async (req, res) => {
 };
 
 export const uploadBookSource = async (req, res) => {
-    console.log(req.body);
     // FIX: Pull sourceName from req.body
     const { studentName, studentId, subject, bookName } = req.body;
     const file = req.file;
+    console.trace('Received file:', file);
 
     try {
         const student = await Users.findOne({
