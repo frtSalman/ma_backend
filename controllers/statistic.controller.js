@@ -46,9 +46,11 @@ export const getHomeworkStats = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const stats = await StatEntry.findAll({
+        const stats = await StatEntry.findOne({
             where: { homeworkId: id },
         });
+
+        console.log(stats);
 
         res.status(200).json({
             success: true,

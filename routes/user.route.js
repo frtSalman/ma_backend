@@ -7,6 +7,8 @@ import {
     getParents,
     uploadBookSource,
     uploadVideoSourceURL,
+    getBookSources,
+    deleteBookSource,
 } from '../controllers/user.controller.js';
 
 const router = express.Router();
@@ -16,7 +18,11 @@ router.get('/students/:role/:id', getStudents);
 
 router.get('/parents/:teacherId', getParents);
 
+router.get('/book-sources/:studentId', getBookSources);
+
 router.post('/add-book-source', upload.single('file'), uploadBookSource);
+
+router.post('/delete-book-source', deleteBookSource);
 
 router.post('/add-video-source', uploadVideoSourceURL);
 

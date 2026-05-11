@@ -33,14 +33,16 @@ export const createSchedule = async (req, res) => {
         const {
             teacherId,
             studentId,
+            studentName,
             day,
             timeRange,
             subject,
             topic,
             tematic,
-            pageRanges,
+            explanation,
             workType,
             generalRep,
+            bookSources,
         } = req.body.schedules;
 
         if (
@@ -61,14 +63,16 @@ export const createSchedule = async (req, res) => {
         const newSchedule = await StudySchedule.create({
             teacherId,
             studentId,
+            studentName,
             day,
             timeRange,
             subject,
             topic,
             tematic,
-            pageRanges,
+            explanation,
             workType,
             generalRep,
+            bookSources,
         });
 
         return res.status(201).json(newSchedule);
@@ -89,9 +93,10 @@ export const updateSchedule = async (req, res) => {
             subject,
             topic,
             tematic,
-            pageRanges,
+            explanation,
             workType,
             generalRep,
+            bookSources,
         } = req.body;
 
         const schedule = await StudySchedule.findByPk(id);
@@ -106,9 +111,10 @@ export const updateSchedule = async (req, res) => {
             subject,
             topic,
             tematic,
-            pageRanges,
+            explanation,
             workType,
             generalRep,
+            bookSources,
         });
 
         return res.status(200).json(schedule);

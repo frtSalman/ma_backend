@@ -152,9 +152,42 @@ export const addLogoPath = async (req, res) => {
     }
 };
 
+export const getBookSources = async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+            attributes: { exclude: ['password'] },
+        });
+
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: 'Öğrenci bulunamadı.',
+            });
+        }
+
+        const bookSources = student.books || {};
+
+        return res.status(200).json({
+            success: true,
+            message: 'Kitap kaynakları getirildi.',
+            bookSources,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
 export const uploadBookSource = async (req, res) => {
+    console.log(req.body);
     // FIX: Pull sourceName from req.body
-    const { studentName, studentId, subject } = req.body;
+    const { studentName, studentId, subject, bookName } = req.body;
     const file = req.file;
 
     try {
@@ -192,6 +225,16 @@ export const uploadBookSource = async (req, res) => {
             });
         }
 
+        // DETERMINING THE NAME: Use file name if available, otherwise use bookName from body
+        const finalSourceName = file?.originalname || bookName;
+
+        if (!finalSourceName) {
+            return res.status(400).json({
+                success: false,
+                message: 'Lütfen bir dosya yükleyin veya kitap adı girin.',
+            });
+        }
+
         const existingBooks = student.books || {};
         const updatedBookSources = { ...existingBooks };
 
@@ -201,7 +244,7 @@ export const uploadBookSource = async (req, res) => {
 
         // FIX: Check against the sourceName provided by the frontend, not the file name
         const isBookalreadyAdded = updatedBookSources[subject].some(
-            bookItem => bookItem.sourceName === file.originalname
+            bookItem => bookItem.sourceName === finalSourceName
         );
 
         if (isBookalreadyAdded) {
@@ -212,7 +255,7 @@ export const uploadBookSource = async (req, res) => {
         }
 
         updatedBookSources[subject].push({
-            sourceName: file.originalname, // FIX: Use the actual file name
+            sourceName: finalSourceName,
             url: pullZoneURL, // Will be the URL or null if no file was uploaded
         });
 
@@ -235,18 +278,26 @@ export const uploadBookSource = async (req, res) => {
     }
 };
 
-export const deleteBookSourceURL = async (req, res) => {
-    const { path, studentName, studentId, pullZoneURL, subject } = req.body;
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${path}`;
+export const deleteBookSource = async (req, res) => {
+    const { path, studentName, studentId, pullZoneURL, subject, sourceName } =
+        req.body;
+
+    if (path) {
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${path}`;
+
+        try {
+            await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: { AccessKey: KEY },
+            });
+        } catch (cdnError) {
+            console.log(
+                'File not found on CDN or CDN error, proceeding to DB deletion...'
+            );
+        }
+    }
 
     try {
-        await fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: {
-                AccessKey: KEY,
-            },
-        });
-
         const student = await Users.findOne({
             where: { id: studentId, role: 'student' },
         });

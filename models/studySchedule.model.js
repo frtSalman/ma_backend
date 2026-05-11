@@ -17,6 +17,10 @@ const StudySchedule = db.define(
             type: DataTypes.UUID,
             allowNull: false,
         },
+        studentName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         day: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -47,7 +51,7 @@ const StudySchedule = db.define(
             defaultValue: false,
             allowNull: false,
         },
-        pageRanges: {
+        explanation: {
             type: DataTypes.STRING,
             defaultValue: '',
             allowNull: true,
@@ -57,6 +61,17 @@ const StudySchedule = db.define(
             defaultValue: 'Konu Anlatımı',
             allowNull: false,
             enum: ['Konu Anlatımı', 'Soru Çözümü'],
+        },
+        bookSources: {
+            // [{sourceName: 'Kitap Adı', url: 'https://...'}, ...]
+            type: DataTypes.JSONB,
+            defaultValue: [],
+            allowNull: true,
+        },
+        videoSources: {
+            type: DataTypes.JSONB,
+            defaultValue: [],
+            allowNull: true,
         },
     },
     {
