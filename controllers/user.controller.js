@@ -208,10 +208,7 @@ export const uploadBookSource = async (req, res) => {
             // NOTE: If you use Multer, this should be file.originalname.
             // If express-fileupload, file.name. I'll use file.originalname as it's standard for Multer buffer uploads.
             const fileNameToUse = file.originalname || file.name;
-            const safeFileName = encodeURIComponent(
-                fileNameToUse.replace(/\s+/g, '-')
-            );
-            const uniqueName = `${Date.now()}-${safeFileName}`;
+            const uniqueName = `${Date.now()}-${fileNameToUse}`;
 
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${subject}/${uniqueName}`;
             pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${subject}/${uniqueName}`;
