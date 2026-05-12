@@ -1,3 +1,4 @@
+import axios from 'axios';
 import models from '../models/index.model.js';
 const { Users } = models;
 
@@ -205,6 +206,7 @@ export const uploadBookSource = async (req, res) => {
 
         // FIX: Only process file logic IF a file actually exists
         if (file) {
+            console.trace('Processing file upload logic...');
             // NOTE: If you use Multer, this should be file.originalname.
             // If express-fileupload, file.name. I'll use file.originalname as it's standard for Multer buffer uploads.
             const fileNameToUse = file.originalname || file.name;
@@ -213,12 +215,11 @@ export const uploadBookSource = async (req, res) => {
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${subject}/${uniqueName}`;
             pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${subject}/${uniqueName}`;
 
-            await fetch(uploadUrl, {
-                method: 'PUT',
+            await axios.put(uploadUrl, file.buffer, {
                 headers: {
-                    'Content-Type': 'application/pdf',
+                    AccessKey: KEY,
+                    'Content-Type': file.mimetype,
                 },
-                body: file.buffer,
             });
         }
 
@@ -254,6 +255,7 @@ export const uploadBookSource = async (req, res) => {
         updatedBookSources[subject].push({
             sourceName: finalSourceName,
             url: pullZoneURL, // Will be the URL or null if no file was uploaded
+            isChecked: false,
         });
 
         await Users.update(
@@ -280,7 +282,7 @@ export const deleteBookSource = async (req, res) => {
         req.body;
 
     if (path) {
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${path}`;
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${subject}/${path}`;
 
         try {
             await fetch(deleteUrl, {
