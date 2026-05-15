@@ -185,6 +185,34 @@ export const getBookSources = async (req, res) => {
     }
 };
 
+export const getVideoSources = async (req, res) => {
+    const { studentId } = req.params;
+    try {
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+            attributes: { exclude: ['password'] },
+        });
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: 'Öğrenci bulunamadı.',
+            });
+        }
+        const videoSources = student.videos || {};
+        return res.status(200).json({
+            success: true,
+            message: 'Video kaynakları getirildi.',
+            videoSources,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
 export const uploadBookSource = async (req, res) => {
     // FIX: Pull sourceName from req.body
     const { studentName, studentId, subject, bookName } = req.body;
@@ -342,6 +370,8 @@ export const deleteBookSource = async (req, res) => {
 
 export const uploadVideoSourceURL = async (req, res) => {
     const { studentId, subject, videoName, url } = req.body;
+
+    console.trace('Received video source upload request:', req.body);
 
     try {
         const student = await Users.findOne({

@@ -43,6 +43,7 @@ export const createSchedule = async (req, res) => {
             workType,
             generalRep,
             bookSources,
+            videoSources,
         } = req.body.schedules;
 
         if (
@@ -73,6 +74,7 @@ export const createSchedule = async (req, res) => {
             workType,
             generalRep,
             bookSources,
+            videoSources,
         });
 
         return res.status(201).json(newSchedule);
@@ -97,9 +99,12 @@ export const updateSchedule = async (req, res) => {
             workType,
             generalRep,
             bookSources,
+            videoSources,
         } = req.body;
 
         const schedule = await StudySchedule.findByPk(id);
+
+        console.trace('Received update data:', req.body);
 
         if (!schedule) {
             return res.status(404).json({ message: 'Program bulunamadı.' });
@@ -115,6 +120,7 @@ export const updateSchedule = async (req, res) => {
             workType,
             generalRep,
             bookSources,
+            videoSources,
         });
 
         return res.status(200).json(schedule);
