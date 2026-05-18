@@ -1,5 +1,15 @@
 import StudySchedule from '../models/studySchedule.model.js';
 
+const weekDays = [
+    'Pazartesi',
+    'Salı',
+    'Çarşamba',
+    'Perşembe',
+    'Cuma',
+    'Cumartesi',
+    'Pazar',
+];
+
 export const getSchedules = async (req, res) => {
     try {
         const { role, userId, studentId } = req.query;
@@ -46,6 +56,8 @@ export const createSchedule = async (req, res) => {
             videoSources,
         } = req.body.schedules;
 
+        const isAllDays = req.body.isAllDays;
+
         if (
             !teacherId ||
             !studentId ||
@@ -61,23 +73,45 @@ export const createSchedule = async (req, res) => {
             });
         }
 
-        const newSchedule = await StudySchedule.create({
-            teacherId,
-            studentId,
-            studentName,
-            day,
-            timeRange,
-            subject,
-            topic,
-            tematic,
-            explanation,
-            workType,
-            generalRep,
-            bookSources,
-            videoSources,
-        });
+        if (!isAllDays) {
+            await StudySchedule.create({
+                teacherId,
+                studentId,
+                studentName,
+                day,
+                timeRange,
+                subject,
+                topic,
+                tematic,
+                explanation,
+                workType,
+                generalRep,
+                bookSources,
+                videoSources,
+            });
+        } else {
+            for (const day of weekDays) {
+                await StudySchedule.create({
+                    teacherId,
+                    studentId,
+                    studentName,
+                    day,
+                    timeRange,
+                    subject,
+                    topic,
+                    tematic,
+                    explanation,
+                    workType,
+                    generalRep,
+                    bookSources,
+                    videoSources,
+                });
+            }
+        }
 
-        return res.status(201).json(newSchedule);
+        return res
+            .status(201)
+            .json({ message: 'Programlar başarıyla oluşturuldu.' });
     } catch (error) {
         console.error('Error creating schedule:', error);
         return res
