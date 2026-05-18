@@ -76,7 +76,7 @@ app.use('/api/exam', examRoutes);
 
 app.use('/api/schedule', scheduleRoutes);
 
-db.sync({ alter: false })
+db.sync({ alter: true })
     .then(() =>
         app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)

@@ -56,6 +56,10 @@ const StudySchedule = db.define(
             defaultValue: '',
             allowNull: true,
         },
+        deadline: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         workType: {
             type: DataTypes.STRING,
             defaultValue: 'Konu Anlatımı',

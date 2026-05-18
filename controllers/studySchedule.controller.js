@@ -1,4 +1,5 @@
 import StudySchedule from '../models/studySchedule.model.js';
+import getNearestDateForDay from '../utils/getNearestDateForDay.js';
 
 const weekDays = [
     'Pazartesi',
@@ -79,6 +80,7 @@ export const createSchedule = async (req, res) => {
                 studentId,
                 studentName,
                 day,
+                deadline: getNearestDateForDay(day),
                 timeRange,
                 subject,
                 topic,
@@ -96,6 +98,7 @@ export const createSchedule = async (req, res) => {
                     studentId,
                     studentName,
                     day,
+                    deadline: getNearestDateForDay(day),
                     timeRange,
                     subject,
                     topic,
