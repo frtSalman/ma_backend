@@ -15,7 +15,10 @@ export default function getNearestDateForDay(dayName) {
     const currentDayIndex = now.getDay();
 
     let diffDays = targetDayIndex - currentDayIndex;
-    if (diffDays < 0) {
+
+    // Küçük VEYA EŞİTTİR (<=) yapıyoruz
+    // Böylece bugün ve aranan gün aynıysa (0) +7 gün ekleyip haftaya atacak
+    if (diffDays <= 0) {
         diffDays += 7;
     }
 
