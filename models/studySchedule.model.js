@@ -64,7 +64,7 @@ const StudySchedule = db.define(
             type: DataTypes.STRING,
             defaultValue: 'Konu Anlatımı',
             allowNull: false,
-            enum: ['Konu Anlatımı', 'Soru Çözümü'],
+            enum: ['Konu Anlatımı', 'Soru Çözümü', 'Branş Deneme'],
         },
         bookSources: {
             // [{sourceName: 'Kitap Adı', url: 'https://...'}, ...]
