@@ -189,6 +189,22 @@ export const deleteSchedule = async (req, res) => {
     }
 };
 
+export const deleteAllSchedule = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+
+        await StudySchedule.destroy({ where: { studentId } });
+        return res
+            .status(200)
+            .json({ message: 'Programlar başarıyla silindi.' });
+    } catch (error) {
+        console.error('Error deleting schedule:', error);
+        return res
+            .status(500)
+            .json({ message: 'Sunucu hatası: Program silinemedi.' });
+    }
+};
+
 export const updateScheduleStatus = async (req, res) => {
     try {
         const { id } = req.params;
