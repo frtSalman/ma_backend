@@ -368,7 +368,7 @@ export const deleteBookSource = async (req, res) => {
     }
 };
 
-export const uploadVideoSourceURL = async (req, res) => {
+/* export const uploadVideoSourceURL = async (req, res) => {
     const { studentId, subject, videoName, url } = req.body;
 
     console.trace('Received video source upload request:', req.body);
@@ -429,6 +429,144 @@ export const uploadVideoSourceURL = async (req, res) => {
         console.trace(error.message);
         res.status(500).json({
             // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+}; */
+
+export const uploadVideoSourceURL = async (req, res) => {
+    // Destructure the new type and ytId parameters sent from the frontend
+    const { studentId, subject, url, type, ytId } = req.body;
+
+    console.trace('Received video source upload request:', req.body);
+
+    try {
+        const student = await Users.findOne({
+            where: { id: studentId, role: 'student' },
+        });
+
+        if (!student) {
+            return res
+                .status(404)
+                .json({ success: false, message: 'Öğrenci bulunamadı.' });
+        }
+
+        const existingVideos = student.videos || {};
+        const updatedVideoSources = { ...existingVideos };
+
+        if (!updatedVideoSources[subject]) {
+            updatedVideoSources[subject] = [];
+        }
+
+        if (type === 'playlist' && ytId) {
+            const ytApiKey = process.env.YOUTUBE_API_KEY;
+
+            if (!ytApiKey) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'YouTube API anahtarı yapılandırılmamış.',
+                });
+            }
+
+            let allPlaylistItems = [];
+            let nextPageToken = '';
+            let fetchMore = true;
+
+            // Fetch all videos in the playlist, handling YouTube's 50-item pagination limit
+            while (fetchMore) {
+                const pageTokenParam = nextPageToken
+                    ? `&pageToken=${nextPageToken}`
+                    : '';
+                const ytApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${ytId}&key=${ytApiKey}${pageTokenParam}`;
+
+                const response = await axios.get(ytApiUrl);
+                allPlaylistItems = allPlaylistItems.concat(response.data.items);
+
+                nextPageToken = response.data.nextPageToken;
+                if (!nextPageToken) fetchMore = false;
+            }
+
+            let addedCount = 0;
+
+            // Process each video and push to the JSON array
+            allPlaylistItems.forEach((item, index) => {
+                const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
+
+                // Use the actual YouTube video title, but prefix it with your subject/custom name for organization
+                const title = item.snippet.title;
+
+                const isVideoAlreadyAdded = updatedVideoSources[subject].some(
+                    videoItem => videoItem.url === videoUrl
+                );
+
+                if (
+                    !isVideoAlreadyAdded &&
+                    title !== 'Private video' &&
+                    title !== 'Deleted video'
+                ) {
+                    updatedVideoSources[subject].push({
+                        sourceName: title,
+                        url: videoUrl,
+                        isWatched: false,
+                        percentage: 0,
+                        lastMoment: 0,
+                    });
+                    addedCount++;
+                }
+            });
+
+            if (addedCount === 0) {
+                return res.json({
+                    success: false,
+                    message: 'Listedeki tüm geçerli videolar zaten eklenmiş.',
+                });
+            }
+        } else {
+            // Standard single video upload logic
+            const isVideoAlreadyAdded = updatedVideoSources[subject].some(
+                videoItem => videoItem.url === url
+            );
+
+            if (isVideoAlreadyAdded) {
+                return res.json({
+                    success: false,
+                    message: 'Bu video kaynağı zaten eklenmiş.',
+                });
+            }
+
+            updatedVideoSources[subject].push({
+                sourceName: videoName,
+                url: url,
+                isWatched: false,
+                percentage: 0,
+                lastMoment: 0,
+            });
+        }
+
+        // Save the updated JSON object back to the database
+        await Users.update(
+            {
+                videos: updatedVideoSources,
+            },
+            {
+                where: { id: studentId },
+            }
+        );
+
+        res.json({
+            success: true,
+            message:
+                type === 'playlist'
+                    ? 'Oynatma listesi başarıyla eklendi.'
+                    : 'Video kaynağı oluşturuldu.',
+        });
+    } catch (error) {
+        console.error(
+            'Video upload error: ',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
             success: false,
             message: 'Sunucu hatası oluştu.',
         });
