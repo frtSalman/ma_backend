@@ -5,6 +5,7 @@ import sharp from 'sharp';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import generateScheduleDocDefinition from '../utils/generateScheduleDocDefinition.js';
+import Users from '../models/user.model.js';
 
 // ES Modülleri kullandığınız için __dirname tanımlayalım
 const __filename = fileURLToPath(import.meta.url);
@@ -158,14 +159,37 @@ export const updateSchedule = async (req, res) => {
             generalRep,
             bookSources,
             videoSources,
+            studentId,
         } = req.body;
 
         const schedule = await StudySchedule.findByPk(id);
 
-        console.trace('Received update data:', req.body);
-
         if (!schedule) {
             return res.status(404).json({ message: 'Program bulunamadı.' });
+        }
+
+        const student = await Users.findByPk(studentId);
+
+        if (!student) {
+            return res.status(404).json({ message: 'Öğrenci bulunamadı.' });
+        }
+
+        if (videoSources && student.videos?.[subject]) {
+            const updatedVideos = student.videos[subject].map(video => {
+                videoSources.forEach(source => {
+                    if (video.url === source.url) {
+                        Object.assign(video, source);
+                    }
+                });
+                return video;
+            });
+
+            student.videos[subject] = updatedVideos;
+
+            await Users.update(
+                { videos: student.videos },
+                { where: { id: studentId } }
+            );
         }
 
         await schedule.update({
