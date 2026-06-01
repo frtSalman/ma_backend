@@ -368,76 +368,9 @@ export const deleteBookSource = async (req, res) => {
     }
 };
 
-/* export const uploadVideoSourceURL = async (req, res) => {
-    const { studentId, subject, videoName, url } = req.body;
-
-    console.trace('Received video source upload request:', req.body);
-
-    try {
-        const student = await Users.findOne({
-            where: { id: studentId, role: 'student' },
-        });
-
-        if (!student) {
-            return res
-                .status(404)
-                .json({ success: false, message: 'Öğrenci bulunamadı.' });
-        }
-
-        const existingVideos = student.videos || {};
-
-        const updatedVideoSources = { ...existingVideos };
-
-        if (!updatedVideoSources[subject]) {
-            updatedVideoSources[subject] = [];
-        }
-
-        const isVideoAlreadyAdded = updatedVideoSources[subject].some(
-            videoItem => videoItem.url === url
-        );
-
-        if (isVideoAlreadyAdded) {
-            console.log(isVideoAlreadyAdded);
-            return res.json({
-                success: false,
-                message: 'Bu video kaynağı zaten eklenmiş.',
-            });
-        }
-
-        updatedVideoSources[subject].push({
-            sourceName: videoName,
-            url: url,
-            isWatched: false,
-            percentage: 0,
-            lastMoment: 0,
-        });
-
-        await Users.update(
-            {
-                videos: updatedVideoSources,
-            },
-            {
-                where: { id: studentId },
-            }
-        );
-
-        res.json({
-            success: true,
-            message: 'Video kaynağı oluşturuldu.',
-        });
-    } catch (error) {
-        console.trace(error.message);
-        res.status(500).json({
-            // 500 Internal Server Error
-            success: false,
-            message: 'Sunucu hatası oluştu.',
-        });
-    }
-}; */
-
 export const uploadVideoSourceURL = async (req, res) => {
     // Destructure the new type and ytId parameters sent from the frontend
-    const { studentId, subject, url, type, ytId } = req.body;
+    const { studentId, subject, url, type, ytId, name } = req.body;
 
     console.trace('Received video source upload request:', req.body);
 
@@ -462,6 +395,8 @@ export const uploadVideoSourceURL = async (req, res) => {
         if (type === 'playlist' && ytId) {
             const ytApiKey = process.env.YOUTUBE_API_KEY;
 
+            const playListId = new Date().getTime(); // Generate a unique playlist ID based on timestamp
+
             if (!ytApiKey) {
                 return res.status(500).json({
                     success: false,
@@ -481,6 +416,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                 const ytApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${ytId}&key=${ytApiKey}${pageTokenParam}`;
 
                 const response = await axios.get(ytApiUrl);
+                console.trace('YouTube API response:', response);
                 allPlaylistItems = allPlaylistItems.concat(response.data.items);
 
                 nextPageToken = response.data.nextPageToken;
@@ -511,6 +447,14 @@ export const uploadVideoSourceURL = async (req, res) => {
                         isWatched: false,
                         percentage: 0,
                         lastMoment: 0,
+                        playlist: {
+                            id: ytId,
+                            playlistTitle:
+                                name ||
+                                item.snippet.videoOwnerChannelTitle +
+                                    ' Oynatma Listesi ' +
+                                    playListId, // Combine channel name and unique playlist ID for better identification
+                        }, // Store playlist ID for reference
                     });
                     addedCount++;
                 }
@@ -536,7 +480,7 @@ export const uploadVideoSourceURL = async (req, res) => {
             }
 
             updatedVideoSources[subject].push({
-                sourceName: videoName,
+                sourceName: name || url, // Use provided name or fallback to URL as sourceName
                 url: url,
                 isWatched: false,
                 percentage: 0,
@@ -574,7 +518,7 @@ export const uploadVideoSourceURL = async (req, res) => {
 };
 
 export const deleteVideoSourceURL = async (req, res) => {
-    const { url, videoSubject, studentId } = req.body;
+    const { url, videoSubject, studentId, playlistId } = req.body;
 
     try {
         const student = await Users.findOne({
@@ -589,9 +533,20 @@ export const deleteVideoSourceURL = async (req, res) => {
 
         const existingVideos = student.videos || {};
 
-        const updatedSubjectVideos = existingVideos[videoSubject].filter(
-            videoItem => videoItem.url !== url
-        );
+        console.trace(playlistId);
+
+        let updatedSubjectVideos;
+
+        if (playlistId) {
+            // If playlistId is provided, we want to remove all videos that belong to that playlist
+            updatedSubjectVideos = existingVideos[videoSubject].filter(
+                videoItem => videoItem.playlist?.id !== playlistId
+            );
+        } else {
+            updatedSubjectVideos = existingVideos[videoSubject].filter(
+                videoItem => videoItem.url !== url
+            );
+        }
 
         const updatedVideoSources = {
             ...existingVideos,
