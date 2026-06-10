@@ -6,6 +6,8 @@ import StatEntry from './statistic.model.js';
 import UnsolvedQuestion from './unsolvedQuesiton.model.js';
 import Solution from './solution.model.js';
 import Exam from './exam.model.js';
+import Cirriculum from './cirriculum.model.js';
+import StudentBookProgress from './studentBookProgress.model.js';
 
 const models = {
     Users,
@@ -16,6 +18,8 @@ const models = {
     UnsolvedQuestion,
     Solution,
     Exam,
+    Cirriculum,
+    StudentBookProgress,
 };
 
 Object.values(models).forEach(model => {

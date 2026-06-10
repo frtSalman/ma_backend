@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import db from '../utils/database.js';
+
 const Cirriculum = db.define(
     'Cirriculum',
     {
@@ -43,5 +44,13 @@ const Cirriculum = db.define(
         ],
     }
 );
+
+Cirriculum.associate = models => {
+    Cirriculum.hasMany(models.StudentBookProgress, {
+        foreignKey: 'topicId',
+        as: 'bookProgresses',
+        onDelete: 'CASCADE',
+    });
+};
 
 export default Cirriculum;

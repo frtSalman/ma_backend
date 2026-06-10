@@ -144,6 +144,7 @@ Users.associate = models => {
         as: 'exams',
         onDelete: 'CASCADE',
     });
+    Users.hasMany(models.StudentBookProgress, { foreignKey: 'studentId' });
 };
 
 export default Users;

@@ -161,36 +161,6 @@ export const postSchedule = async (req, res) => {
         req.body;
 
     try {
-        /* // 1. Find or create timetable
-        let [programEx, created] = await Timetable.findOrCreate({
-            where: { studentId },
-            defaults: { program: {}, teacherId },
-        });
-
-        // 2. Get existing program or initialize empty
-        const existingProgram = programEx.program || {};
-
-        // 3. Merge new data with existing program
-        const mergedProgram = { ...existingProgram };
-
-        // Process incoming days with time periods
-        for (const [day, entries] of Object.entries(programData)) {
-            // Initialize day array if not exists
-            if (!mergedProgram[day]) mergedProgram[day] = [];
-
-            // Remove existing entries with same period before adding new ones
-            entries.forEach(newEntry => {
-                // Filter out existing entries with same period
-                 mergedProgram[day] = mergedProgram[day].filter(
-                    existingEntry => existingEntry.period !== newEntry.period
-                ); 
-                // Add new entry
-                mergedProgram[day].push(newEntry);
-            });
-        } */
-
-        console.trace(programData);
-
         // 4. Update timetable
         const timeTable = await Timetable.create({
             program: programData,

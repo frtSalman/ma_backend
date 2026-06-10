@@ -8,8 +8,6 @@ export async function getSolution(req, res) {
             where: { qId },
         });
 
-        console.trace('Hata: ' + record);
-
         if (!record) {
             return res.status(404).json({
                 success: false,

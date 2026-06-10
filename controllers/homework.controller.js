@@ -186,8 +186,6 @@ export const updateHomework = async (req, res) => {
 export const updateHomeworkStatus = async (req, res) => {
     const { id: homeworkId, day } = req.params;
 
-    console.trace(homeworkId, day);
-
     if (!day || typeof day !== 'string') {
         return res.status(400).json({
             success: false,

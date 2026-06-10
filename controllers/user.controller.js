@@ -70,7 +70,7 @@ export const getParents = async (req, res) => {
 
 export const deleteParent = async (req, res) => {
     const { teacherId, parentId } = req.params;
-    console.trace(req.params);
+
     try {
         const parent = await Users.findOne({
             where: { role: 'parent', id: parentId, teacherId },
@@ -95,7 +95,6 @@ export const deleteParent = async (req, res) => {
 
 export const deleteStudent = async (req, res) => {
     const { teacherId, studentId } = req.params;
-    console.trace(req.params);
     try {
         const student = await Users.findOne({
             where: { role: 'student', id: studentId, teacherId },
@@ -217,7 +216,6 @@ export const uploadBookSource = async (req, res) => {
     // FIX: Pull sourceName from req.body
     const { studentName, studentId, subject, bookName } = req.body;
     const file = req.file;
-    console.trace('Received file:', file);
 
     try {
         const student = await Users.findOne({
@@ -234,7 +232,6 @@ export const uploadBookSource = async (req, res) => {
 
         // FIX: Only process file logic IF a file actually exists
         if (file) {
-            console.trace('Processing file upload logic...');
             // NOTE: If you use Multer, this should be file.originalname.
             // If express-fileupload, file.name. I'll use file.originalname as it's standard for Multer buffer uploads.
             const fileNameToUse = file.originalname || file.name;
@@ -372,8 +369,6 @@ export const uploadVideoSourceURL = async (req, res) => {
     // Destructure the new type and ytId parameters sent from the frontend
     const { studentId, subject, url, type, ytId, name } = req.body;
 
-    console.trace('Received video source upload request:', req.body);
-
     try {
         const student = await Users.findOne({
             where: { id: studentId, role: 'student' },
@@ -416,7 +411,6 @@ export const uploadVideoSourceURL = async (req, res) => {
                 const ytApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${ytId}&key=${ytApiKey}${pageTokenParam}`;
 
                 const response = await axios.get(ytApiUrl);
-                console.trace('YouTube API response:', response);
                 allPlaylistItems = allPlaylistItems.concat(response.data.items);
 
                 nextPageToken = response.data.nextPageToken;
@@ -532,8 +526,6 @@ export const deleteVideoSourceURL = async (req, res) => {
         }
 
         const existingVideos = student.videos || {};
-
-        console.trace(playlistId);
 
         let updatedSubjectVideos;
 
