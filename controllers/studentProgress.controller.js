@@ -14,11 +14,13 @@ export const getStudentBookProgress = async (req, res) => {
             });
         }
 
-        // 1. Öğrencinin derslerini bir diziye al (DB'de filtrelemek için)
-        /* const studentSubjects = Object.entries(student.books)
-            .filter(([, bookProgresses]) => bookProgresses.length > 0)
-            .map(([subject]) => subject);
- */
+        console.trace('Öğrenci bilgisi:', {
+            id: student.id,
+            name: student.name,
+            grade: student.grade,
+            books: student.books,
+        });
+
         let edLevel = 'lise';
         if (student.grade && parseInt(student.grade) < 9) {
             edLevel = 'ortaokul';
