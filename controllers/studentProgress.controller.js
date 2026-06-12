@@ -14,13 +14,6 @@ export const getStudentBookProgress = async (req, res) => {
             });
         }
 
-        console.trace('Öğrenci bilgisi:', {
-            id: student.id,
-            name: student.name,
-            grade: student.grade,
-            books: student.books,
-        });
-
         let edLevel = 'lise';
         if (student.grade && parseInt(student.grade) < 9) {
             edLevel = 'ortaokul';
@@ -46,20 +39,40 @@ export const getStudentBookProgress = async (req, res) => {
             ],
         });
 
+        const studentBooksForSubject = student.books[subject];
+
+        if (!studentBooksForSubject)
+            return res.status(404).json({
+                success: false,
+                message: `${subject} dersi ile ilgili ekli kaynak yok.`,
+            });
+
+        const bookNames = [];
+
+        let newBooksArray;
+
+        if (
+            !bookNames.includes('konu anlatım') &&
+            !bookNames.includes('çıkmış sorular')
+        ) {
+            newBooksArray = [
+                { url: null, isChecked: false, sourceName: 'konu anlatım' },
+                ...studentBooksForSubject,
+                { url: null, isChecked: false, sourceName: 'çıkmış sorular' },
+            ];
+        } else {
+            newBooksArray = studentBooksForSubject;
+        }
+
         // 3. Tek bir döngü ile veriyi işle
         const result = topics.reduce((acc, topic) => {
-            const studentBooksForSubject = student.books[topic.subject];
-
-            // Eğer bu konunun dersi öğrencinin kitap listesinde yoksa atla (gerçi DB'de filtreledik ama güvenlik için)
-            if (!studentBooksForSubject) return acc;
-
             // Bu konuya ait progress'leri hızlı erişim için bir Map'e çevir (O(1) lookup)
             const progressMap = new Map(
                 topic.bookProgresses?.map(p => [p.bookName, p.isCompleted])
             );
 
             // Kitap durumlarını oluştur
-            const books = studentBooksForSubject.map(bp => ({
+            const books = newBooksArray.map(bp => ({
                 bookName: bp.sourceName,
                 subject: topic.subject,
                 isCompleted: progressMap.get(bp.sourceName) || false,

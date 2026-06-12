@@ -10,9 +10,9 @@ const router = express.Router();
 // Route'ları koruma altına alıyoruz
 router.get(
     '/book-progress/:studentId/:subject',
-    verifyToken,
+
     getStudentBookProgress
 );
-router.post('/book-progress/toggle', verifyToken, toggleBookProgress);
+router.post('/book-progress/toggle', toggleBookProgress);
 
 export default router;
