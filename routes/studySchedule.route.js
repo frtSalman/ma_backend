@@ -8,6 +8,7 @@ import {
     deleteAllSchedule, // Import the new controller function
     createSchedulePDF, // Import the new controller function
 } from '../controllers/studySchedule.controller.js';
+import { getScreenShot } from '../controllers/studentVideos.controller.js';
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.put('/update-schedule/:id', updateSchedule);
 router.delete('/delete-schedule/:id', deleteSchedule);
 router.delete('/delete-all-schedules/:studentId', deleteAllSchedule);
 router.patch('/update-schedule-status/:id', updateScheduleStatus);
+router.get('/youtube-screenshot', getScreenShot);
 
 export default router;

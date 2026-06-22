@@ -14,6 +14,7 @@ import solutionRoutes from './routes/solution.route.js';
 import examRoutes from './routes/exam.route.js';
 import scheduleRoutes from './routes/studySchedule.route.js';
 import studentProgressRoutes from './routes/studentProgress.route.js';
+import studentVideosRoutes from './routes/studentVideos.route.js';
 
 dotenv.config();
 const app = express();
@@ -26,6 +27,7 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://192.168.1.119:3000',
+    'http://192.168.1.108:3000',
     'http://192.168.1.106:3000',
     'http://172.20.10.2:3000',
 ];
@@ -80,6 +82,8 @@ app.use('/api/exam', examRoutes);
 app.use('/api/schedule', scheduleRoutes);
 
 app.use('/api/progress', studentProgressRoutes);
+
+app.use('/api/student-videos', studentVideosRoutes);
 
 db.sync({ alter: true })
     .then(() =>

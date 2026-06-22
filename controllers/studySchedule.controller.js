@@ -168,7 +168,7 @@ export const updateSchedule = async (req, res) => {
             return res.status(404).json({ message: 'Program bulunamadı.' });
         }
 
-        const student = await Users.findByPk(studentId);
+        /* const student = await Users.findByPk(studentId);
 
         if (!student) {
             return res.status(404).json({ message: 'Öğrenci bulunamadı.' });
@@ -190,7 +190,7 @@ export const updateSchedule = async (req, res) => {
                 { videos: student.videos },
                 { where: { id: studentId } }
             );
-        }
+        } */
 
         await schedule.update({
             day,

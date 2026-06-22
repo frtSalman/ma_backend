@@ -145,6 +145,7 @@ Users.associate = models => {
         onDelete: 'CASCADE',
     });
     Users.hasMany(models.StudentBookProgress, { foreignKey: 'studentId' });
+    Users.hasMany(models.StudentVideos, { foreignKey: 'studentId' });
 };
 
 export default Users;

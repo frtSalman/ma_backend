@@ -8,6 +8,8 @@ import Solution from './solution.model.js';
 import Exam from './exam.model.js';
 import Cirriculum from './cirriculum.model.js';
 import StudentBookProgress from './studentBookProgress.model.js';
+import StudentVideos from './studentVideos.model.js';
+import StudentVideoQuestions from './studentVideoQuestions.model.js';
 
 const models = {
     Users,
@@ -20,6 +22,8 @@ const models = {
     Exam,
     Cirriculum,
     StudentBookProgress,
+    StudentVideos,
+    StudentVideoQuestions,
 };
 
 Object.values(models).forEach(model => {
