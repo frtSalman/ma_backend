@@ -1,7 +1,7 @@
 import axios from 'axios';
 import models from '../models/index.model.js';
 import puppeteer from 'puppeteer';
-const { Users, StudentVideos } = models;
+const { Users, StudentVideos, StudentVideoQuestions } = models;
 
 export const getVideoSources = async (req, res) => {
     const { studentId } = req.params;
@@ -22,6 +22,34 @@ export const getVideoSources = async (req, res) => {
             success: true,
             message: 'Video kaynakları getirildi.',
             videos,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const getVideoQuestions = async (req, res) => {
+    const { videoId } = req.params;
+    try {
+        if (!videoId) {
+            return res.status(404).json({
+                success: false,
+                message: 'Video bulunamadı.',
+            });
+        }
+
+        const videoQuestions = await StudentVideoQuestions.find({
+            where: { videoId },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Video soruları getirildi.',
+            videoQuestions,
         });
     } catch (error) {
         console.trace(error.message);

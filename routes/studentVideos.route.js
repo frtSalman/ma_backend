@@ -5,6 +5,7 @@ import {
     getVideoSources,
     updateVideoStatus,
     getScreenShot,
+    getVideoQuestions,
 } from '../controllers/studentVideos.controller.js';
 
 const router = express.Router();
@@ -12,6 +13,8 @@ const router = express.Router();
 router.get('/youtube-screenshot', getScreenShot);
 
 router.get('/video-sources/:studentId', getVideoSources);
+
+router.get('/video-questions/:videoId', getVideoQuestions);
 
 router.patch('/update-video-status', updateVideoStatus);
 
