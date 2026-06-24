@@ -42,7 +42,7 @@ export const getVideoQuestions = async (req, res) => {
             });
         }
 
-        const videoQuestions = await StudentVideoQuestions.find({
+        const videoQuestions = await StudentVideoQuestions.findOne({
             where: { videoId },
         });
 
