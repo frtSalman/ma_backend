@@ -46,6 +46,8 @@ export const getVideoQuestions = async (req, res) => {
             where: { videoId },
         });
 
+        console.trace(videoQuestions);
+
         return res.status(200).json({
             success: true,
             message: 'Video soruları getirildi.',
