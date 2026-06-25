@@ -282,7 +282,13 @@ export const saveVideoQuestions = async (req, res) => {
         // Puppeteer tarayıcısını bir kez açıyoruz (Performans için tek tarayıcı yetecektir)
         browser = await puppeteer.launch({
             headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--mute-audio'],
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-gpu',
+                '--disable-dev-shm-usage', // Sunucu hafıza sorunlarını engeller
+                '--mute-audio',
+            ],
         });
 
         const page = await browser.newPage();
