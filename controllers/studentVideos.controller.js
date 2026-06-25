@@ -363,7 +363,7 @@ export const saveVideoQuestions = async (req, res) => {
         console.error('Screenshot veya DB kayıt hatası:', error.message);
         return res.status(500).json({
             success: false,
-            error: 'İşlem sırasında sunucu hatası oluştu.',
+            error: error.message,
         });
     }
 };
