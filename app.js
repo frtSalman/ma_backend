@@ -32,6 +32,8 @@ const allowedOrigins = [
     'http://192.168.1.106:3000',
     'http://192.168.1.109:3000',
     'http://172.20.10.2:3000',
+    'https://n8n.teachflow.net:5678',
+    'http://localhost:5678',
 ];
 
 app.use(express.json()); // allow us to parse incoming request from req.body

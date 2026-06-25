@@ -261,7 +261,9 @@ export const deleteVideoSourceURL = async (req, res) => {
 };
 
 export const getScreenShot = async (req, res) => {
-    const { videoId, t } = req.query; // t: saniye (örn: 185)
+    const { trancriptData } = req.body; // t: saniye (örn: 185)
+
+    console.trace(trancriptData);
 
     if (!videoId || !t)
         return res.status(400).json({ error: 'videoId ve t gerekli' });
