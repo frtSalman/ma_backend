@@ -3,6 +3,12 @@ import models from '../models/index.model.js';
 import puppeteer from 'puppeteer';
 const { Users, StudentVideos, StudentVideoQuestions } = models;
 
+const KEY = process.env.BUNNY_KEY;
+
+const BUNNY_ZONE = 'teachflow';
+
+const baseHost = 'storage.bunnycdn.com';
+
 export const getVideoSources = async (req, res) => {
     const { studentId } = req.params;
     try {
@@ -260,8 +266,110 @@ export const deleteVideoSourceURL = async (req, res) => {
     }
 };
 
-export const getScreenShot = async (req, res) => {
-    const { trancriptData } = req.body; // t: saniye (örn: 185)
+export const saveVideoQuestions = async (req, res) => {
+    // n8n'den gelen verileri alıyoruz
+    const { questions, videoId } = req.body;
+
+    if (!videoId || !questions || !Array.isArray(questions)) {
+        return res.status(400).json({
+            success: false,
+            error: "videoId ve questions array'i gerekli.",
+        });
+    }
+
+    let browser;
+    try {
+        // Puppeteer tarayıcısını bir kez açıyoruz (Performans için tek tarayıcı yetecektir)
+        browser = await puppeteer.launch({
+            headless: 'new',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--mute-audio'],
+        });
+
+        const page = await browser.newPage();
+        await page.setUserAgent(
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        );
+        await page.setViewport({ width: 1280, height: 720 });
+
+        // Array içindeki her bir soru için döngü başlatıyoruz
+        for (let question of questions) {
+            const t = question.timestamp_seconds || 0;
+            const url = `https://www.youtube.com/watch?v=${videoId}&t=${t}s`;
+
+            // İlgili dakikaya git
+            await page.goto(url, { waitUntil: 'networkidle2' });
+            await page.waitForSelector('video', { timeout: 15000 });
+
+            // YouTube kontrollerini gizleyen CSS enjekte et
+            await page.addStyleTag({
+                content: `
+                    .ytp-chrome-bottom, .ytp-chrome-top, 
+                    .ytp-gradient-bottom, .ytp-gradient-top, 
+                    .ytp-watermark, .ytp-ce-element {
+                        display: none !important;
+                    }
+                    body { overflow: hidden !important; }
+                `,
+            });
+
+            // Videonun netleşmesi için kısa bir bekleme süresi
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Ekran görüntüsünü Buffer olarak al
+            const imageBuffer = await page.screenshot({
+                type: 'webp',
+                quality: 85,
+            });
+
+            // -------------------------------------------------------------
+            // BUNNY.NET / STORAGE YÜKLEME ALANI
+            // -------------------------------------------------------------
+            // TODO: Buraya kendi Bunny.net yükleme fonksiyonunu entegre etmelisin.
+            // Örnek kullanım: const uploadedUrl = await uploadToBunny(imageBuffer, `${videoId}_${t}.jpg`);
+            // -------------------------------------------------------------
+            const uniqueName = `${videoId}_${t}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
+
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
+            const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
+
+            // 1. BunnyCDN'e Yükle
+            await axios.put(uploadUrl, imageBuffer, {
+                headers: {
+                    AccessKey: KEY,
+                    'Content-Type': 'image/webp',
+                },
+            });
+            // Sorunun içerisindeki boş screenShotURL alanını dolduruyoruz
+            question.screenShotURL = pullZoneURL;
+        }
+
+        // Tarayıcıyı kapatıyoruz
+        await browser.close();
+
+        // 4. Veri Tabanına (Postgres) Kaydetme Aşaması
+        const savedData = await StudentVideoQuestions.create({
+            videoId: videoId,
+            videoQuestions: { data: questions }, // JSON formatında saklama
+        });
+
+        // n8n'e sürecin başarıyla tamamlandığını bildiriyoruz
+        return res.status(200).json({
+            success: true,
+            message: "Tüm soruların screenshotları alındı ve DB'ye kaydedildi.",
+            data: savedData,
+        });
+    } catch (error) {
+        if (browser) await browser.close();
+        console.error('Screenshot veya DB kayıt hatası:', error.message);
+        return res.status(500).json({
+            success: false,
+            error: 'İşlem sırasında sunucu hatası oluştu.',
+        });
+    }
+};
+
+/* export const s = async (req, res) => {
+    const { questions, videoId } = req.body; // t: saniye (örn: 185)
 
     console.trace(trancriptData);
 
@@ -300,7 +408,7 @@ export const getScreenShot = async (req, res) => {
         await page.addStyleTag({
             content: `
       
-        /* Oynatma çubuğu, üst başlık, logolar ve gölgeleri gizle */
+        /* Oynatma çubuğu, üst başlık, logolar ve gölgeleri gizle 
         .ytp-chrome-bottom, 
         .ytp-chrome-top, 
         .ytp-gradient-bottom, 
@@ -310,7 +418,7 @@ export const getScreenShot = async (req, res) => {
           display: none !important;
         }
         
-        /* Arka planda kaydırma çubuğu çıkmasını engelle */
+         Arka planda kaydırma çubuğu çıkmasını engelle 
         body { overflow: hidden !important; }
       `,
         });
@@ -332,3 +440,4 @@ export const getScreenShot = async (req, res) => {
         res.status(500).json({ error: 'Screenshot alınamadı.' });
     }
 };
+ */

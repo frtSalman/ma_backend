@@ -4,13 +4,13 @@ import {
     deleteVideoSourceURL,
     getVideoSources,
     updateVideoStatus,
-    getScreenShot,
+    saveVideoQuestions,
     getVideoQuestions,
 } from '../controllers/studentVideos.controller.js';
 
 const router = express.Router();
 
-router.get('/youtube-screenshot', getScreenShot);
+router.post('/video-questions', saveVideoQuestions);
 
 router.get('/video-sources/:studentId', getVideoSources);
 
