@@ -339,7 +339,7 @@ export const saveVideoQuestions = async (req, res) => {
         for (let question of questions) {
             const t = question.timestamp_seconds || 0;
 
-            const url = `https://www.youtube.com/watch?v=${youtubeRealId}&t=${t}s`;
+            const url = `https://www.youtube.com/embed/${youtubeRealId}?start=${t}&autoplay=1`;
 
             // İlgili dakikaya git
             await page.goto(url, { waitUntil: 'networkidle2' });
