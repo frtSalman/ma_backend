@@ -333,7 +333,7 @@ export const saveVideoQuestions = async (req, res) => {
             // TODO: Buraya kendi Bunny.net yükleme fonksiyonunu entegre etmelisin.
             // Örnek kullanım: const uploadedUrl = await uploadToBunny(imageBuffer, `${videoId}_${t}.jpg`);
             // -------------------------------------------------------------
-            const uniqueName = `${videoId}_${t}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
+            const uniqueName = `${videoId}_${t}_${Date.now()}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
 
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/screenshots/${uniqueName}`;
             const pullZoneURL = `https://cdn.teachflow.net/screenshots/${uniqueName}`;
