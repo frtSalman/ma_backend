@@ -335,8 +335,8 @@ export const saveVideoQuestions = async (req, res) => {
             // -------------------------------------------------------------
             const uniqueName = `${videoId}_${t}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
 
-            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
-            const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/screenshots/${uniqueName}`;
+            const pullZoneURL = `https://cdn.teachflow.net/screenshots/${uniqueName}`;
 
             // 1. BunnyCDN'e Yükle
             await axios.put(uploadUrl, imageBuffer, {
