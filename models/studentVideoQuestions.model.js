@@ -12,7 +12,6 @@ const StudentVideoQuestions = db.define(
         videoId: {
             type: DataTypes.UUID,
             allowNull: false,
-            unique: true, // Her video için sadece 1 tane soru/çözüm kaydı olabilmesini garanti eder
         },
         videoQuestions: {
             type: DataTypes.JSONB,
