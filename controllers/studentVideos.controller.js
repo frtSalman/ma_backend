@@ -268,7 +268,7 @@ export const deleteVideoSourceURL = async (req, res) => {
 
 export const saveVideoQuestions = async (req, res) => {
     // n8n'den gelen verileri alıyoruz
-    const { questions, videoId } = req.body;
+    const { questions, videoId, videoURL } = req.body;
 
     if (!videoId || !questions || !Array.isArray(questions)) {
         return res.status(400).json({
@@ -347,6 +347,8 @@ export const saveVideoQuestions = async (req, res) => {
             });
             // Sorunun içerisindeki boş screenShotURL alanını dolduruyoruz
             question.screenShotURL = pullZoneURL;
+            question.videoURL = videoURL;
+            question.isCorrect = false;
         }
 
         // Tarayıcıyı kapatıyoruz
