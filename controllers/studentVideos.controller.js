@@ -332,10 +332,14 @@ export const saveVideoQuestions = async (req, res) => {
         // --- DÖNGÜ ÖNCESİ BAYRAK TANIMLIYORUZ ---
         let isCookieDismissed = false;
 
+        const urlObj = new URL(videoURL);
+        const youtubeRealId = urlObj.searchParams.get('v');
+
         // Array içindeki her bir soru için döngü başlatıyoruz
         for (let question of questions) {
             const t = question.timestamp_seconds || 0;
-            const url = `https://www.youtube.com/watch?v=${videoId}&t=${t}s`;
+
+            const url = `https://www.youtube.com/watch?v=${youtubeRealId}&t=${t}s`;
 
             // İlgili dakikaya git
             await page.goto(url, { waitUntil: 'networkidle2' });
@@ -384,7 +388,7 @@ export const saveVideoQuestions = async (req, res) => {
             // -----------------------------------------------------------------
 
             // Artık video elementi güvenle beklenebilir
-            await page.waitForSelector('video', { timeout: 15000 });
+            await page.waitForSelector('video', { timeout: 5000 });
 
             // YouTube kontrollerini gizleyen CSS enjekte et
             await page.addStyleTag({
