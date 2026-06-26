@@ -299,7 +299,7 @@ export const saveVideoQuestions = async (req, res) => {
         );
         await page.setViewport({ width: 1280, height: 720 });
 
-        // Array içindeki her bir soru için döngü başlatıyoruz
+        /* // Array içindeki her bir soru için döngü başlatıyoruz
         for (let question of questions) {
             const t = question.timestamp_seconds || 0;
             const url = `https://www.youtube.com/watch?v=${videoId}&t=${t}s`;
@@ -327,7 +327,87 @@ export const saveVideoQuestions = async (req, res) => {
             const imageBuffer = await page.screenshot({
                 type: 'webp',
                 quality: 85,
+            }); */
+
+        // --- DÖNGÜ ÖNCESİ BAYRAK TANIMLIYORUZ ---
+        let isCookieDismissed = false;
+
+        // Array içindeki her bir soru için döngü başlatıyoruz
+        for (let question of questions) {
+            const t = question.timestamp_seconds || 0;
+            const url = `https://www.youtube.com/watch?v=${videoId}&t=${t}s`;
+
+            // İlgili dakikaya git
+            await page.goto(url, { waitUntil: 'networkidle2' });
+
+            // -----------------------------------------------------------------
+            // COOKIE POP-UP ENGELİNİ AŞMA ALANI
+            // -----------------------------------------------------------------
+            // Sadece ilk soruda çalışır, sonraki sorularda cookie hafızada olduğu için es geçer.
+            if (!isCookieDismissed) {
+                try {
+                    // Sayfadaki butonların yüklenmesi için maksimum 4 saniye tolerans tanıyoruz
+                    await page.waitForSelector('button', { timeout: 4000 });
+
+                    // Sayfa içinde "Reject all" butonunu arayıp tıklatıyoruz
+                    const clicked = await page.evaluate(() => {
+                        const buttons = Array.from(
+                            document.querySelectorAll('button')
+                        );
+                        // Farklı dil seçeneklerine karşı önlem alıyoruz (Görselinizdeki 'Reject all' dahil)
+                        const rejectBtn = buttons.find(b => {
+                            const text = b.textContent.toLowerCase();
+                            return (
+                                text.includes('reject all') ||
+                                text.includes('tümünü reddet') ||
+                                text.includes('alle ablehnen')
+                            );
+                        });
+
+                        if (rejectBtn) {
+                            rejectBtn.click();
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    if (clicked) {
+                        // Butona tıklandıktan sonra sayfanın videoya yönlenmesi için 2 saniye bekliyoruz
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
+                    isCookieDismissed = true;
+                } catch (e) {
+                    // Eğer pop-up hiç çıkmadıysa veya bir hata oluştuysa sonraki sorularda vakit kaybetmemek için geçiyoruz
+                    isCookieDismissed = true;
+                }
+            }
+            // -----------------------------------------------------------------
+
+            // Artık video elementi güvenle beklenebilir
+            await page.waitForSelector('video', { timeout: 15000 });
+
+            // YouTube kontrollerini gizleyen CSS enjekte et
+            await page.addStyleTag({
+                content: `
+                    .ytp-chrome-bottom, .ytp-chrome-top, 
+                    .ytp-gradient-bottom, .ytp-gradient-top, 
+                    .ytp-watermark, .ytp-ce-element {
+                        display: none !important;
+                    }
+                    body { overflow: hidden !important; }
+                `,
             });
+
+            // Videonun netleşmesi için kısa bir bekleme süresi
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Ekran görüntüsünü Buffer olarak al
+            const imageBuffer = await page.screenshot({
+                type: 'webp',
+                quality: 85,
+            });
+
+            // ... Geri kalan Bunny.net yükleme ve DB kayıt işlemleriniz aynen devam ediyor
 
             // -------------------------------------------------------------
             // BUNNY.NET / STORAGE YÜKLEME ALANI
