@@ -118,11 +118,10 @@ export const uploadVideoSourceURL = async (req, res) => {
 
             let addedCount = 0;
 
-            // Process each video and push to the JSON array
-            allPlaylistItems.forEach((item, index) => {
-                const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
+            let newVideosToInsert = [];
 
-                // Use the actual YouTube video title, but prefix it with your subject/custom name for organization
+            for (const item of allPlaylistItems) {
+                const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
                 const title = item.snippet.title;
 
                 const isVideoAlreadyAdded = videos.some(
@@ -134,7 +133,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                     title !== 'Private video' &&
                     title !== 'Deleted video'
                 ) {
-                    StudentVideos.create({
+                    newVideosToInsert.push({
                         sourceName: title,
                         url: videoUrl,
                         isWatched: false,
@@ -146,14 +145,17 @@ export const uploadVideoSourceURL = async (req, res) => {
                                 name ||
                                 item.snippet.videoOwnerChannelTitle +
                                     ' Oynatma Listesi ' +
-                                    playListId, // Combine channel name and unique playlist ID for better identification
-                        }, // Store playlist ID for reference
+                                    playListId,
+                        },
                     });
-                    addedCount++;
                 }
-            });
+            }
 
-            if (addedCount === 0) {
+            // Eğer eklenecek video varsa tek seferde sıralı olarak ekle
+            if (newVideosToInsert.length > 0) {
+                await StudentVideos.bulkCreate(newVideosToInsert);
+                addedCount = newVideosToInsert.length;
+            } else {
                 return res.json({
                     success: false,
                     message: 'Listedeki tüm geçerli videolar zaten eklenmiş.',
@@ -172,7 +174,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                 });
             }
 
-            StudentVideos.create({
+            await StudentVideos.create({
                 sourceName: name,
                 url,
                 isWatched: false,
@@ -375,77 +377,3 @@ export const saveVideoQuestions = async (req, res) => {
         });
     }
 };
-
-/* export const s = async (req, res) => {
-    const { questions, videoId } = req.body; // t: saniye (örn: 185)
-
-    console.trace(trancriptData);
-
-    if (!videoId || !t)
-        return res.status(400).json({ error: 'videoId ve t gerekli' });
-
-    try {
-        const url = `https://www.youtube.com/watch?v=${videoId}&t=${t}s`;
-
-        const browser = await puppeteer.launch({
-            headless: 'new', // Yeni ve daha stabil headless modunu kullanıyoruz
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--mute-audio', // Sesi kapatmak, tarayıcıların otomatik oynatma engellerini aşmasını sağlar
-            ],
-        });
-
-        const page = await browser.newPage();
-
-        // Gerçek bir kullanıcı gibi görünmek için User-Agent
-        await page.setUserAgent(
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        );
-        await page.setViewport({ width: 1280, height: 720 });
-
-        // Sayfanın yüklenmesini bekle
-        await page.goto(url, { waitUntil: 'networkidle2' });
-
-        // Video elementinin DOM'a düşmesini bekle
-        await page.waitForSelector('video', { timeout: 15000 });
-
-        await page.keyboard.press('F');
-
-        // CSS ile videoyu en üste çekip tam ekran yapıyoruz ve YouTube kontrollerini gizliyoruz
-        await page.addStyleTag({
-            content: `
-      
-        /* Oynatma çubuğu, üst başlık, logolar ve gölgeleri gizle 
-        .ytp-chrome-bottom, 
-        .ytp-chrome-top, 
-        .ytp-gradient-bottom, 
-        .ytp-gradient-top, 
-        .ytp-watermark,
-        .ytp-ce-element {
-          display: none !important;
-        }
-        
-         Arka planda kaydırma çubuğu çıkmasını engelle 
-        body { overflow: hidden !important; }
-      `,
-        });
-
-        // Videonun ilgili saniyeye atlaması, tamponlaması (buffer) ve görüntünün netleşmesi için bekleme süresi
-        // İnternet hızınıza göre bu süreyi artırıp azaltabilirsiniz.
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        const imageBuffer = await page.screenshot({
-            type: 'jpeg',
-            quality: 80,
-        });
-        await browser.close();
-
-        // Resmi direkt frontend'e döndür
-        res.set('Content-Type', 'image/jpeg');
-        res.send(imageBuffer);
-    } catch (error) {
-        res.status(500).json({ error: 'Screenshot alınamadı.' });
-    }
-};
- */
