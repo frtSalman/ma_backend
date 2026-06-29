@@ -431,7 +431,10 @@ export const saveVideoQuestions = async (req, res) => {
             `;
 
             // Oluşturduğumuz sanal HTML'i Puppeteer sayfasına render ediyoruz
-            await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+            await page.setContent(htmlContent, {
+                waitUntil: 'domcontentloaded',
+                timeout: 60000,
+            });
 
             // Videonun iframe içinde yüklenip oynamaya başlaması ve netleşmesi için gereken bekleme süresi
             await new Promise(resolve => setTimeout(resolve, 3500));
