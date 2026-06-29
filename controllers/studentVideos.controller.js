@@ -300,17 +300,23 @@ export const saveVideoQuestions = async (req, res) => {
         });
 
         const page = await browser.newPage();
-        // WebDriver korumasını JavaScript seviyesinde de tamamen sıfırlıyoruz
-        await page.evaluateOnNewDocument(() => {
-            Object.defineProperty(navigator, 'webdriver', {
-                get: () => undefined,
-            });
+
+        // 1. MANUEL WEBDRIVER SİLME KODUNU TAMAMEN KALDIRDIK. (Stealth plugin halledecek)
+
+        // 2. SABİT USER-AGENT YERİNE DİNAMİK VE GÜVENLİ USER-AGENT ALIYORUZ
+        // Tarayıcının GERÇEK kimliğini alıp, sadece bizi ele veren "Headless" kelimesini siliyoruz.
+        const originalUserAgent = await browser.userAgent();
+        const stealthUserAgent = originalUserAgent.replace(
+            'HeadlessChrome',
+            'Chrome'
+        );
+        await page.setUserAgent(stealthUserAgent);
+
+        // YouTube'a gerçek bir kullanıcı olduğumuzu kanıtlamak için dil başlıklarını zorluyoruz
+        await page.setExtraHTTPHeaders({
+            'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
         });
 
-        // Gerçekçi bir ekran çözünürlüğü ve user agent tanımlıyoruz
-        await page.setUserAgent(
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-        );
         await page.setViewport({ width: 1920, height: 1080 });
 
         // --- DÖNGÜ ÖNCESİ BAYRAK TANIMLIYORUZ ---
