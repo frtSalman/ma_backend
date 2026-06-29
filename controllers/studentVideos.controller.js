@@ -405,11 +405,11 @@ export const saveVideoQuestions = async (req, res) => {
             // 1. YouTube'u kandırmak için sahte bir referer (yönlendiren sayfa) başlığı ekliyoruz.
             // Bu sayede YouTube, isteğin bot'tan değil TeachFlow uygulamasından geldiğini sanacak.
             await page.setExtraHTTPHeaders({
-                Referer: 'https://www.teachflow.net/',
+                Referer: 'https://app.teachflow.net/',
             });
 
             // 2. youtube-nocookie.com kullanarak hem Hata 153 riskini azaltıyor hem de çerez pop-up'larını yok ediyoruz.
-            const embedUrl = `https://www.youtube-nocookie.com/embed/${youtubeRealId}?start=${t}&autoplay=1&mute=1&controls=0&modestbranding=1`;
+            const embedUrl = `https://www.youtube.com/watch?v=${youtubeRealId}?start=${t}s`;
 
             // 3. Doğrudan URL'ye gitmek (page.goto) YERİNE, Puppeteer içinde sanal bir HTML sayfası oluşturuyoruz.
             // referrerpolicy="strict-origin-when-cross-origin" parametresi Hata 153'ün panzehiridir.
