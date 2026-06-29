@@ -287,6 +287,7 @@ export const saveVideoQuestions = async (req, res) => {
         // Puppeteer tarayıcısını bir kez açıyoruz (Performans için tek tarayıcı yetecektir)
         browser = await puppeteer.launch({
             headless: 'new',
+            executablePath: '/usr/bin/chromium-browser',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
