@@ -323,6 +323,7 @@ export const saveVideoQuestions = async (req, res) => {
         for (let question of questions) {
             const t = question.timestamp_seconds || 0;
 
+            /*
             const url = `https://www.youtube.com/watch?v=${youtubeRealId}?start=${t}s`;
 
             // İlgili dakikaya git
@@ -388,6 +389,52 @@ export const saveVideoQuestions = async (req, res) => {
 
             // Videonun netleşmesi için kısa bir bekleme süresi
             await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Ekran görüntüsünü Buffer olarak al
+            const imageBuffer = await page.screenshot({
+                type: 'webp',
+                quality: 85,
+            }); */
+
+            // 1. YouTube'u kandırmak için sahte bir referer (yönlendiren sayfa) başlığı ekliyoruz.
+            // Bu sayede YouTube, isteğin bot'tan değil TeachFlow uygulamasından geldiğini sanacak.
+            await page.setExtraHTTPHeaders({
+                Referer: 'https://www.teachflow.net/',
+            });
+
+            // 2. youtube-nocookie.com kullanarak hem Hata 153 riskini azaltıyor hem de çerez pop-up'larını yok ediyoruz.
+            const embedUrl = `https://www.youtube-nocookie.com/embed/${youtubeRealId}?start=${t}&autoplay=1&mute=1&controls=0&modestbranding=1`;
+
+            // 3. Doğrudan URL'ye gitmek (page.goto) YERİNE, Puppeteer içinde sanal bir HTML sayfası oluşturuyoruz.
+            // referrerpolicy="strict-origin-when-cross-origin" parametresi Hata 153'ün panzehiridir.
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="tr">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        /* Videonun ekranı tam kaplamasını sağlayan CSS */
+                        body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; background-color: black; overflow: hidden; }
+                        iframe { width: 100vw; height: 100vh; border: none; }
+                    </style>
+                </head>
+                <body>
+                    <iframe 
+                        src="${embedUrl}" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allow="autoplay"
+                        allowfullscreen>
+                    </iframe>
+                </body>
+                </html>
+            `;
+
+            // Oluşturduğumuz sanal HTML'i Puppeteer sayfasına render ediyoruz
+            await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+            // Videonun iframe içinde yüklenip oynamaya başlaması ve netleşmesi için gereken bekleme süresi
+            await new Promise(resolve => setTimeout(resolve, 3500));
 
             // Ekran görüntüsünü Buffer olarak al
             const imageBuffer = await page.screenshot({
