@@ -299,36 +299,6 @@ export const saveVideoQuestions = async (req, res) => {
         );
         await page.setViewport({ width: 1280, height: 720 });
 
-        /* // Array içindeki her bir soru için döngü başlatıyoruz
-        for (let question of questions) {
-            const t = question.timestamp_seconds || 0;
-            const url = `https://www.youtube.com/watch?v=${videoId}&t=${t}s`;
-
-            // İlgili dakikaya git
-            await page.goto(url, { waitUntil: 'networkidle2' });
-            await page.waitForSelector('video', { timeout: 15000 });
-
-            // YouTube kontrollerini gizleyen CSS enjekte et
-            await page.addStyleTag({
-                content: `
-                    .ytp-chrome-bottom, .ytp-chrome-top, 
-                    .ytp-gradient-bottom, .ytp-gradient-top, 
-                    .ytp-watermark, .ytp-ce-element {
-                        display: none !important;
-                    }
-                    body { overflow: hidden !important; }
-                `,
-            });
-
-            // Videonun netleşmesi için kısa bir bekleme süresi
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // Ekran görüntüsünü Buffer olarak al
-            const imageBuffer = await page.screenshot({
-                type: 'webp',
-                quality: 85,
-            }); */
-
         // --- DÖNGÜ ÖNCESİ BAYRAK TANIMLIYORUZ ---
         let isCookieDismissed = false;
 
@@ -339,7 +309,9 @@ export const saveVideoQuestions = async (req, res) => {
         for (let question of questions) {
             const t = question.timestamp_seconds || 0;
 
-            const url = `https://www.youtube.com/embed/${youtubeRealId}?start=${t}&autoplay=1`;
+            //const url = `https://www.youtube.com/watch?v=${youtubeRealId}?start=${t}s`;
+
+            const url = `https://www.youtube.com/embed/${youtubeRealId}?start=${t}s`;
 
             // İlgili dakikaya git
             await page.goto(url, { waitUntil: 'networkidle2' });
