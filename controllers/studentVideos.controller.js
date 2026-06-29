@@ -1,7 +1,10 @@
 import axios from 'axios';
 import models from '../models/index.model.js';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 const { Users, StudentVideos, StudentVideoQuestions } = models;
+
+puppeteer.use(StealthPlugin());
 
 const KEY = process.env.BUNNY_KEY;
 
@@ -290,14 +293,24 @@ export const saveVideoQuestions = async (req, res) => {
                 '--disable-gpu',
                 '--disable-dev-shm-usage', // Sunucu hafıza sorunlarını engeller
                 '--mute-audio',
+                '--disable-blink-features=AutomationControlled', // webdriver=true bayrağını kapatır
+                '--lang=tr-TR,tr',
             ],
         });
 
         const page = await browser.newPage();
+        // WebDriver korumasını JavaScript seviyesinde de tamamen sıfırlıyoruz
+        await page.evaluateOnNewDocument(() => {
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined,
+            });
+        });
+
+        // Gerçekçi bir ekran çözünürlüğü ve user agent tanımlıyoruz
         await page.setUserAgent(
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
         );
-        await page.setViewport({ width: 1280, height: 720 });
+        await page.setViewport({ width: 1920, height: 1080 });
 
         // --- DÖNGÜ ÖNCESİ BAYRAK TANIMLIYORUZ ---
         let isCookieDismissed = false;
@@ -309,9 +322,7 @@ export const saveVideoQuestions = async (req, res) => {
         for (let question of questions) {
             const t = question.timestamp_seconds || 0;
 
-            //const url = `https://www.youtube.com/watch?v=${youtubeRealId}?start=${t}s`;
-
-            const url = `https://www.youtube.com/embed/${youtubeRealId}?start=${t}s`;
+            const url = `https://www.youtube.com/watch?v=${youtubeRealId}?start=${t}s`;
 
             // İlgili dakikaya git
             await page.goto(url, { waitUntil: 'networkidle2' });
