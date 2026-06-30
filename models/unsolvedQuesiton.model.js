@@ -17,11 +17,13 @@ const UnsolvedQuestion = db.define(
             type: DataTypes.UUID,
             allowNull: false,
             references: { model: 'users', key: 'id' },
+            onDelete: 'CASCADE',
         },
         teacherId: {
             type: DataTypes.UUID,
             allowNull: false,
             references: { model: 'users', key: 'id' },
+            onDelete: 'CASCADE',
         },
         subject: { type: DataTypes.STRING, allowNull: true },
         topic: { type: DataTypes.STRING, allowNull: true },

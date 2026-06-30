@@ -139,6 +139,15 @@ Users.associate = models => {
         as: 'timetables',
         onDelete: 'CASCADE',
     });
+    Users.hasMany(models.UnsolvedQuestion, {
+        foreignKey: 'studentId',
+        onDelete: 'CASCADE',
+    });
+
+    Users.hasMany(models.UnsolvedQuestion, {
+        foreignKey: 'teacherId',
+        onDelete: 'CASCADE',
+    });
     Users.hasMany(models.Exam, {
         foreignKey: 'studentId',
         as: 'exams',
