@@ -126,7 +126,10 @@ export const deleteExamURL = async (req, res) => {
         'for student:',
         studentName
     );
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${studentName}/${path}`;
+
+    const safeStudentName = studentName.replace(/\s+/g, '-');
+
+    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${safeStudentName}/${path}`;
 
     try {
         await Exam.destroy({
