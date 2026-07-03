@@ -7,7 +7,7 @@ export const getStudentBookProgress = async (req, res) => {
         const { studentId, subject } = req.params;
 
         const student = await Users.findByPk(studentId);
-        if (!student || !student.books) {
+        if (!student && !student.books) {
             return res.status(404).json({
                 success: false,
                 message: 'Öğrenci veya kitap bilgisi bulunamadı',
