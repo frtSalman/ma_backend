@@ -118,6 +118,14 @@ export const uploadExam = async (req, res) => {
 
 export const deleteExamURL = async (req, res) => {
     const { path, id, studentName } = req.body;
+    console.log(
+        'Deleting exam result with path:',
+        path,
+        'and id:',
+        id,
+        'for student:',
+        studentName
+    );
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${studentName}/${path}`;
 
     try {
