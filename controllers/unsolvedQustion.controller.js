@@ -253,6 +253,36 @@ export const deleteUQURL = async (req, res) => {
     }
 };
 
+export const deleteAllUQURL = async (req, res) => {
+    const student = req.body; // Örn: "studentName/unsolved-questions/subject/topic/filename.webp"
+    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student?.name}/unsolved-quetions`;
+
+    try {
+        await UnsolvedQuestion.destroy({
+            where: { studentId: student?.id },
+        });
+
+        await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                AccessKey: KEY,
+            },
+        });
+
+        res.json({
+            success: true,
+            message: `${student?.name} adlı öğrencinin tüm çözülemeyen soruları silindi.`,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
 export const updateUQAppearance = async (req, res) => {
     const { bool, id } = req.query;
 

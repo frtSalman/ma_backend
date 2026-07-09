@@ -66,6 +66,24 @@ export const getHomeworkStats = async (req, res) => {
     }
 };
 
+export const deleteAllStats = async (req, res) => {
+    const studentId = req.params.id;
+    console.trace(`Deleting all stats for studentId: ${req.params.id}`);
+    try {
+        await StatEntry.destroy({ where: { studentId } });
+        res.json({
+            success: true,
+            message: 'Tüm istatistikler silindi.',
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
 export const updateStats = async (req, res) => {
     const { stats } = req.body;
 
