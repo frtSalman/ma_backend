@@ -275,7 +275,7 @@ export const deleteAllUQURL = async (req, res) => {
 
         res.json({
             success: true,
-            message: `${student?.name} adlı öğrencinin tüm çözülemeyen soruları silindi.`,
+            message: `${studentName} adlı öğrencinin tüm çözülemeyen soruları silindi.`,
         });
     } catch (error) {
         console.trace(error.message);
