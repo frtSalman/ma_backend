@@ -254,12 +254,16 @@ export const deleteUQURL = async (req, res) => {
 };
 
 export const deleteAllUQURL = async (req, res) => {
-    const student = req.body; // Örn: "studentName/unsolved-questions/subject/topic/filename.webp"
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student?.name}/unsolved-quetions`;
+    const { studentName, studentId } = req.params;
+    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/unsolved-quetions`;
+
+    console.trace(
+        `Tüm çözülemeyen sorular siliniyor: ${studentName} (${studentId})`
+    );
 
     try {
         await UnsolvedQuestion.destroy({
-            where: { studentId: student?.id },
+            where: { studentId: studentId },
         });
 
         await fetch(deleteUrl, {
