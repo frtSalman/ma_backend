@@ -6,6 +6,15 @@ const { Users, StudentVideos, StudentVideoQuestions } = models;
 
 puppeteer.use(StealthPlugin());
 
+const parseISO8601Duration = duration => {
+    if (!duration) return 0;
+    const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+    if (!match) return 0;
+    match.shift(); // remove full match
+    const [hours, minutes, seconds] = match.map(val => parseInt(val || 0, 10));
+    return hours * 3600 + minutes * 60 + seconds;
+};
+
 const KEY = process.env.BUNNY_KEY;
 
 const BUNNY_ZONE = 'teachflow';
@@ -75,8 +84,6 @@ export const uploadVideoSourceURL = async (req, res) => {
     // Destructure the new type and ytId parameters sent from the frontend
     const { studentId, subject, url, type, ytId, name } = req.body;
 
-    console.log(studentId, subject, url, type, ytId, name);
-
     try {
         if (!studentId) {
             return res.status(404).json({
@@ -89,17 +96,16 @@ export const uploadVideoSourceURL = async (req, res) => {
             where: { studentId, subject },
         });
 
+        const ytApiKey = process.env.YOUTUBE_API_KEY;
+        if (!ytApiKey) {
+            return res.status(500).json({
+                success: false,
+                message: 'YouTube API anahtarı yapılandırılmamış.',
+            });
+        }
+
         if (type === 'playlist' && ytId) {
-            const ytApiKey = process.env.YOUTUBE_API_KEY;
-
             const playListId = new Date().getTime(); // Generate a unique playlist ID based on timestamp
-
-            if (!ytApiKey) {
-                return res.status(500).json({
-                    success: false,
-                    message: 'YouTube API anahtarı yapılandırılmamış.',
-                });
-            }
 
             let allPlaylistItems = [];
             let nextPageToken = '';
@@ -112,56 +118,119 @@ export const uploadVideoSourceURL = async (req, res) => {
                     : '';
                 const ytApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${ytId}&key=${ytApiKey}${pageTokenParam}`;
 
-                const response = await axios.get(ytApiUrl);
-                allPlaylistItems = allPlaylistItems.concat(response.data.items);
-
-                nextPageToken = response.data.nextPageToken;
-                if (!nextPageToken) fetchMore = false;
-            }
-
-            let addedCount = 0;
-
-            let newVideosToInsert = [];
-
-            for (const item of allPlaylistItems) {
-                const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
-                const title = item.snippet.title;
-
-                const isVideoAlreadyAdded = videos.some(
-                    videoItem => videoItem.url === videoUrl
-                );
-
-                if (
-                    !isVideoAlreadyAdded &&
-                    title !== 'Private video' &&
-                    title !== 'Deleted video'
-                ) {
-                    newVideosToInsert.push({
-                        sourceName: title,
-                        url: videoUrl,
-                        isWatched: false,
-                        studentId,
-                        subject,
-                        playList: {
-                            id: ytId,
-                            playlistTitle:
-                                name ||
-                                item.snippet.videoOwnerChannelTitle +
-                                    ' Oynatma Listesi ' +
-                                    playListId,
-                        },
+                try {
+                    const response = await axios.get(ytApiUrl);
+                    allPlaylistItems = allPlaylistItems.concat(
+                        response.data.items
+                    );
+                    nextPageToken = response.data.nextPageToken;
+                    if (!nextPageToken) fetchMore = false;
+                } catch (playlistError) {
+                    console.error(
+                        'YouTube playlist fetch error: ',
+                        playlistError.response?.data || playlistError.message
+                    );
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            'YouTube oynatma listesi alınırken bir hata oluştu. IDyi kontrol edin.',
                     });
                 }
             }
 
-            // Eğer eklenecek video varsa tek seferde sıralı olarak ekle
+            let newVideosToInsert = [];
+
+            const newVideoItems = allPlaylistItems.filter(item => {
+                const title = item.snippet.title;
+                if (
+                    !item.snippet.resourceId ||
+                    !item.snippet.resourceId.videoId
+                ) {
+                    return false;
+                }
+                const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
+                const isVideoAlreadyAdded = videos.some(
+                    videoItem => videoItem.url === videoUrl
+                );
+                return (
+                    !isVideoAlreadyAdded &&
+                    title !== 'Private video' &&
+                    title !== 'Deleted video'
+                );
+            });
+
+            if (newVideoItems.length > 0) {
+                const CHUNK_SIZE = 50;
+                for (let i = 0; i < newVideoItems.length; i += CHUNK_SIZE) {
+                    const chunk = newVideoItems.slice(i, i + CHUNK_SIZE);
+                    const videoIds = chunk
+                        .map(item => item.snippet.resourceId.videoId)
+                        .join(',');
+
+                    const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${ytApiKey}`;
+
+                    try {
+                        const detailsResponse = await axios.get(ytDetailsUrl);
+                        const videoDetailsMap = new Map(
+                            detailsResponse.data.items.map(item => [
+                                item.id,
+                                item.contentDetails,
+                            ])
+                        );
+
+                        for (const item of chunk) {
+                            const videoId = item.snippet.resourceId.videoId;
+                            const videoDetails = videoDetailsMap.get(videoId);
+                            if (videoDetails) {
+                                const durationInSeconds = parseISO8601Duration(
+                                    videoDetails.duration
+                                );
+                                const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                                const title = item.snippet.title;
+
+                                newVideosToInsert.push({
+                                    sourceName: title,
+                                    url: videoUrl,
+                                    isWatched: false,
+                                    studentId,
+                                    subject,
+                                    duration: durationInSeconds,
+                                    lastConfirmedMoment: 0,
+                                    playList: {
+                                        id: ytId,
+                                        playlistTitle:
+                                            name ||
+                                            item.snippet
+                                                .videoOwnerChannelTitle +
+                                                ' Oynatma Listesi ' +
+                                                playListId,
+                                    },
+                                });
+                            }
+                        }
+                    } catch (apiError) {
+                        console.error(
+                            'YouTube API error: ',
+                            apiError.response?.data || apiError.message
+                        );
+                        // Stop and return an error if a chunk fails.
+                        return res.status(500).json({
+                            success: false,
+                            message:
+                                'YouTube video detayları alınırken bir hata oluştu.',
+                        });
+                    }
+                }
+            }
+
+            // If there are videos to insert, add them in a single batch
             if (newVideosToInsert.length > 0) {
                 await StudentVideos.bulkCreate(newVideosToInsert);
-                addedCount = newVideosToInsert.length;
             } else {
                 return res.json({
                     success: false,
-                    message: 'Listedeki tüm geçerli videolar zaten eklenmiş.',
+                    message:
+                        'Listedeki tüm geçerli videolar zaten eklenmiş veya liste boş.',
                 });
             }
         } else {
@@ -177,13 +246,54 @@ export const uploadVideoSourceURL = async (req, res) => {
                 });
             }
 
-            await StudentVideos.create({
-                sourceName: name,
-                url,
-                isWatched: false,
-                studentId,
-                subject,
-            });
+            if (!ytId) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        'Tekli video yüklemek için video IDsi (ytId) gerekli.',
+                });
+            }
+
+            const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ytId}&key=${ytApiKey}`;
+
+            try {
+                const detailsResponse = await axios.get(ytDetailsUrl);
+                if (
+                    !detailsResponse.data.items ||
+                    detailsResponse.data.items.length === 0
+                ) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'YouTube videosu bulunamadı.',
+                    });
+                }
+
+                const videoDetails =
+                    detailsResponse.data.items[0].contentDetails;
+                const durationInSeconds = parseISO8601Duration(
+                    videoDetails.duration
+                );
+
+                await StudentVideos.create({
+                    sourceName: name,
+                    url,
+                    isWatched: false,
+                    studentId,
+                    subject,
+                    duration: durationInSeconds,
+                    lastConfirmedMoment: 0,
+                });
+            } catch (apiError) {
+                console.error(
+                    'YouTube API error: ',
+                    apiError.response?.data || apiError.message
+                );
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        'YouTube video detayları alınırken bir hata oluştu.',
+                });
+            }
         }
 
         res.json({
