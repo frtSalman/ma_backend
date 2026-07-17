@@ -33,8 +33,8 @@ const StudentVideos = db.define(
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
-        duration: { type: DataTypes.INTEGER, allowNull: true },
-        lastConfirmedMoment: { type: DataTypes.INTEGER, allowNull: true },
+        duration: { type: DataTypes.FLOAT, allowNull: true },
+        lastConfirmedMoment: { type: DataTypes.FLOAT, allowNull: true },
     },
     {
         tableName: 'student_videos',
