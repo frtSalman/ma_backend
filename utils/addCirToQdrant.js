@@ -12,7 +12,8 @@ dotenv.config();
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const qdrant = new QdrantClient({
-    url: 'https://qdrant.teachflow.net:6333',
+    url: 'https://qdrant.teachflow.net',
+    port: 443,
     checkCompatibility: false,
     apiKey: process.env.QUADRANT_API_KEY,
 });
