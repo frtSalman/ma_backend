@@ -84,14 +84,20 @@ function prepareDocuments() {
 
 // 3. GEMINI EMBEDDING ALMA
 async function generateEmbeddings(texts) {
-    // Gemini text-embedding-004 modelini çağırıyoruz
+    // Model adını 'models/text-embedding-004' şeklinde tam yol olarak veriyoruz
     const response = await ai.models.embedContent({
-        model: 'text-embedding-004',
+        model: 'models/text-embedding-004',
         contents: texts,
     });
 
-    // Çoklu isteklerde response.embeddings dizisi döner
-    return response.embeddings.map(e => e.values);
+    // Dönüş formatını kontrol edip vektör dizisini çıkarıyoruz
+    if (response.embedding) {
+        return [response.embedding.values];
+    } else if (response.embeddings) {
+        return response.embeddings.map(e => e.values);
+    }
+
+    throw new Error("Gemini API'den geçerli bir embedding yanıtı alınamadı.");
 }
 
 // 4. QDRANT KOLEKSİYONU OLUŞTURMA VE YÜKLEME
