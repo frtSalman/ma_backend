@@ -86,7 +86,7 @@ function prepareDocuments() {
 async function generateEmbeddings(texts) {
     // Model adını 'models/text-embedding-004' şeklinde tam yol olarak veriyoruz
     const response = await ai.models.embedContent({
-        model: 'models/text-embedding-004',
+        model: 'gemini-embedding-001',
         contents: texts,
     });
 
