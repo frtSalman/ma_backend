@@ -1,6 +1,13 @@
-import Exam from '../models/exam.model.js';
-import Users from '../models/user.model.js';
 import axios from 'axios';
+import models from '../models/index.model.js';
+import { processExamData } from '../pipeline/mainProcessor.js';
+
+const { Exam, Users } = models;
+
+const n8nWebhookUrl =
+    process.env.NODE_ENV === 'production'
+        ? 'https://n8n.teachflow.net/webhook/84259f1b-da3d-4a5e-9a97-11d852f1f4ad'
+        : 'https://n8n.teachflow.net/webhook-test/84259f1b-da3d-4a5e-9a97-11d852f1f4ad';
 
 const KEY = process.env.BUNNY_KEY;
 
@@ -99,6 +106,17 @@ export const uploadExam = async (req, res) => {
         // Tüm paralel işlemlerin bitmesini bekle
         const pullZoneURLs = await Promise.all(uploadPromises);
 
+        pullZoneURLs.forEach(url => {
+            // 4. n8n Webhook'u tetikle
+            const aiJsonPayload = axios.post(n8nWebhookUrl, {
+                path: url,
+            });
+
+            const result = processExamData(aiJsonPayload);
+
+            console.trace(result);
+        });
+
         res.json({
             success: true,
             message: 'Deneme sonucu URL oluşturuldu.',
@@ -111,6 +129,36 @@ export const uploadExam = async (req, res) => {
             success: false,
             message: !studentName
                 ? 'Lütfen bir öğrenci seçiniz.'
+                : 'Sunucu hatası oluştu.',
+        });
+    }
+};
+
+export const examOCRTest = async (req, res) => {
+    const { path } = req.body;
+
+    try {
+        // 4. n8n Webhook'u tetikle
+        const aiJsonPayload = await axios.post(n8nWebhookUrl, {
+            path: path,
+        });
+
+        console.trace('AI JSON Payload:', aiJsonPayload.data);
+
+        const result = await processExamData(aiJsonPayload.data);
+
+        res.json({
+            success: true,
+            message: 'Deneme sonucu test edildi.',
+            result,
+        });
+    } catch (error) {
+        console.trace(error.message);
+        res.status(500).json({
+            // 500 Internal Server Error
+            success: false,
+            message: !path
+                ? 'Lütfen bir dosya seçiniz.'
                 : 'Sunucu hatası oluştu.',
         });
     }

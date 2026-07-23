@@ -3,6 +3,7 @@ import multer from 'multer';
 
 import {
     deleteExamURL,
+    examOCRTest,
     getExamResults,
     updateExam,
     uploadExam,
@@ -14,6 +15,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get('/get-exam-results', getExamResults);
 
 router.post('/add-exam-result-path', upload.array('files', 15), uploadExam);
+
+router.post('/test-exam-result', examOCRTest);
 
 router.delete('/delete-exam-result', deleteExamURL);
 
