@@ -199,3 +199,5 @@ async function resolveTopic(
         normalizedInput: normalizedInput,
     };
 }
+
+export { resolveTopic };
