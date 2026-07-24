@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 // Veri dosyalarından importlar (dosya yollarını kendi yapına göre ayarla)
 import { xHData, mHData } from './lise_mufredat.js';
 import { mMData, xMData } from './orta_mufredat.js';
+import { generateEmbeddings } from './embeddings.js';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ const qdrant = new QdrantClient({
 });
 
 const COLLECTION_NAME = 'mufredat_collection';
-const VECTOR_SIZE = 768; // Gemini text-embedding-004 boyutu
+const VECTOR_SIZE = 768; // nomic-embed-text boyutu
 
 // 2. VERİLERİ DÜZLEŞTİRME (FLATTENING)
 // Qdrant'a yüklemeden önce tüm farklı veri tiplerini standart bir dizi formatına getiriyoruz.
@@ -80,24 +81,6 @@ function prepareDocuments() {
     processNestedData(mMData, 'mMData');
 
     return docs;
-}
-
-// 3. GEMINI EMBEDDING ALMA
-async function generateEmbeddings(texts) {
-    // Model adını 'models/text-embedding-004' şeklinde tam yol olarak veriyoruz
-    const response = await ai.models.embedContent({
-        model: 'gemini-embedding-001',
-        contents: texts,
-    });
-
-    // Dönüş formatını kontrol edip vektör dizisini çıkarıyoruz
-    if (response.embedding) {
-        return [response.embedding.values];
-    } else if (response.embeddings) {
-        return response.embeddings.map(e => e.values);
-    }
-
-    throw new Error("Gemini API'den geçerli bir embedding yanıtı alınamadı.");
 }
 
 // 4. QDRANT KOLEKSİYONU OLUŞTURMA VE YÜKLEME

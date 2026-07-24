@@ -50,7 +50,7 @@ async function resolveTopic(normalizedInput, oldInput, dbMasterTopics) {
 export { resolveTopic };
  */
 
-import { token_sort_ratio, partial_ratio } from 'fuzzball';
+/* import { token_sort_ratio, partial_ratio } from 'fuzzball';
 
 async function resolveTopic(
     normalizedInput,
@@ -117,3 +117,85 @@ async function resolveTopic(
 }
 
 export { resolveTopic };
+ */
+
+import { QdrantClient } from '@qdrant/js-client-rest'; // veya kullandığın Qdrant istemcisi
+import { getEmbedding } from '../utils/embeddings';
+
+async function resolveTopic(
+    normalizedInput,
+    oldInput,
+    subject,
+    dbMasterTopics
+) {
+    // 1. Exact Match (Birebir Eşleşme - O(1))
+    // Metin birebir aynıysa Qdrant'a sorgu atıp maliyet/zaman harcamaya gerek yok.
+    const exactMatch = dbMasterTopics.find(t => t.topic === normalizedInput);
+    if (exactMatch) {
+        return {
+            status: 'resolved',
+            masterTopicId: exactMatch.topicId,
+            originalInput: oldInput,
+            normalizedInput: normalizedInput,
+            confidence: 100,
+        };
+    }
+
+    // 2. EMBEDDING / VECTOR SEARCH (Qdrant Adımı)
+    try {
+        // Gelen kazanım cümlesinin embedding (vektör) karşılığını alıyoruz
+        const inputVector = await getEmbedding(normalizedInput);
+
+        // Qdrant üzerinde arama yapıyoruz
+        const searchResult = await qdrantClient.search('mufredat_collection', {
+            vector: inputVector,
+            limit: 1, // En yakın 1 sonucu getir
+            filter: {
+                // ÇOK KRİTİK: Aramayı mutlaka sadece gelen derse sınırla!
+                must: [{ key: 'subject', match: { value: subject } }],
+            },
+        });
+
+        if (searchResult.length > 0) {
+            const topMatch = searchResult[0];
+
+            // Qdrant Cosine Similarity skoru genellikle 0 ile 1 arasındadır.
+            // Bunu senin sistemdeki 0-100 güven skoruna çeviriyoruz:
+            const confidence = Math.round(topMatch.score * 100);
+
+            // Eğer vektör benzerliği belirlediğin threshold'un üzerindeyse dön
+            if (confidence >= 75) {
+                return {
+                    status: 'resolved_auto_alias',
+                    masterTopic: topMatch.payload.topicName, // Qdrant payload'undaki master topic adı
+                    confidence: confidence,
+                    originalInput: oldInput,
+                    normalizedInput: normalizedInput,
+                };
+            }
+        }
+    } catch (error) {
+        console.error(
+            "Qdrant aramasında hata oluştu, fallback'e geçiliyor:",
+            error
+        );
+    }
+
+    // 3. FALLBACK: String tabanlı Fuzzy Match (Sadece Qdrant eşiği geçemezse veya çökerse çalışır)
+    let bestMatch = null;
+    let highestScore = 0;
+
+    for (const masterTopic of dbMasterTopics) {
+        // Eski fuzzball kodların...
+    }
+
+    const isResolved = highestScore >= 75;
+
+    return {
+        status: isResolved ? 'resolved_auto_alias' : 'requires_new_topic',
+        masterTopic: bestMatch,
+        confidence: highestScore,
+        originalInput: oldInput,
+        normalizedInput: normalizedInput,
+    };
+}
