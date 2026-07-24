@@ -120,7 +120,7 @@ export { resolveTopic };
  */
 
 import { QdrantClient } from '@qdrant/js-client-rest'; // veya kullandığın Qdrant istemcisi
-import { getEmbedding } from '../utils/embeddings';
+import { getEmbedding } from '../utils/embeddings.js';
 
 async function resolveTopic(
     normalizedInput,
