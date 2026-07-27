@@ -143,8 +143,6 @@ export const examOCRTest = async (req, res) => {
             path: path,
         });
 
-        console.trace('AI JSON Payload:', aiJsonPayload.data);
-
         const result = await processExamData(aiJsonPayload.data);
 
         res.json({

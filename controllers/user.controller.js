@@ -237,8 +237,8 @@ export const uploadBookSource = async (req, res) => {
             const fileNameToUse = file.originalname || file.name;
             const uniqueName = `${Date.now()}-${fileNameToUse}`;
 
-            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${subject}/${uniqueName}`;
-            pullZoneURL = `https://cdn.teachflow.net/source/${studentName}/${subject}/${uniqueName}`;
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/book_sources/${subject}/${uniqueName}`;
+            pullZoneURL = `https://cdn.teachflow.net/${studentName}/book_sources/${subject}/${uniqueName}`;
 
             await axios.put(uploadUrl, file.buffer, {
                 headers: {
@@ -307,7 +307,7 @@ export const deleteBookSource = async (req, res) => {
         req.body;
 
     if (path) {
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/source/${studentName}/${subject}/${path}`;
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/book_sources/${subject}/${path}`;
 
         try {
             await fetch(deleteUrl, {

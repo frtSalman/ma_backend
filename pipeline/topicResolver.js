@@ -121,6 +121,8 @@ export { resolveTopic };
 
 import { QdrantClient } from '@qdrant/js-client-rest'; // veya kullandığın Qdrant istemcisi
 import { getEmbedding } from '../utils/embeddings.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function resolveTopic(
     normalizedInput,
@@ -141,13 +143,20 @@ async function resolveTopic(
         };
     }
 
+    const qdrant = new QdrantClient({
+        url: 'https://qdrant.teachflow.net',
+        port: 443,
+        checkCompatibility: false,
+        apiKey: process.env.QUADRANT_API_KEY,
+    });
+
     // 2. EMBEDDING / VECTOR SEARCH (Qdrant Adımı)
     try {
         // Gelen kazanım cümlesinin embedding (vektör) karşılığını alıyoruz
         const inputVector = await getEmbedding(normalizedInput);
 
         // Qdrant üzerinde arama yapıyoruz
-        const searchResult = await qdrantClient.search('mufredat_collection', {
+        const searchResult = await qdrant.search('mufredat_collection', {
             vector: inputVector,
             limit: 1, // En yakın 1 sonucu getir
             filter: {
