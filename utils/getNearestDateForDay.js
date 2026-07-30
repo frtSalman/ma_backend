@@ -24,7 +24,7 @@ export default function getNearestDateForDay(dayName) {
 
     const targetDate = new Date(now);
     targetDate.setDate(now.getDate() + diffDays);
-    targetDate.setHours(23, 59, 59, 999);
+    targetDate.setUTCHours(20, 59, 59, 999);
 
     return targetDate.toISOString();
 }

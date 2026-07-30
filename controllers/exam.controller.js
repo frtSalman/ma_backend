@@ -86,10 +86,10 @@ export const uploadExam = async (req, res) => {
         const uploadPromises = req.files.map(async file => {
             // İsim çakışmasını önlemek için index'i de ekliyoruz
             const originalName = file.originalname || file.name;
-            const fileName = `${studentName}/${Date.now()}-Exam_result-${originalName}`;
+            const fileName = `${studentName}/examResults/${Date.now()}-Exam_result-${originalName}`;
             const safeFilename = fileName.replace(/\s+/g, '-');
-            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${safeFilename}`;
-            const pullZoneURL = `https://cdn.teachflow.net/examResults/${safeFilename}`;
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeFilename}`;
+            const pullZoneURL = `https://cdn.teachflow.net/${safeFilename}`;
 
             // 1. BunnyCDN'e Yükle
             await axios.put(uploadUrl, file.buffer, {
@@ -175,7 +175,7 @@ export const deleteExamURL = async (req, res) => {
 
     const safeStudentName = studentName.replace(/\s+/g, '-');
 
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/examResults/${safeStudentName}/${path}`;
+    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeStudentName}/${path}`;
 
     try {
         await Exam.destroy({
