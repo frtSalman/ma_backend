@@ -1,11 +1,13 @@
-import StudySchedule from '../models/studySchedule.model.js';
 import getNearestDateForDay from '../utils/getNearestDateForDay.js';
 import PDFDocument from 'pdfkit-table';
 import sharp from 'sharp';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import generateScheduleDocDefinition from '../utils/generateScheduleDocDefinition.js';
-import Users from '../models/user.model.js';
+
+import models from '../models/index.model.js';
+
+const { Users, StudentBookProgress, StudySchedule, Cirriculum } = models;
 
 // ES Modülleri kullandığınız için __dirname tanımlayalım
 const __filename = fileURLToPath(import.meta.url);
@@ -284,16 +286,31 @@ export const updateScheduleStatus = async (req, res) => {
         const { id } = req.params;
         const { checked } = req.body;
 
-        console.trace(checked);
-
         const schedule = await StudySchedule.findByPk(id);
 
         if (!schedule) {
             return res.status(404).json({ message: 'Program bulunamadı.' });
         }
 
-        // Update only the checked status
         await schedule.update({ checked });
+
+        const promises = schedule.bookSources?.map(async book => {
+            const circulumTopic = await Cirriculum.findOne({
+                where: {
+                    subject: schedule.subject,
+                    topic: schedule.topic,
+                },
+            });
+            return await StudentBookProgress.create({
+                studentId: schedule.studentId,
+                topicId: circulumTopic?.id,
+                bookName: book?.name,
+                subject: schedule.subject,
+                isCompleted: checked,
+            });
+        });
+
+        await Promise.all(promises);
 
         return res.status(200).json(schedule);
     } catch (error) {

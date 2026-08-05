@@ -155,6 +155,8 @@ Users.associate = models => {
     });
     Users.hasMany(models.StudentBookProgress, { foreignKey: 'studentId' });
     Users.hasMany(models.StudentVideos, { foreignKey: 'studentId' });
+    Users.hasMany(models.StudySchedule, { foreignKey: 'studentId' });
+    Users.hasMany(models.StudySchedule, { foreignKey: 'teacherId' });
 };
 
 export default Users;

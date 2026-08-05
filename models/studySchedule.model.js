@@ -12,10 +12,12 @@ const StudySchedule = db.define(
         teacherId: {
             type: DataTypes.UUID,
             allowNull: false,
+            references: { model: 'users', key: 'id' },
         },
         studentId: {
             type: DataTypes.UUID,
             allowNull: false,
+            references: { model: 'users', key: 'id' },
         },
         studentName: {
             type: DataTypes.STRING,
@@ -64,7 +66,12 @@ const StudySchedule = db.define(
             type: DataTypes.STRING,
             defaultValue: 'Konu Anlatımı',
             allowNull: false,
-            enum: ['Konu Anlatımı', 'Soru Çözümü', 'Branş Deneme'],
+            enum: [
+                'Konu Anlatımı',
+                'Soru Çözümü',
+                'Branş Deneme',
+                'Çıkmış Sorular',
+            ],
         },
         bookSources: {
             // [{sourceName: 'Kitap Adı', url: 'https://...'}, ...]
@@ -82,5 +89,18 @@ const StudySchedule = db.define(
         timestamps: true,
     }
 );
+
+StudySchedule.associate = models => {
+    StudySchedule.belongsTo(models.Users, {
+        foreignKey: 'studentId',
+        as: 'student',
+        onDelete: 'CASCADE',
+    });
+    StudySchedule.belongsTo(models.Users, {
+        foreignKey: 'teacherId',
+        as: 'teacher',
+        onDelete: 'CASCADE',
+    });
+};
 
 export default StudySchedule;

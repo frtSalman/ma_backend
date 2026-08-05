@@ -10,6 +10,7 @@ import Cirriculum from './cirriculum.model.js';
 import StudentBookProgress from './studentBookProgress.model.js';
 import StudentVideos from './studentVideos.model.js';
 import StudentVideoQuestions from './studentVideoQuestions.model.js';
+import StudySchedule from './studySchedule.model.js';
 
 const models = {
     Users,
@@ -24,6 +25,7 @@ const models = {
     StudentBookProgress,
     StudentVideos,
     StudentVideoQuestions,
+    StudySchedule,
 };
 
 Object.values(models).forEach(model => {
