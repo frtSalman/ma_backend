@@ -52,13 +52,13 @@ export const getStudentBookProgress = async (req, res) => {
         let newBooksArray;
 
         if (
-            !bookNames.includes('konu anlatım') &&
-            !bookNames.includes('çıkmış sorular')
+            !bookNames.includes('Konu Anlatımı') &&
+            !bookNames.includes('Çıkmış Sorular')
         ) {
             newBooksArray = [
-                { url: null, isChecked: false, sourceName: 'konu anlatım' },
+                { url: null, isChecked: false, sourceName: 'Konu Anlatımı' },
                 ...studentBooksForSubject,
-                { url: null, isChecked: false, sourceName: 'çıkmış sorular' },
+                { url: null, isChecked: false, sourceName: 'Çıkmış Sorular' },
             ];
         } else {
             newBooksArray = studentBooksForSubject;

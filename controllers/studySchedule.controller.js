@@ -294,23 +294,89 @@ export const updateScheduleStatus = async (req, res) => {
 
         await schedule.update({ checked });
 
-        const promises = schedule.bookSources?.map(async book => {
-            const circulumTopic = await Cirriculum.findOne({
-                where: {
-                    subject: schedule.subject,
-                    topic: schedule.topic,
-                },
-            });
-            return await StudentBookProgress.create({
-                studentId: schedule.studentId,
-                topicId: circulumTopic?.id,
-                bookName: book?.name,
+        let promisses = [];
+
+        const circulumTopic = await Cirriculum.findOne({
+            where: {
                 subject: schedule.subject,
-                isCompleted: checked,
-            });
+                topic: schedule.topic,
+            },
         });
 
-        await Promise.all(promises);
+        const existingProgresses = await StudentBookProgress.findAll({
+            where: {
+                studentId: schedule.studentId,
+                topicId: circulumTopic?.id,
+                subject: schedule.subject,
+            },
+        });
+
+        if (schedule?.workType === 'Konu Anlatımı') {
+            const konuAnlatimiProgress = existingProgresses.find(
+                p => p.bookName === 'Konu Anlatımı'
+            );
+            if (konuAnlatimiProgress) {
+                await StudentBookProgress.update(
+                    { isCompleted: checked },
+                    { where: { id: konuAnlatimiProgress.id } }
+                );
+            } else {
+                await StudentBookProgress.create({
+                    studentId: schedule.studentId,
+                    topicId: circulumTopic?.id,
+                    bookName: 'Konu Anlatımı',
+                    subject: schedule.subject,
+                    isCompleted: checked,
+                });
+            }
+        }
+
+        if (schedule?.workType === 'Çıkmış Sorular') {
+            const cikmisSorularProgress = existingProgresses.find(
+                p => p.bookName === 'Çıkmış Sorular'
+            );
+            if (cikmisSorularProgress) {
+                await StudentBookProgress.update(
+                    { isCompleted: checked },
+                    { where: { id: cikmisSorularProgress.id } }
+                );
+            } else {
+                await StudentBookProgress.create({
+                    studentId: schedule.studentId,
+                    topicId: circulumTopic?.id,
+                    bookName: 'Çıkmış Sorular',
+                    subject: schedule.subject,
+                    isCompleted: checked,
+                });
+            }
+        }
+
+        if (schedule?.workType === 'Soru Çözümü') {
+            const promises = schedule.bookSources?.map(book => {
+                const existingProgress = existingProgresses.find(
+                    p => p.bookName === book.name
+                );
+
+                if (existingProgress) {
+                    return StudentBookProgress.update(
+                        { isCompleted: checked },
+                        { where: { id: existingProgress.id } }
+                    );
+                } else {
+                    return StudentBookProgress.create({
+                        studentId: schedule.studentId,
+                        topicId: circulumTopic?.id,
+                        bookName: book?.name,
+                        subject: schedule.subject,
+                        isCompleted: checked,
+                    });
+                }
+            });
+
+            if (promises) {
+                await Promise.all(promises);
+            }
+        }
 
         return res.status(200).json(schedule);
     } catch (error) {
