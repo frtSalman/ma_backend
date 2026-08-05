@@ -145,6 +145,35 @@ export const createSchedule = async (req, res) => {
     }
 };
 
+export const createBulkSchedule = async (req, res) => {
+    try {
+        const schedules = req.body.schedules;
+
+        const newSchedules = schedules.map(schedule => ({
+            ...schedule,
+            id: undefined, // Ensure the id is not set, so Sequelize can auto-generate it
+            deadline: getNearestDateForDay(schedule.day),
+        }));
+
+        if (!Array.isArray(schedules) || schedules.length === 0) {
+            return res.status(400).json({
+                message:
+                    'Geçersiz program verisi. Lütfen geçerli bir program listesi sağlayın.',
+            });
+        }
+
+        await StudySchedule.bulkCreate(newSchedules);
+        return res
+            .status(201)
+            .json({ message: 'Programlar başarıyla oluşturuldu.' });
+    } catch (error) {
+        console.error('Error creating schedule:', error);
+        return res
+            .status(500)
+            .json({ message: 'Sunucu hatası: Program oluşturulamadı.' });
+    }
+};
+
 export const updateSchedule = async (req, res) => {
     try {
         const { id } = req.params;

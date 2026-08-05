@@ -6,13 +6,15 @@ import {
     deleteSchedule,
     updateScheduleStatus,
     deleteAllSchedule, // Import the new controller function
-    createSchedulePDF, // Import the new controller function
+    createSchedulePDF,
+    createBulkSchedule, // Import the new controller function
 } from '../controllers/studySchedule.controller.js';
 
 const router = express.Router();
 
 router.get('/get-schedules', getSchedules);
 router.post('/create-schedule', createSchedule);
+router.post('/create-bulk-schedule', createBulkSchedule);
 router.post('/create-schedule-pdf/:studentId/:studentName', createSchedulePDF);
 router.put('/update-schedule/:id', updateSchedule);
 router.delete('/delete-schedule/:id', deleteSchedule);
