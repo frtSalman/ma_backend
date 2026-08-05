@@ -354,7 +354,7 @@ export const updateScheduleStatus = async (req, res) => {
         if (schedule?.workType === 'Soru Çözümü') {
             const promises = schedule.bookSources?.map(book => {
                 const existingProgress = existingProgresses.find(
-                    p => p.bookName === book.name
+                    p => p.bookName === book.sourceName
                 );
 
                 if (existingProgress) {
@@ -366,7 +366,7 @@ export const updateScheduleStatus = async (req, res) => {
                     return StudentBookProgress.create({
                         studentId: schedule.studentId,
                         topicId: circulumTopic?.id,
-                        bookName: book?.name,
+                        bookName: book?.sourceName,
                         subject: schedule.subject,
                         isCompleted: checked,
                     });
