@@ -350,6 +350,16 @@ export const createTestPDF = async (req, res) => {
             }
         }
 
+        const promises = selectedQuestions.map(async question => {
+            try {
+                await question.update({ show: false });
+            } catch (error) {
+                console.error(error.message);
+            }
+        });
+
+        await Promise.all(promises);
+
         if (selectedQuestions.length === 0) {
             return res.status(404).json({
                 success: false,
