@@ -2,16 +2,39 @@ import { validateAiOutput } from './schema.js';
 import { normalizeText } from './normalizer.js';
 import { mergeDuplicateTopics } from './merger.js';
 import { resolveTopic } from './topicResolver.js';
+import { Op } from 'sequelize';
 import models from '../models/index.model.js';
 
 const { Cirriculum } = models;
 
-async function processExamData(aiJsonPayload) {
+async function processExamData(aiJsonPayload, grade) {
     try {
         // Aşama 4: JSON Validation [cite: 1]
         if (!validateAiOutput(aiJsonPayload)) {
             console.error('AI JSON Validation Error:', validateAiOutput.errors);
         }
+
+        const sourceSet =
+            aiJsonPayload.header.examType !== 'LGS'
+                ? ['xHData', 'mHData']
+                : ['xMData', 'mMData'];
+
+        const gradeLevel =
+            grade === '5' || grade === '6' || grade === '7' || grade === '8'
+                ? [
+                      '5. Sınıf',
+                      '6. Sınıf',
+                      '7. Sınıf',
+                      '8. Sınıf',
+                      'Ortaokul Genel',
+                  ]
+                : [
+                      '9. Sınıf',
+                      '10. Sınıf',
+                      '11. Sınıf',
+                      '12. Sınıf',
+                      'Lise Genel',
+                  ];
 
         // DB'den mevcut aliasları ve master topicleri çekiyoruz (Örnek)
         const results = [];
@@ -21,7 +44,10 @@ async function processExamData(aiJsonPayload) {
             // (Burada subjectName DB'deki master subjectler ile kontrol edilmeli)
 
             const masterTopics = await Cirriculum.findAll({
-                where: { subject: subject },
+                where: {
+                    subject: subject,
+                    gradeLevel: { [Op.in]: gradeLevel },
+                },
             });
 
             let processedTopics = aiJsonPayload.analysis[subject].map(
@@ -41,7 +67,8 @@ async function processExamData(aiJsonPayload) {
                     topic.normalizedName,
                     topic.oldName,
                     subject,
-                    masterTopics
+                    masterTopics,
+                    sourceSet
                 );
 
                 results.push({

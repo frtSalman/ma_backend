@@ -14,9 +14,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get('/get-exam-results', getExamResults);
 
-router.post('/add-exam-result-path', upload.array('files', 15), uploadExam);
-
-router.post('/test-exam-result', examOCRTest);
+router.post('/save-exam-result', upload.array('files', 15), uploadExam);
 
 router.delete('/delete-exam-result', deleteExamURL);
 

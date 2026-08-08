@@ -73,7 +73,7 @@ export const getExamResults = async (req, res) => {
 };
 
 export const uploadExam = async (req, res) => {
-    const { studentName } = req.body;
+    const { studentId } = req.body;
 
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({
@@ -83,10 +83,14 @@ export const uploadExam = async (req, res) => {
     }
 
     try {
-        const uploadPromises = req.files.map(async file => {
+        const student = await Users.findOne({
+            where: { id: studentId },
+        });
+
+        const examPromises = req.files.map(async file => {
             // İsim çakışmasını önlemek için index'i de ekliyoruz
             const originalName = file.originalname || file.name;
-            const fileName = `${studentName}/examResults/${Date.now()}-Exam_result-${originalName}`;
+            const fileName = `${student.name}/examResults/${Date.now()}-Exam_result-${originalName}`;
             const safeFilename = fileName.replace(/\s+/g, '-');
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeFilename}`;
             const pullZoneURL = `https://cdn.teachflow.net/${safeFilename}`;
@@ -100,34 +104,52 @@ export const uploadExam = async (req, res) => {
             });
 
             // 3. Her bir dosya için path ve id döndür
-            return pullZoneURL;
-        });
-
-        // Tüm paralel işlemlerin bitmesini bekle
-        const pullZoneURLs = await Promise.all(uploadPromises);
-
-        pullZoneURLs.forEach(url => {
-            // 4. n8n Webhook'u tetikle
             const aiJsonPayload = axios.post(n8nWebhookUrl, {
-                path: url,
+                path: pullZoneURL,
             });
 
-            const result = processExamData(aiJsonPayload);
+            const results = await processExamData(
+                aiJsonPayload.data,
+                student?.grade
+            );
 
-            console.trace(result);
+            const resultSubjects = results.map(result => result.subject);
+
+            const uniqueSubjects = [...new Set(resultSubjects)];
+
+            const analysis = {};
+
+            uniqueSubjects.forEach(subject => {
+                const subjectResults = results.filter(
+                    result => result.subject === subject
+                );
+                analysis[subject] = subjectResults;
+            });
+
+            return await Exam.create({
+                studentId: studentId,
+                teacherId: student?.teacherId,
+                path: url,
+                analysis: results,
+                scoreSummary: aiJsonPayload?.scoreSummary,
+                examTitle: aiJsonPayload?.header?.examTitle,
+                examDate: aiJsonPayload?.header?.examDate,
+                totalPoint: aiJsonPayload?.header?.totalPoint,
+            });
         });
+
+        await Promise.all(examPromises);
 
         res.json({
             success: true,
-            message: 'Deneme sonucu URL oluşturuldu.',
-            filePaths: pullZoneURLs,
+            message: 'Deneme sonucu oluşturuldu.',
         });
     } catch (error) {
         console.trace(error.message);
         res.status(500).json({
             // 500 Internal Server Error
             success: false,
-            message: !studentName
+            message: !studentId
                 ? 'Lütfen bir öğrenci seçiniz.'
                 : 'Sunucu hatası oluştu.',
         });
@@ -135,7 +157,7 @@ export const uploadExam = async (req, res) => {
 };
 
 export const examOCRTest = async (req, res) => {
-    const { path } = req.body;
+    const { path, grade } = req.body;
 
     try {
         // 4. n8n Webhook'u tetikle
@@ -143,7 +165,7 @@ export const examOCRTest = async (req, res) => {
             path: path,
         });
 
-        const result = await processExamData(aiJsonPayload.data);
+        const result = await processExamData(aiJsonPayload.data, grade);
 
         res.json({
             success: true,
