@@ -55,7 +55,8 @@ async function searchInQdrant(normalizedInput, subject, sourceSet) {
             if (confidence >= 70) {
                 return {
                     status: 'vector_resolved',
-                    masterTopic: topMatch.payload.topicName, // Access payload from the first result
+                    masterTopic:
+                        topMatch.payload.topicName.toLocaleLowerCase('tr-TR'), // Access payload from the first result
                     confidence: confidence,
                 };
             }
