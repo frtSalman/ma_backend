@@ -142,6 +142,7 @@ export const uploadExam = async (req, res) => {
                 path: pullZoneURL,
                 analysis: results,
                 scoreSummary,
+                totalPoint: aiJsonPayload?.data.header?.totalPoint,
                 examTitle: aiJsonPayload?.data.header?.examTitle,
                 examDate: aiJsonPayload?.data.header?.examDate,
                 totalPoint: aiJsonPayload?.data.header?.totalPoint,

@@ -2,63 +2,52 @@ import { DataTypes } from 'sequelize';
 import db from '../utils/database.js';
 import Users from './user.model.js';
 
-const Exam = db.define(
-    'Exam',
-    {
-        id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true,
-        },
+const Exam = db.define('Exam', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
 
-        path: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        studentId: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
-            references: {
-                model: Users,
-                key: 'id',
-            },
-        },
-        teacherId: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
-        },
-        examTitle: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        examDate: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        totalPoint: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
-        },
-        scoreSummary: {
-            type: DataTypes.JSONB,
-            allowNull: true,
-        },
-        analysis: {
-            type: DataTypes.JSONB,
-            allowNull: true,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            field: 'createdAt',
+    path: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    studentId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        references: {
+            model: Users,
+            key: 'id',
         },
     },
-    {
-        timestamps: false, // 🔴 critical
-    }
-);
+    teacherId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+    },
+    examTitle: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    examDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    totalPoint: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+    },
+    scoreSummary: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+    },
+    analysis: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+    },
+});
 
 Exam.associate = models => {
     Exam.belongsTo(models.Users, {
