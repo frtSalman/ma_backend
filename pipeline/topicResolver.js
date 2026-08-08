@@ -85,7 +85,7 @@ async function resolveTopic(
     if (exactMatch) {
         return {
             status: 'exact_resolved',
-            masterTopic: exactMatch.topic,
+            masterTopic: exactMatch.topic.toLocaleLowerCase('tr-TR'),
             originalInput: oldInput,
             normalizedInput: normalizedInput,
             confidence: 100,
