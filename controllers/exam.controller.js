@@ -104,7 +104,7 @@ export const uploadExam = async (req, res) => {
             });
 
             // 3. Her bir dosya için path ve id döndür
-            const aiJsonPayload = axios.post(n8nWebhookUrl, {
+            const aiJsonPayload = await axios.post(n8nWebhookUrl, {
                 path: pullZoneURL,
             });
 
@@ -113,28 +113,38 @@ export const uploadExam = async (req, res) => {
                 student?.grade
             );
 
-            const resultSubjects = results.map(result => result.subject);
+            const analysis = Object.groupBy(results, item => item.subject);
 
-            const uniqueSubjects = [...new Set(resultSubjects)];
+            const scoreSummary = Object.entries(analysis).reduce(
+                (acc, [subject, topics]) => {
+                    if (!acc[subject]) {
+                        acc[subject] = { D: 0, Y: 0, SS: 0, NET: 0 };
+                    }
 
-            const analysis = {};
+                    topics.forEach(topic => {
+                        acc[subject]['D'] += +topic.D || 0;
+                        acc[subject]['Y'] += +topic.Y || 0;
+                        acc[subject]['SS'] += +topic.T || 0;
+                    });
 
-            uniqueSubjects.forEach(subject => {
-                const subjectResults = results.filter(
-                    result => result.subject === subject
-                );
-                analysis[subject] = subjectResults;
-            });
+                    acc[subject]['NET'] =
+                        acc[subject]['D'] - acc[subject]['Y'] * 0.25;
+                    acc[subject]['subject'] = subject;
 
-            return await Exam.create({
+                    return acc;
+                },
+                {}
+            );
+
+            return Exam.create({
                 studentId: studentId,
                 teacherId: student?.teacherId,
-                path: url,
+                path: pullZoneURL,
                 analysis: results,
-                scoreSummary: aiJsonPayload?.scoreSummary,
-                examTitle: aiJsonPayload?.header?.examTitle,
-                examDate: aiJsonPayload?.header?.examDate,
-                totalPoint: aiJsonPayload?.header?.totalPoint,
+                scoreSummary,
+                examTitle: aiJsonPayload?.data.header?.examTitle,
+                examDate: aiJsonPayload?.data.header?.examDate,
+                totalPoint: aiJsonPayload?.data.header?.totalPoint,
             });
         });
 
@@ -166,6 +176,29 @@ export const examOCRTest = async (req, res) => {
         });
 
         const result = await processExamData(aiJsonPayload.data, grade);
+
+        const scoreSummary = Object.entries(aiJsonPayload.data.analysis).reduce(
+            (acc, [subject, topics]) => {
+                if (!acc[subject]) {
+                    acc[subject] = { D: 0, Y: 0, SS: 0, NET: 0 };
+                }
+
+                topics.forEach(topic => {
+                    acc[subject]['D'] += +topic.D || 0;
+                    acc[subject]['Y'] += +topic.Y || 0;
+                    acc[subject]['SS'] += +topic.T || 0;
+                });
+
+                acc[subject]['NET'] =
+                    acc[subject]['D'] - acc[subject]['Y'] * 0.25;
+                acc[subject]['subject'] = subject;
+
+                return acc;
+            },
+            {}
+        );
+
+        console.log('Score Summary:', scoreSummary);
 
         res.json({
             success: true,

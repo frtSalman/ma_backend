@@ -16,6 +16,8 @@ router.get('/get-exam-results', getExamResults);
 
 router.post('/save-exam-result', upload.array('files', 15), uploadExam);
 
+router.post('/test-exam-result', examOCRTest);
+
 router.delete('/delete-exam-result', deleteExamURL);
 
 router.put('/update-exam-result/:id', updateExam);
