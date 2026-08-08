@@ -15,6 +15,11 @@ const BUNNY_ZONE = 'teachflow';
 
 const baseHost = 'storage.bunnycdn.com';
 
+function setDate(date) {
+    const [d, m, y] = date.split('.');
+    return new Date(m + '.' + d + '.' + y).toLocaleDateString();
+}
+
 export const getExamResults = async (req, res) => {
     const { role, userId, studentId } = req.query;
 
@@ -136,6 +141,7 @@ export const uploadExam = async (req, res) => {
                 {}
             );
 
+            const settledDate = setDate(aiJsonPayload?.data?.header?.examDate);
             return Exam.create({
                 studentId: studentId,
                 teacherId: student?.teacherId,
@@ -143,8 +149,8 @@ export const uploadExam = async (req, res) => {
                 analysis: results,
                 scoreSummary,
                 totalPoint: aiJsonPayload?.data.header?.totalPoint,
-                examTitle: aiJsonPayload?.data.header?.examTitle,
-                examDate: aiJsonPayload?.data.header?.examDate,
+                examTitle: aiJsonPayload?.data.header?.examName,
+                examDate: settledDate,
                 totalPoint: aiJsonPayload?.data.header?.totalPoint,
             });
         });
