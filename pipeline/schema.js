@@ -12,8 +12,12 @@ const aiOutputSchema = {
                 examName: { type: 'string' },
                 examDate: { type: 'string' },
                 totalPoint: { type: 'number' },
+                examType: {
+                    type: 'string',
+                    description: 'Sınavın türü (TYT, AYT, LGS, DGS, KPSS)',
+                },
             },
-            required: ['studentName', 'examName', 'totalPoint'],
+            required: ['studentName', 'examName', 'totalPoint', 'examType'],
         },
         scoreSummary: {
             type: 'object',
