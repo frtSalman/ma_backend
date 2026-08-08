@@ -79,7 +79,9 @@ async function resolveTopic(
 ) {
     // 1. Exact Match (Birebir Eşleşme - O(1))
     // Metin birebir aynıysa Qdrant'a sorgu atıp maliyet/zaman harcamaya gerek yok.
-    const exactMatch = dbMasterTopics.find(t => t.topic === normalizedInput);
+    const exactMatch = dbMasterTopics.find(
+        t => t.topic.toLocaleLowerCase('tr-TR') === normalizedInput
+    );
     if (exactMatch) {
         return {
             status: 'exact_resolved',
@@ -99,7 +101,7 @@ async function resolveTopic(
         // `fuzzyMatch` artık en iyi 3 sonucu döndürüyor, biz en iyisini alıyoruz.
         return {
             status: 'fuzzy_resolved',
-            masterTopic: bestMatch.topic,
+            masterTopic: bestMatch.topic.toLocaleLowerCase('tr-TR'),
             confidence: bestMatch.confidence,
             originalInput: oldInput,
             normalizedInput: normalizedInput,
