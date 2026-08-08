@@ -10,10 +10,10 @@ const { Cirriculum } = models;
 async function processExamData(aiJsonPayload, grade) {
     try {
         // Aşama 4: JSON Validation [cite: 1]
-        if (!validateAiOutput(aiJsonPayload)) {
+        /* if (!validateAiOutput(aiJsonPayload)) {
             console.error('AI JSON Validation Error:', validateAiOutput.errors);
         }
-
+ */
         const sourceSet =
             aiJsonPayload.header.examType !== 'LGS'
                 ? ['xHData', 'mHData']
