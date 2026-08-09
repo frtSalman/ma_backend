@@ -62,6 +62,7 @@ async function processExamData(aiJsonPayload, grade) {
             processedTopics = mergeDuplicateTopics(processedTopics);
 
             for (const topic of processedTopics) {
+                const { T, D, Y } = topic;
                 // Aşama 9, 10, 11: Alias Lookup ve Fuzzy Match [cite: 1]
                 const resolution = await resolveTopic(
                     topic.normalizedName,
@@ -73,6 +74,9 @@ async function processExamData(aiJsonPayload, grade) {
 
                 results.push({
                     subject: subject,
+                    T,
+                    D,
+                    Y,
                     ...resolution,
                 });
             }
