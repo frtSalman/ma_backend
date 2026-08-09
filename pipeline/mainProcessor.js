@@ -73,7 +73,6 @@ async function processExamData(aiJsonPayload, grade) {
 
                 results.push({
                     subject: subject,
-                    ...topic,
                     ...resolution,
                 });
             }
