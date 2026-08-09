@@ -159,7 +159,7 @@ export const uploadExam = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Deneme sonucu oluşturuldu.',
+            message: 'Deneme sonuçları oluşturuldu. ✅',
         });
     } catch (error) {
         console.trace(error.message);
