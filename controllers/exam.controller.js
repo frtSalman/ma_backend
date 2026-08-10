@@ -272,6 +272,10 @@ export const uploadExam = async (req, res) => {
                     );
                 }
             }
+            return res.json({
+                success: true,
+                message: 'Deneme analiz işlemi arka planda tamamlandı. ✅',
+            });
         };
 
         // 3. FONKSİYONU ÇAĞIRIYORUZ AMA BAŞINA AWAIT KOYMUYORUZ! (Sihir burada)
