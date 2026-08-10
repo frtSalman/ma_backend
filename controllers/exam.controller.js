@@ -1,4 +1,5 @@
 import axios from 'axios';
+import crypto from 'crypto';
 import models from '../models/index.model.js';
 import { processExamData } from '../pipeline/mainProcessor.js';
 
@@ -77,7 +78,7 @@ export const getExamResults = async (req, res) => {
     }
 };
 
-/* export const uploadExam = async (req, res) => {
+export const uploadExam = async (req, res) => {
     const { studentId } = req.body;
 
     if (!req.files || req.files.length === 0) {
@@ -92,15 +93,29 @@ export const getExamResults = async (req, res) => {
             where: { id: studentId },
         });
 
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: 'Öğrenci bulunamadı.',
+            });
+        }
+
         const examPromises = req.files.map(async file => {
-            // İsim çakışmasını önlemek için index'i de ekliyoruz
             const originalName = file.originalname || file.name;
-            const fileName = `${student.name}/examResults/${Date.now()}-Exam_result-${originalName}`;
+
+            const uniqueId = crypto.randomUUID();
+
+            const fileName =
+                `${student.name}/examResults/` +
+                `${uniqueId}-Exam_result-${originalName}`;
+
             const safeFilename = fileName.replace(/\s+/g, '-');
+
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeFilename}`;
+
             const pullZoneURL = `https://cdn.teachflow.net/${safeFilename}`;
 
-            // 1. BunnyCDN'e Yükle
+            // BunnyCDN
             await axios.put(uploadUrl, file.buffer, {
                 headers: {
                     AccessKey: KEY,
@@ -108,14 +123,15 @@ export const getExamResults = async (req, res) => {
                 },
             });
 
-            // 3. Her bir dosya için path ve id döndür
+            // n8n
             const aiJsonPayload = await axios.post(n8nWebhookUrl, {
                 path: pullZoneURL,
             });
 
+            // Exam processing
             const results = await processExamData(
                 aiJsonPayload.data,
-                student?.grade
+                student.grade
             );
 
             const analysis = Object.groupBy(results, item => item.subject);
@@ -123,18 +139,23 @@ export const getExamResults = async (req, res) => {
             const scoreSummary = Object.entries(analysis).reduce(
                 (acc, [subject, topics]) => {
                     if (!acc[subject]) {
-                        acc[subject] = { D: 0, Y: 0, SS: 0, NET: 0 };
+                        acc[subject] = {
+                            D: 0,
+                            Y: 0,
+                            SS: 0,
+                            NET: 0,
+                        };
                     }
 
                     topics.forEach(topic => {
-                        acc[subject]['D'] += +topic.D || 0;
-                        acc[subject]['Y'] += +topic.Y || 0;
-                        acc[subject]['SS'] += +topic.T || 0;
+                        acc[subject].D += +topic.D || 0;
+                        acc[subject].Y += +topic.Y || 0;
+                        acc[subject].SS += +topic.T || 0;
                     });
 
-                    acc[subject]['NET'] =
-                        acc[subject]['D'] - acc[subject]['Y'] * 0.25;
-                    acc[subject]['subject'] = subject;
+                    acc[subject].NET = acc[subject].D - acc[subject].Y * 0.25;
+
+                    acc[subject].subject = subject;
 
                     return acc;
                 },
@@ -142,38 +163,48 @@ export const getExamResults = async (req, res) => {
             );
 
             const settledDate = setDate(aiJsonPayload?.data?.header?.examDate);
+
+            // DB
             return Exam.create({
-                studentId: studentId,
-                teacherId: student?.teacherId,
+                studentId,
+                teacherId: student.teacherId,
                 path: pullZoneURL,
                 analysis: results,
                 scoreSummary,
-                totalPoint: aiJsonPayload?.data.header?.totalPoint,
-                examTitle: aiJsonPayload?.data.header?.examName,
+                totalPoint: aiJsonPayload?.data?.header?.totalPoint,
+                examTitle: aiJsonPayload?.data?.header?.examName,
                 examDate: settledDate,
-                totalPoint: aiJsonPayload?.data.header?.totalPoint,
             });
         });
 
-        await Promise.all(examPromises);
+        const results = await Promise.allSettled(examPromises);
+
+        const successful = results.filter(
+            result => result.status === 'fulfilled'
+        );
+
+        const failed = results.filter(result => result.status === 'rejected');
 
         return res.json({
-            success: true,
-            message: 'Deneme sonuçları oluşturuldu. ✅',
+            success: failed.length === 0,
+            message:
+                failed.length === 0
+                    ? 'Deneme sonuçları oluşturuldu. ✅'
+                    : `${successful.length} dosya işlendi, ${failed.length} dosya başarısız oldu.`,
+            processedCount: successful.length,
+            failedCount: failed.length,
         });
     } catch (error) {
-        console.trace(error.message);
+        console.error(error);
+
         return res.status(500).json({
-            // 500 Internal Server Error
             success: false,
-            message: !studentId
-                ? 'Lütfen bir öğrenci seçiniz.'
-                : 'Sunucu hatası oluştu.',
+            message: 'Sunucu hatası oluştu.',
         });
     }
-}; */
+};
 
-export const uploadExam = async (req, res) => {
+/* export const uploadExam = async (req, res) => {
     const { studentId } = req.body;
 
     if (!req.files || req.files.length === 0) {
@@ -272,10 +303,6 @@ export const uploadExam = async (req, res) => {
                     );
                 }
             }
-            return res.json({
-                success: true,
-                message: 'Deneme analiz işlemi arka planda tamamlandı. ✅',
-            });
         };
 
         // 3. FONKSİYONU ÇAĞIRIYORUZ AMA BAŞINA AWAIT KOYMUYORUZ! (Sihir burada)
@@ -297,7 +324,7 @@ export const uploadExam = async (req, res) => {
                 : 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */
 
 export const examOCRTest = async (req, res) => {
     const { path, grade } = req.body;
