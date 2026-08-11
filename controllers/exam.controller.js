@@ -157,6 +157,20 @@ export const uploadExam = async (req, res) => {
 
                     acc[subject].subject = subject;
 
+                    if (!acc['totals']) {
+                        acc['totals'] = {
+                            D: 0,
+                            Y: 0,
+                            SS: 0,
+                            NET: 0,
+                        };
+                    }
+
+                    acc['totals']['NET'] += acc[subject].NET;
+                    acc['totals']['D'] += acc[subject].D;
+                    acc['totals']['Y'] += acc[subject].Y;
+                    acc['totals']['SS'] += acc[subject].SS;
+
                     return acc;
                 },
                 {}
