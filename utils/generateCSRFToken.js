@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
-export const generateCSRFToken = (res, userId) => {
+export const generateCSRFToken = res => {
     const csrfToken = crypto.randomBytes(32).toString('hex');
 
     const isProd = process.env.NODE_ENV === 'production';
