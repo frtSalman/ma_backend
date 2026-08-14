@@ -372,8 +372,6 @@ export const examOCRTest = async (req, res) => {
             {}
         );
 
-        console.log('Score Summary:', scoreSummary);
-
         return res.json({
             success: true,
             message: 'Deneme sonuçları test edildi.',
@@ -393,14 +391,6 @@ export const examOCRTest = async (req, res) => {
 
 export const deleteExamURL = async (req, res) => {
     const { path, id, studentName } = req.body;
-    console.log(
-        'Deleting exam result with path:',
-        path,
-        'and id:',
-        id,
-        'for student:',
-        studentName
-    );
 
     const safeStudentName = studentName.replace(/\s+/g, '-');
 

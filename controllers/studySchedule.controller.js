@@ -199,30 +199,6 @@ export const updateSchedule = async (req, res) => {
             return res.status(404).json({ message: 'Program bulunamadı.' });
         }
 
-        /* const student = await Users.findByPk(studentId);
-
-        if (!student) {
-            return res.status(404).json({ message: 'Öğrenci bulunamadı.' });
-        }
-
-        if (videoSources && student.videos?.[subject]) {
-            const updatedVideos = student.videos[subject].map(video => {
-                videoSources.forEach(source => {
-                    if (video.url === source.url) {
-                        Object.assign(video, source);
-                    }
-                });
-                return video;
-            });
-
-            student.videos[subject] = updatedVideos;
-
-            await Users.update(
-                { videos: student.videos },
-                { where: { id: studentId } }
-            );
-        } */
-
         await schedule.update({
             day,
             timeRange,

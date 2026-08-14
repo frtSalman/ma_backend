@@ -153,8 +153,6 @@ export const deleteHomework = async (req, res) => {
 export const updateHomework = async (req, res) => {
     const { homework } = req.body;
 
-    console.trace(homework);
-
     try {
         await Homework.update(
             {
@@ -183,7 +181,7 @@ export const updateHomework = async (req, res) => {
     }
 };
 
-export const updateHomeworkStatus = async (req, res) => {
+/* export const updateHomeworkStatus = async (req, res) => {
     const { id: homeworkId, day } = req.params;
 
     if (!day || typeof day !== 'string') {
@@ -236,4 +234,4 @@ export const updateHomeworkStatus = async (req, res) => {
             message: 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */

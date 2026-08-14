@@ -1,5 +1,7 @@
 import express from 'express';
 import multer from 'multer';
+import { verifyToken } from '../middlewares/verifyToken.js';
+import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 import {
     uploadUQ,
     deleteUQURL,
@@ -12,7 +14,9 @@ import {
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/add-unsolved-question-path', upload.array('files', 15), uploadUQ);
+router.use(verifyToken, verifyCsrfToken);
+
+router.post('/add-unsolved-question-path', upload.array('files'), uploadUQ);
 
 router.put('/update-unsolved-question-view', updateUQAppearance);
 

@@ -257,10 +257,6 @@ export const deleteAllUQURL = async (req, res) => {
     const { studentName, studentId } = req.params;
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/unsolved-quetions`;
 
-    console.trace(
-        `Tüm çözülemeyen sorular siliniyor: ${studentName} (${studentId})`
-    );
-
     try {
         await UnsolvedQuestion.destroy({
             where: { studentId: studentId },

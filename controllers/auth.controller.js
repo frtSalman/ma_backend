@@ -15,7 +15,7 @@ import passport from 'passport';
 
 const { Users, Invitation } = models;
 
-// creating user
+// creating user only teachers
 export const signup = async (req, res) => {
     const { email, name, password } = req.body;
     try {
@@ -132,7 +132,7 @@ export const sendParentInvitation = async (req, res) => {
     }
 };
 
-export const sendTeacherInvitation = async (req, res) => {
+/* export const sendTeacherInvitation = async (req, res) => {
     const { email, teacherId } = req.body;
     try {
         const ınvToken = generateToken();
@@ -158,7 +158,7 @@ export const sendTeacherInvitation = async (req, res) => {
             message: 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */
 
 export const studentSignup = async (req, res) => {
     const token = req.params.token;
@@ -187,6 +187,9 @@ export const studentSignup = async (req, res) => {
             teacherId: inv.teacherId,
             parentId: null,
         });
+
+        //jwt proccess
+        generateTokenAndSetCookie(res, student.id); // thats how we auth and proceed as logged in
 
         res.status(200).json({
             success: true,
@@ -262,6 +265,9 @@ export const parentSignup = async (req, res) => {
 
             student.parentId = parent.id;
             await student.save();
+
+            //jwt proccess
+            generateTokenAndSetCookie(res, parent.id); // thats how we auth and proceed as logged in
 
             res.status(200).json({
                 success: true,
@@ -375,6 +381,7 @@ export const verifyEmail = async (req, res) => {
 
 export const logout = async (req, res) => {
     res.clearCookie('token');
+    res.clearCookie('XSRF-TOKEN');
     res.status(200).json({ success: true, message: 'Logged out successfuly.' });
 };
 
@@ -487,7 +494,7 @@ export const resetPassword = async (req, res) => {
         if (
             !user ||
             !user.resetPasswordTokenExpiresAt || // no expiry date at all
-            user.resetPasswordTokenTokenExpiresAt <= now // already expired
+            user.resetPasswordTokenExpiresAt <= now // already expired
         ) {
             return res.status(401).json({
                 success: false,
@@ -543,7 +550,8 @@ export const checkAuth = async (req, res) => {
 };
 
 export const updateAccount = async (req, res) => {
-    const { email, name, grade, id } = req.body;
+    const { email, name, grade } = req.body;
+    const id = req.userId;
 
     try {
         const user = await Users.findOne({ where: { id } });

@@ -85,11 +85,7 @@ function prepareDocuments() {
 
 // 4. QDRANT KOLEKSİYONU OLUŞTURMA VE YÜKLEME
 async function main() {
-    console.log('🚀 Müfredat verileri hazırlanıyor...');
     const documents = prepareDocuments();
-    console.log(
-        `📦 Toplam ${documents.length} adet müfredat başlığı/kazanımı işlenecek.`
-    );
 
     // Koleksiyon var mı kontrol et, yoksa oluştur
     const collections = await qdrant.getCollections();

@@ -64,8 +64,6 @@ export const getVideoQuestions = async (req, res) => {
             where: { videoId },
         });
 
-        console.trace(videoQuestions);
-
         return res.status(200).json({
             success: true,
             message: 'Video soruları getirildi.',
@@ -317,8 +315,6 @@ export const uploadVideoSourceURL = async (req, res) => {
 
 export const updateVideoStatus = async (req, res) => {
     const { url, studentId } = req.body;
-
-    console.trace(req.body);
 
     try {
         if (!studentId) {

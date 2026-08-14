@@ -10,7 +10,7 @@ const baseHost = 'storage.bunnycdn.com';
 
 export const getStudents = async (req, res) => {
     const { role, id } = req.params;
-    console.log(role, id);
+
     try {
         if (role === 'teacher') {
             const students = await Users.findAll({
@@ -117,7 +117,7 @@ export const deleteStudent = async (req, res) => {
     }
 };
 
-export const addLogoPath = async (req, res) => {
+/* export const addLogoPath = async (req, res) => {
     const { id, name } = req.body;
 
     const safeFilename = `${name}`.replace(/\s+/g, '-');
@@ -150,7 +150,7 @@ export const addLogoPath = async (req, res) => {
             message: 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */
 
 export const getBookSources = async (req, res) => {
     const { studentId } = req.params;

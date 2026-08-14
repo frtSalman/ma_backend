@@ -1,5 +1,7 @@
 import express from 'express';
 import multer from 'multer';
+import { verifyToken } from '../middlewares/verifyToken.js';
+import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 import {
     deleteStudent,
     getStudents,
@@ -12,6 +14,8 @@ import {
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
+
+router.use(verifyToken, verifyCsrfToken);
 
 router.get('/students/:role/:id', getStudents);
 

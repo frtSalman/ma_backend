@@ -15,6 +15,9 @@ import examRoutes from './routes/exam.route.js';
 import scheduleRoutes from './routes/studySchedule.route.js';
 import studentProgressRoutes from './routes/studentProgress.route.js';
 import studentVideosRoutes from './routes/studentVideos.route.js';
+import { generateTokenAndSetCookie } from './utils/generateTokenAndSetCookie.js';
+import { generateCSRFToken } from './utils/generateCSRFToken.js';
+import { verifyToken } from './middlewares/verifyToken.js';
 
 dotenv.config();
 const app = express();
@@ -23,18 +26,8 @@ const PORT = 5000;
 const allowedOrigins = [
     'https://app.teachflow.net',
     'https://api.teachflow.net',
-    'http://127.0.0.1:3000',
     'http://localhost:3000',
-    'http://localhost:3001',
-    'http://192.168.1.120:3000',
-    'http://192.168.1.121:3000',
-    'http://192.168.1.4:3000',
-    'http://192.168.1.108:3000',
-    'http://192.168.1.106:3000',
-    'http://192.168.1.109:3000',
-    'http://172.20.10.2:3000',
     'https://n8n.teachflow.net:5678',
-    'http://localhost:5678',
 ];
 
 app.use(express.json()); // allow us to parse incoming request from req.body
@@ -60,12 +53,15 @@ app.use(
             'Authorization',
             'X-Custom-Header',
             'AccessKey',
+            'X-CSRF-Token',
+            'X-XSRF-TOKEN',
         ],
     })
 );
 
-app.get('/', (req, res) => {
-    return res.json({ message: 'Welcome To My API' });
+app.get('/api/csrf-token', async (req, res) => {
+    await generateCSRFToken(res, req.userId);
+    res.json({ message: 'CSRF token set in cookies' });
 });
 
 app.use('/api/analysis', statisticRoutes);
@@ -90,7 +86,7 @@ app.use('/api/progress', studentProgressRoutes);
 
 app.use('/api/student-videos', studentVideosRoutes);
 
-db.sync({ alter: true })
+db.sync()
     .then(() =>
         app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)

@@ -50,8 +50,6 @@ export const getHomeworkStats = async (req, res) => {
             where: { homeworkId: id },
         });
 
-        console.log(stats);
-
         res.status(200).json({
             success: true,
             stats,
@@ -68,7 +66,6 @@ export const getHomeworkStats = async (req, res) => {
 
 export const deleteAllStats = async (req, res) => {
     const studentId = req.params.id;
-    console.trace(`Deleting all stats for studentId: ${req.params.id}`);
     try {
         await StatEntry.destroy({ where: { studentId } });
         res.json({

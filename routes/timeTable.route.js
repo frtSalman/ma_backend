@@ -1,4 +1,6 @@
 import express from 'express';
+import { verifyToken } from '../middlewares/verifyToken.js';
+import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 import {
     getSchedule,
     postSchedule,
@@ -7,6 +9,8 @@ import {
 } from '../controllers/timeTable.controller.js';
 
 const router = express.Router();
+
+router.use(verifyToken, verifyCsrfToken);
 
 router.get('/get-schedule/:studentId', getSchedule);
 

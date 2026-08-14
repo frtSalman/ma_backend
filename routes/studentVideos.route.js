@@ -1,4 +1,6 @@
 import express from 'express';
+import { verifyToken } from '../middlewares/verifyToken.js';
+import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 import {
     uploadVideoSourceURL,
     deleteVideoSourceURL,
@@ -9,6 +11,8 @@ import {
 } from '../controllers/studentVideos.controller.js';
 
 const router = express.Router();
+
+router.use(verifyToken, verifyCsrfToken);
 
 router.post('/video-questions', saveVideoQuestions);
 
