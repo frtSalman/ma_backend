@@ -8,6 +8,8 @@ export const verifyCsrfToken = (req, res, next) => {
     const csrfCookie = req.cookies?.['XSRF-TOKEN'];
     const csrfHeader = req.get('x-csrf-token') || req.get('X-XSRF-TOKEN') || '';
 
+    console.trace('verifyCsrfToken', csrfCookie, csrfHeader);
+
     if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
         return res.status(403).json({
             success: false,
