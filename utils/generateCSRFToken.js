@@ -16,7 +16,7 @@ export const generateCSRFToken = (res, userId) => {
         sameSite: isProd ? 'none' : 'lax',
         // ÖNEMLİ
         ...(isProd && {
-            domain: '.teachflow.net',
+            domain: 'app.teachflow.net',
         }),
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
