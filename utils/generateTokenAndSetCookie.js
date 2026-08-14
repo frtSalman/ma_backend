@@ -6,24 +6,12 @@ export const generateTokenAndSetCookie = (res, userId) => {
         expiresIn: '7d',
     });
 
-    const csrfToken = crypto.randomBytes(32).toString('hex');
-
     const isProd = process.env.NODE_ENV === 'production';
 
     res.cookie('token', token, {
         httpOnly: true,
         secure: isProd,
         sameSite: isProd ? 'none' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie('XSRF-TOKEN', csrfToken, {
-        httpOnly: false,
-        secure: isProd,
-        sameSite: isProd ? 'none' : 'lax',
-        ...(isProd && {
-            domain: '.teachflow.net',
-        }),
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
