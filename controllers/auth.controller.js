@@ -416,7 +416,7 @@ export const login = async (req, res) => {
             });
         }
 
-        generateTokenAndSetCookie(res, user.id);
+        await generateTokenAndSetCookie(res, user.id);
 
         user.lastLogin = new Date();
         await user.save();

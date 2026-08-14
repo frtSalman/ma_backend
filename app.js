@@ -60,8 +60,11 @@ app.use(
 );
 
 app.get('/api/csrf-token', async (req, res) => {
-    await generateCSRFToken(res, req.userId);
-    res.json({ message: 'CSRF token set in cookies' });
+    const { csrfToken } = await generateCSRFToken(res, req.userId);
+    res.json({
+        message: 'CSRF token set in cookies',
+        csrfToken,
+    });
 });
 
 app.use('/api/analysis', statisticRoutes);
