@@ -6,7 +6,7 @@ export const verifyCsrfToken = (req, res, next) => {
     }
 
     const csrfCookie = req.cookies?.['XSRF-TOKEN'];
-    const csrfHeader = req.get('x-csrf-token') || req.get('x-xsrf-token') || '';
+    const csrfHeader = req.get('x-csrf-token') || req.get('X-XSRF-TOKEN') || '';
 
     if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
         return res.status(403).json({
