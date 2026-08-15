@@ -24,7 +24,7 @@ router.get('/get-unsolved-question-path', getUQURL);
 
 router.delete('/delete-unsolved-question-path/:path', deleteUQURL);
 
-router.delete(
+router.post(
     '/delete-all-unsolved-questions/:studentId/:studentName',
     deleteAllUQURL
 );
