@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 export const generateCSRFToken = res => {

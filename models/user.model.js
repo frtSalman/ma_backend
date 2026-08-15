@@ -157,6 +157,11 @@ Users.associate = models => {
     Users.hasMany(models.StudentVideos, { foreignKey: 'studentId' });
     Users.hasMany(models.StudySchedule, { foreignKey: 'studentId' });
     Users.hasMany(models.StudySchedule, { foreignKey: 'teacherId' });
+    Users.hasMany(models.Subscription, {
+        foreignKey: 'userId',
+        as: 'subscriptions',
+        onDelete: 'CASCADE',
+    });
 };
 
 export default Users;

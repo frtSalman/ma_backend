@@ -5,8 +5,6 @@ import { getSolution } from '../controllers/solution.controller.js';
 
 const router = express.Router();
 
-router.use(verifyToken, verifyCsrfToken);
-
 router.get('/:qId', getSolution);
 
 export default router;

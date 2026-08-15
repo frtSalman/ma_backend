@@ -15,6 +15,7 @@ import examRoutes from './routes/exam.route.js';
 import scheduleRoutes from './routes/studySchedule.route.js';
 import studentProgressRoutes from './routes/studentProgress.route.js';
 import studentVideosRoutes from './routes/studentVideos.route.js';
+import subscribeRoutes from './routes/subdcribe.route.js';
 import { generateTokenAndSetCookie } from './utils/generateTokenAndSetCookie.js';
 import { generateCSRFToken } from './utils/generateCSRFToken.js';
 import { verifyToken } from './middlewares/verifyToken.js';
@@ -88,6 +89,8 @@ app.use('/api/schedule', scheduleRoutes);
 app.use('/api/progress', studentProgressRoutes);
 
 app.use('/api/student-videos', studentVideosRoutes);
+
+app.use('/api/subscribe', subscribeRoutes);
 
 db.sync()
     .then(() =>
