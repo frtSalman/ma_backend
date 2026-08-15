@@ -228,19 +228,11 @@ export const uploadUQ = async (req, res) => {
 */
 
 export const deleteUQURL = async (req, res) => {
-    const { path } = req.params;
-
-    const imageUrl = `https://cdn.teachflow.net/${path}`;
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${path}`;
-
-    console.trace(path, imageUrl);
+    const { id } = req.params;
 
     try {
-        // 1. Önce DB'de soruyu bul
-        const question = await UnsolvedQuestion.findOne({
-            where: { imageUrl },
-            attributes: ['id'],
-        });
+        // 1. DB'den soruyu ID ile bul
+        const question = await UnsolvedQuestion.findByPk(id);
 
         if (!question) {
             return res.status(404).json({
@@ -249,7 +241,13 @@ export const deleteUQURL = async (req, res) => {
             });
         }
 
-        // 2. Bunny Storage'daki dosyayı sil
+        // 2. DB'deki imageUrl'den Bunny path'i çıkar
+        const imageUrl = question.imageUrl;
+        const filePath = new URL(imageUrl).pathname.substring(1);
+
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${filePath}`;
+
+        // 3. Bunny'den sil
         const bunnyResponse = await fetch(deleteUrl, {
             method: 'DELETE',
             headers: {
@@ -257,7 +255,6 @@ export const deleteUQURL = async (req, res) => {
             },
         });
 
-        // Bunny'den 2xx dışında bir cevap geldiyse işlemi başarısız say
         if (!bunnyResponse.ok) {
             const bunnyError = await bunnyResponse.text();
 
@@ -273,21 +270,20 @@ export const deleteUQURL = async (req, res) => {
             );
         }
 
-        // 3. Solution kaydını sil
+        // 4. Solution'ı sil
         await Solution.destroy({
             where: {
                 qId: question.id,
             },
         });
 
-        // 4. UnsolvedQuestion kaydını sil
+        // 5. Soru DB kaydını sil
         await UnsolvedQuestion.destroy({
             where: {
                 id: question.id,
             },
         });
 
-        // 5. Başarılı
         return res.json({
             success: true,
             message: 'Soru ve bağlı çözümü silindi.',
