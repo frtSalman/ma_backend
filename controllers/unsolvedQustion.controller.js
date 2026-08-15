@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import models from '../models/index.model.js';
+import Users from '../models/user.model.js';
 
 const { Solution, UnsolvedQuestion } = models;
 
@@ -303,11 +304,13 @@ export const deleteUQURL = async (req, res) => {
 };
 
 export const deleteAllUQURL = async (req, res) => {
-    const { studentName, studentId } = req.params;
-
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/unsolved-quetions`;
+    const { studentId } = req.params;
 
     try {
+        const student = await Users.findOne({ where: { id: studentId } });
+
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student.name}/unsolved-quetions`;
+
         // 1. Öğrencinin tüm çözülemeyen sorularını bul
         const questions = await UnsolvedQuestion.findAll({
             where: { studentId },
