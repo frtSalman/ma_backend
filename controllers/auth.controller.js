@@ -418,8 +418,6 @@ export const login = async (req, res) => {
 
         await generateTokenAndSetCookie(res, user.id);
 
-        console.trace(res.cookie.token);
-
         user.lastLogin = new Date();
         await user.save();
 

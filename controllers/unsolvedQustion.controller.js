@@ -233,6 +233,8 @@ export const deleteUQURL = async (req, res) => {
     const imageUrl = `https://cdn.teachflow.net/${path}`;
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${path}`;
 
+    console.trace(path, imageUrl);
+
     try {
         // 1. Önce DB'de soruyu bul
         const question = await UnsolvedQuestion.findOne({
