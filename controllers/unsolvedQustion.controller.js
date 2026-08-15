@@ -229,12 +229,15 @@ export const uploadUQ = async (req, res) => {
 
 export const deleteUQURL = async (req, res) => {
     const { path } = req.params;
+
     const imageUrl = `https://cdn.teachflow.net/${path}`;
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${path}`;
 
     try {
+        // 1. Önce DB'de soruyu bul
         const question = await UnsolvedQuestion.findOne({
             where: { imageUrl },
+            attributes: ['id'],
         });
 
         if (!question) {
@@ -244,68 +247,117 @@ export const deleteUQURL = async (req, res) => {
             });
         }
 
-        await Solution.destroy({
-            where: { qId: question.id },
-        });
-
-        await UnsolvedQuestion.destroy({
-            where: { id: question.id },
-        });
-
-        await fetch(deleteUrl, {
+        // 2. Bunny Storage'daki dosyayı sil
+        const bunnyResponse = await fetch(deleteUrl, {
             method: 'DELETE',
             headers: {
                 AccessKey: KEY,
             },
         });
 
+        // Bunny'den 2xx dışında bir cevap geldiyse işlemi başarısız say
+        if (!bunnyResponse.ok) {
+            const bunnyError = await bunnyResponse.text();
+
+            console.error('Bunny Storage silme hatası:', {
+                status: bunnyResponse.status,
+                statusText: bunnyResponse.statusText,
+                response: bunnyError,
+                deleteUrl,
+            });
+
+            throw new Error(
+                `Bunny Storage ${bunnyResponse.status}: ${bunnyError}`
+            );
+        }
+
+        // 3. Solution kaydını sil
+        await Solution.destroy({
+            where: {
+                qId: question.id,
+            },
+        });
+
+        // 4. UnsolvedQuestion kaydını sil
+        await UnsolvedQuestion.destroy({
+            where: {
+                id: question.id,
+            },
+        });
+
+        // 5. Başarılı
         return res.json({
             success: true,
             message: 'Soru ve bağlı çözümü silindi.',
         });
     } catch (error) {
-        console.trace(error.message);
+        console.error('deleteUQURL error:', error);
+
         return res.status(500).json({
             success: false,
-            message: 'Sunucu hatası oluştu.',
+            message: 'Soru silinirken sunucu hatası oluştu.',
+            error:
+                process.env.NODE_ENV === 'development'
+                    ? error.message
+                    : undefined,
         });
     }
 };
 
 export const deleteAllUQURL = async (req, res) => {
     const { studentName, studentId } = req.params;
+
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/unsolved-quetions`;
 
     try {
+        // 1. Öğrencinin tüm çözülemeyen sorularını bul
         const questions = await UnsolvedQuestion.findAll({
-            where: { studentId: studentId },
+            where: { studentId },
+            attributes: ['id'],
         });
 
-        await fetch(deleteUrl, {
+        // 2. Bunny Storage klasörünü sil
+        const bunnyResponse = await fetch(deleteUrl, {
             method: 'DELETE',
             headers: {
                 AccessKey: KEY,
             },
         });
 
-        const deletePromises = questions.map(q => {
-            return Solution.destroy({
-                where: { qId: q.id },
+        if (!bunnyResponse.ok) {
+            const bunnyError = await bunnyResponse.text();
+
+            throw new Error(
+                `Bunny silme işlemi başarısız: ${bunnyResponse.status} ${bunnyError}`
+            );
+        }
+
+        // 3. Solution kayıtlarını sil
+        if (questions.length > 0) {
+            const questionIds = questions.map(q => q.id);
+
+            await Solution.destroy({
+                where: {
+                    qId: questionIds,
+                },
             });
-        });
+        }
 
-        await Promise.allSettled(deletePromises);
-
-        res.json({
+        // 4. Başarılı
+        return res.json({
             success: true,
             message: `${studentName} adlı öğrencinin tüm çözülemeyen soruları silindi.`,
         });
     } catch (error) {
-        console.trace(error.message);
-        res.status(500).json({
-            // 500 Internal Server Error
+        console.error('deleteAllUQURL error:', error);
+
+        return res.status(500).json({
             success: false,
-            message: 'Sunucu hatası oluştu.',
+            message: 'Çözülemeyen sorular silinirken sunucu hatası oluştu.',
+            error:
+                process.env.NODE_ENV === 'development'
+                    ? error.message
+                    : undefined,
         });
     }
 };
