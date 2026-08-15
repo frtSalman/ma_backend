@@ -311,7 +311,7 @@ export const deleteAllUQURL = async (req, res) => {
     try {
         const student = await Users.findOne({ where: { id: studentId } });
 
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student.name}/unsolved-quetions`;
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student.name}/unsolved-questions`;
 
         console.trace(deleteUrl);
 
