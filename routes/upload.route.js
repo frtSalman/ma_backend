@@ -22,7 +22,7 @@ router.put('/update-unsolved-question-view', updateUQAppearance);
 
 router.get('/get-unsolved-question-path', getUQURL);
 
-router.delete('/delete-unsolved-question-path/:id', deleteUQURL);
+router.delete('/delete-unsolved-question/:id', deleteUQURL);
 
 router.post(
     '/delete-all-unsolved-questions/:studentId/:studentName',
