@@ -61,7 +61,7 @@ app.use(
 );
 
 app.get('/api/csrf-token', async (req, res) => {
-    const { csrfToken } = await generateCSRFToken(res);
+    const csrfToken = await generateCSRFToken(res);
     res.json({
         message: 'CSRF token set in cookies',
         csrfToken,
