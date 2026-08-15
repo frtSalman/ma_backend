@@ -306,10 +306,14 @@ export const deleteUQURL = async (req, res) => {
 export const deleteAllUQURL = async (req, res) => {
     const { studentId } = req.params;
 
+    console.trace(studentId);
+
     try {
         const student = await Users.findOne({ where: { id: studentId } });
 
         const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student.name}/unsolved-quetions`;
+
+        console.trace(deleteURL);
 
         // 1. Öğrencinin tüm çözülemeyen sorularını bul
         const questions = await UnsolvedQuestion.findAll({
