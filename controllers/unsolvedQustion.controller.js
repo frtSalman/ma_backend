@@ -1,10 +1,12 @@
-import UnsolvedQuestion from '../models/unsolvedQuesiton.model.js';
 import PDFDocument from 'pdfkit';
 import axios from 'axios'; // Ensure axios is installed: npm install axios
 import sharp from 'sharp';
-
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import models from '../models/index.model.js';
+
+const { Solution, UnsolvedQuestion } = models;
 
 // ES Modülleri kullandığınız için __dirname tanımlayalım
 const __filename = fileURLToPath(import.meta.url);
@@ -226,12 +228,28 @@ export const uploadUQ = async (req, res) => {
 */
 
 export const deleteUQURL = async (req, res) => {
-    const path = req.params.path;
+    const { path } = req.params;
+    const imageUrl = `https://cdn.teachflow.net/${path}`;
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${path}`;
 
     try {
+        const question = await UnsolvedQuestion.findOne({
+            where: { imageUrl },
+        });
+
+        if (!question) {
+            return res.status(404).json({
+                success: false,
+                message: 'Silinecek soru bulunamadı.',
+            });
+        }
+
+        await Solution.destroy({
+            where: { qId: question.id },
+        });
+
         await UnsolvedQuestion.destroy({
-            where: { imageUrl: `https://cdn.teachflow.net/${path}` },
+            where: { id: question.id },
         });
 
         await fetch(deleteUrl, {
@@ -241,14 +259,13 @@ export const deleteUQURL = async (req, res) => {
             },
         });
 
-        res.json({
+        return res.json({
             success: true,
-            message: 'Fotoğraf silindi.',
+            message: 'Soru ve bağlı çözümü silindi.',
         });
     } catch (error) {
         console.trace(error.message);
-        res.status(500).json({
-            // 500 Internal Server Error
+        return res.status(500).json({
             success: false,
             message: 'Sunucu hatası oluştu.',
         });
@@ -260,7 +277,7 @@ export const deleteAllUQURL = async (req, res) => {
     const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/unsolved-quetions`;
 
     try {
-        await UnsolvedQuestion.destroy({
+        const questions = await UnsolvedQuestion.findAll({
             where: { studentId: studentId },
         });
 
@@ -270,6 +287,14 @@ export const deleteAllUQURL = async (req, res) => {
                 AccessKey: KEY,
             },
         });
+
+        const deletePromises = questions.map(q => {
+            return Solution.destroy({
+                where: { qId: q.id },
+            });
+        });
+
+        await Promise.allSettled(deletePromises);
 
         res.json({
             success: true,
