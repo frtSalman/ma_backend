@@ -126,6 +126,8 @@ export const uploadUQ = async (req, res) => {
             return {
                 filePath: uniqueName,
                 qId: unsolvedQuestion.id,
+                studentId,
+                teacherId,
             };
         });
 
