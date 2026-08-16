@@ -33,7 +33,6 @@ export const getStudentStats = async (req, res) => {
             stats,
         });
     } catch (error) {
-        console.trace(error.message);
         res.status(500).json({
             // 500 Internal Server Error
             success: false,
