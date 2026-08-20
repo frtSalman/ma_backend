@@ -217,7 +217,8 @@ export const uploadExam = async (req, res) => {
 
         await teacher.increment({ aiAnalysedExamNum: results.length });
 
-        await subscription.increment({ aiAnalysedExamNum: results.length });
+        if (subscription)
+            await subscription.increment({ aiAnalysedExamNum: results.length });
 
         const successful = results.filter(
             result => result.status === 'fulfilled'

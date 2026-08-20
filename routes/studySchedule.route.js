@@ -1,13 +1,14 @@
 import express from 'express';
 import {
-    getSchedules,
+    getAllSchedules,
     createSchedule,
     updateSchedule,
     deleteSchedule,
     updateScheduleStatus,
     deleteAllSchedule, // Import the new controller function
     createSchedulePDF,
-    createBulkSchedule, // Import the new controller function
+    createBulkSchedule,
+    getStudentSchedules, // Import the new controller function
 } from '../controllers/studySchedule.controller.js';
 import { verifyPayment } from '../middlewares/verifyPayment.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -17,7 +18,8 @@ const router = express.Router();
 
 router.use(verifyToken, verifyCsrfToken);
 
-router.get('/get-schedules', getSchedules);
+router.get('/get-all-schedules', getAllSchedules);
+router.get('/get-student-schedules/:studentId', getStudentSchedules);
 router.post('/create-schedule', verifyPayment, createSchedule);
 router.post('/create-bulk-schedule', verifyPayment, createBulkSchedule);
 router.post(

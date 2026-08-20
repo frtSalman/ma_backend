@@ -35,25 +35,28 @@ const weekDays = [
     'Pazar',
 ];
 
-export const getSchedules = async (req, res) => {
+export const getAllSchedules = async (req, res) => {
     try {
-        const { role, userId, studentId } = req.query;
-        let whereClause = {};
+        const teacherId = req.userId;
 
-        // If a specific student ID is requested, fetch their schedules
-        if (studentId) {
-            whereClause.studentId = studentId;
-        }
-        // Fallback for general fetch based on role and userId
-        else if (userId) {
-            if (role === 'teacher') {
-                whereClause.teacherId = userId;
-            } else {
-                whereClause.studentId = userId;
-            }
-        }
+        const schedules = await StudySchedule.findAll({ where: { teacherId } });
+        return res.status(200).json({ schedules });
+    } catch (error) {
+        console.error('Error fetching schedules:', error);
+        return res
+            .status(500)
+            .json({ message: 'Sunucu hatası: Programlar getirilemedi.' });
+    }
+};
 
-        const schedules = await StudySchedule.findAll({ where: whereClause });
+export const getStudentSchedules = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const teacherId = req.userId;
+
+        const schedules = await StudySchedule.findAll({
+            where: { teacherId, studentId },
+        });
         return res.status(200).json({ schedules });
     } catch (error) {
         console.error('Error fetching schedules:', error);
