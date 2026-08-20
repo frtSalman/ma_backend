@@ -91,23 +91,24 @@ export const uploadExam = async (req, res) => {
     }
 
     try {
+        const teacher = await Users.findOne({
+            where: { id: teacherId },
+        });
+
         const subscription = await Subscription.findOne({
             where: { userId: teacherId },
             order: [['createdAt', 'DESC']],
         });
 
         if (
+            teacher.accountType === 'normal' &&
             subscription.aiAnalysedExamNum >=
-            subscription.aiAnalysedExamNumQuota
+                subscription.aiAnalysedExamNumQuota
         )
             return;
 
         const student = await Users.findOne({
             where: { id: studentId },
-        });
-
-        const teacher = await Users.findOne({
-            where: { id: teacherId },
         });
 
         if (teacher.role !== 'teacher') return;
