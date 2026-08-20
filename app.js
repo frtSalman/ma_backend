@@ -32,6 +32,11 @@ const allowedOrigins = [
     'https://n8n.teachflow.net:5678',
 ];
 
+const allowedPaymentCallbackOrigins = [
+    'https://sandbox-api.iyzipay.com',
+    'https://api.iyzipay.com',
+];
+
 app.use(express.json()); // allow us to parse incoming request from req.body
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // allow us to parse incoming cookies
@@ -43,6 +48,13 @@ app.use(
         callback(null, {
             origin: (origin, done) => {
                 if (!origin || (is3DSCallback && origin === 'null')) {
+                    return done(null, true);
+                }
+
+                if (
+                    is3DSCallback &&
+                    allowedPaymentCallbackOrigins.includes(origin)
+                ) {
                     return done(null, true);
                 }
 
