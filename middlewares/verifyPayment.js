@@ -5,6 +5,8 @@ const { Users, Subscription } = models;
 export const verifyPayment = async (req, res, next) => {
     const userId = req.userId;
 
+    console.trace(req.userId);
+
     if (!userId) {
         return res.status(401).json({
             success: false,
@@ -19,12 +21,16 @@ export const verifyPayment = async (req, res, next) => {
             return next();
         }
 
+        if (user.accountType === 'admin') {
+            return next();
+        }
+
         const subscription = await Subscription.findOne({
             where: { userId },
             order: [['createdAt', 'DESC']],
         });
 
-        if (!subscription && user.accountType === 'normal') {
+        if (!subscription && user.accountType === 'admin') {
             return res.status(403).json({
                 success: false,
                 message: 'Lütfen bir ödeme planı seçip kayıt olunuz.',
