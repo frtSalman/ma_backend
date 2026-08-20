@@ -196,12 +196,12 @@ export const initializePayment = async (req, res) => {
             });
         }
 
-        const nameArr = teacher.name.split(' ');
-        const name = nameArr[0];
-        const surname = teacher.surName || nameArr[nameArr.length - 1];
+        const teacherName = teacher.name + ' ' + teacher.surname;
 
-        const teacherGsm = String(teacher.gsm ?? '').replace(/\D/g, '');
-        const normalizedGsm = `+90${teacherGsm.slice(-10)}`;
+        const rawGsm = teacher.gsm || gsm;
+        const normalizedGsm = rawGsm
+            ? `+90${String(rawGsm).replace(/\D/g, '').slice(-10)}`
+            : null;
 
         const callbackUrl = new URL(paymentCallbackUrl);
         callbackUrl.searchParams.set('conversationId', conversationId);
@@ -228,9 +228,9 @@ export const initializePayment = async (req, res) => {
             buyer: {
                 //alıcı bilgileri
                 id: teacher.id,
-                name,
-                surname,
-                gsmNumber: gsm || teacher.gsm,
+                name: teacher.name,
+                surname: teacher.surname,
+                gsmNumber: normalizedGsm,
                 email: teacher.email,
                 identityNumber: tcNo || teacher.tcNo,
                 registrationAddress: address || teacher.address,
@@ -239,7 +239,7 @@ export const initializePayment = async (req, res) => {
             },
             billingAddress: {
                 //alıcı fatura adresi
-                contactName: teacher.name,
+                contactName: teacherName,
                 city: teacher.city,
                 country: 'Turkey',
                 address: address || teacher.address,
