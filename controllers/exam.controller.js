@@ -430,9 +430,9 @@ export const deleteExamURL = async (req, res) => {
 
         //const safeStudentName = studentName.replace(/\s+/g, '-');
 
-        console.trace(path);
+        console.trace(path); //b7858981-9bd4-4722-be31-b6672a1cc834-Exam_result-exam-1.pdf
 
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/${path}`;
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/examResults/${path}`;
 
         await Exam.destroy({
             where: { id },
