@@ -10,8 +10,12 @@ import {
     createBulkSchedule, // Import the new controller function
 } from '../controllers/studySchedule.controller.js';
 import { verifyPayment } from '../middlewares/verifyPayment.js';
+import { verifyToken } from '../middlewares/verifyToken.js';
+import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 
 const router = express.Router();
+
+router.use(verifyToken, verifyCsrfToken);
 
 router.get('/get-schedules', getSchedules);
 router.post('/create-schedule', verifyPayment, createSchedule);

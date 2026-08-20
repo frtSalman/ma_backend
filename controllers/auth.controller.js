@@ -438,7 +438,7 @@ export const login = async (req, res) => {
             });
         }
 
-        await generateTokenAndSetCookie(res, user.id);
+        generateTokenAndSetCookie(res, user.id);
 
         user.lastLogin = new Date();
         await user.save();
