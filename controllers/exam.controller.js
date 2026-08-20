@@ -428,9 +428,11 @@ export const deleteExamURL = async (req, res) => {
 
         const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
-        const safeStudentName = studentName.replace(/\s+/g, '-');
+        //const safeStudentName = studentName.replace(/\s+/g, '-');
 
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${safeStudentName}/${path}`;
+        console.trace(path);
+
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/${path}`;
 
         await Exam.destroy({
             where: { id },
