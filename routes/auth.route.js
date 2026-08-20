@@ -11,7 +11,6 @@ import {
     sendStudentInvitation,
     sendParentInvitation,
     updateAccount,
-    teacherSignup,
     parentSignup,
 } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -27,7 +26,7 @@ router.post('/student-signup/:token', studentSignup);
 
 router.post('/parent-signup/:token', parentSignup);
 
-router.post('/teacher-signup/:token', teacherSignup);
+//router.post('/teacher-signup/:token', teacherSignup);
 
 router.post(
     '/send-student-invitation',

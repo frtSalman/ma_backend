@@ -21,6 +21,28 @@ const BUNNY_ZONE = 'teachflow';
 
 const baseHost = 'storage.bunnycdn.com';
 
+const getPlaylistPosition = video => {
+    const position = video.playList?.position;
+    return Number.isInteger(position) ? position : Number.MAX_SAFE_INTEGER;
+};
+
+const sortVideoSources = (firstVideo, secondVideo) => {
+    const subjectCompare = firstVideo.subject.localeCompare(
+        secondVideo.subject
+    );
+    if (subjectCompare !== 0) return subjectCompare;
+
+    const firstPlaylistId = firstVideo.playList?.id || '';
+    const secondPlaylistId = secondVideo.playList?.id || '';
+    if (firstPlaylistId && firstPlaylistId === secondPlaylistId) {
+        const positionCompare =
+            getPlaylistPosition(firstVideo) - getPlaylistPosition(secondVideo);
+        if (positionCompare !== 0) return positionCompare;
+    }
+
+    return new Date(firstVideo.createdAt) - new Date(secondVideo.createdAt);
+};
+
 export const getVideoSources = async (req, res) => {
     const { studentId } = req.params;
     try {
@@ -33,13 +55,18 @@ export const getVideoSources = async (req, res) => {
 
         const videos = await StudentVideos.findAll({
             where: { studentId },
-            order: [['subject', 'ASC']],
+            order: [
+                ['subject', 'ASC'],
+                ['createdAt', 'ASC'],
+            ],
         });
+
+        const sortedVideos = videos.sort(sortVideoSources);
 
         return res.status(200).json({
             success: true,
             message: 'Video kaynakları getirildi.',
-            videos,
+            videos: sortedVideos,
         });
     } catch (error) {
         console.trace(error.message);
@@ -78,6 +105,7 @@ export const getVideoQuestions = async (req, res) => {
     }
 };
 
+/* 
 export const uploadVideoSourceURL = async (req, res) => {
     // Destructure the new type and ytId parameters sent from the frontend
     const { studentId, subject, url, type, ytId, name } = req.body;
@@ -196,6 +224,249 @@ export const uploadVideoSourceURL = async (req, res) => {
                                     lastConfirmedMoment: 0,
                                     playList: {
                                         id: ytId,
+                                        playlistTitle:
+                                            name ||
+                                            item.snippet
+                                                .videoOwnerChannelTitle +
+                                                ' Oynatma Listesi ' +
+                                                playListId,
+                                    },
+                                });
+                            }
+                        }
+                    } catch (apiError) {
+                        console.error(
+                            'YouTube API error: ',
+                            apiError.response?.data || apiError.message
+                        );
+                        // Stop and return an error if a chunk fails.
+                        return res.status(500).json({
+                            success: false,
+                            message:
+                                'YouTube video detayları alınırken bir hata oluştu.',
+                        });
+                    }
+                }
+            }
+
+            // If there are videos to insert, add them in a single batch
+            if (newVideosToInsert.length > 0) {
+                await StudentVideos.bulkCreate(newVideosToInsert);
+            } else {
+                return res.json({
+                    success: false,
+                    message:
+                        'Listedeki tüm geçerli videolar zaten eklenmiş veya liste boş.',
+                });
+            }
+        } else {
+            // Standard single video upload logic
+            const isVideoAlreadyAdded = videos.some(
+                videoItem => videoItem.url === url
+            );
+
+            if (isVideoAlreadyAdded) {
+                return res.json({
+                    success: false,
+                    message: 'Bu video kaynağı zaten eklenmiş.',
+                });
+            }
+
+            if (!ytId) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        'Tekli video yüklemek için video IDsi (ytId) gerekli.',
+                });
+            }
+
+            const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ytId}&key=${ytApiKey}`;
+
+            try {
+                const detailsResponse = await axios.get(ytDetailsUrl);
+                if (
+                    !detailsResponse.data.items ||
+                    detailsResponse.data.items.length === 0
+                ) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'YouTube videosu bulunamadı.',
+                    });
+                }
+
+                const videoDetails =
+                    detailsResponse.data.items[0].contentDetails;
+                const durationInSeconds = parseISO8601Duration(
+                    videoDetails.duration
+                );
+
+                await StudentVideos.create({
+                    sourceName: name,
+                    url,
+                    isWatched: false,
+                    studentId,
+                    subject,
+                    duration: durationInSeconds,
+                    lastConfirmedMoment: 0,
+                });
+            } catch (apiError) {
+                console.error(
+                    'YouTube API error: ',
+                    apiError.response?.data || apiError.message
+                );
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        'YouTube video detayları alınırken bir hata oluştu.',
+                });
+            }
+        }
+
+        res.json({
+            success: true,
+            message:
+                type === 'playlist'
+                    ? 'Oynatma listesi başarıyla eklendi.'
+                    : 'Video kaynağı oluşturuldu.',
+        });
+    } catch (error) {
+        console.error(
+            'Video upload error: ',
+            error.response?.data || error.message
+        );
+        res.status(500).json({
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
+ */
+
+export const uploadVideoSourceURL = async (req, res) => {
+    // Destructure the new type and ytId parameters sent from the frontend
+    const { studentId, subject, url, type, ytId, name } = req.body;
+
+    try {
+        if (!studentId) {
+            return res.status(404).json({
+                success: false,
+                message: 'Öğrenci bulunamadı.',
+            });
+        }
+
+        const videos = await StudentVideos.findAll({
+            where: { studentId, subject },
+        });
+
+        const ytApiKey = process.env.YOUTUBE_API_KEY;
+        if (!ytApiKey) {
+            return res.status(500).json({
+                success: false,
+                message: 'YouTube API anahtarı yapılandırılmamış.',
+            });
+        }
+
+        if (type === 'playlist' && ytId) {
+            const playListId = new Date().getTime(); // Generate a unique playlist ID based on timestamp
+
+            let allPlaylistItems = [];
+            let nextPageToken = '';
+            let fetchMore = true;
+
+            // Fetch all videos in the playlist, handling YouTube's 50-item pagination limit
+            while (fetchMore) {
+                const pageTokenParam = nextPageToken
+                    ? `&pageToken=${nextPageToken}`
+                    : '';
+                const ytApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${ytId}&key=${ytApiKey}${pageTokenParam}`;
+
+                try {
+                    const response = await axios.get(ytApiUrl);
+                    allPlaylistItems = allPlaylistItems.concat(
+                        response.data.items
+                    );
+                    nextPageToken = response.data.nextPageToken;
+                    if (!nextPageToken) fetchMore = false;
+                } catch (playlistError) {
+                    console.error(
+                        'YouTube playlist fetch error: ',
+                        playlistError.response?.data || playlistError.message
+                    );
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            'YouTube oynatma listesi alınırken bir hata oluştu. IDyi kontrol edin.',
+                    });
+                }
+            }
+
+            let newVideosToInsert = [];
+
+            const newVideoItems = allPlaylistItems.reduce(
+                (items, item, index) => {
+                    const title = item.snippet.title;
+                    if (
+                        !item.snippet.resourceId ||
+                        !item.snippet.resourceId.videoId
+                    ) {
+                        return items;
+                    }
+                    const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
+                    const isVideoAlreadyAdded = videos.some(
+                        videoItem => videoItem.url === videoUrl
+                    );
+                    if (
+                        !isVideoAlreadyAdded &&
+                        title !== 'Private video' &&
+                        title !== 'Deleted video'
+                    ) {
+                        items.push({ item, position: index });
+                    }
+                    return items;
+                },
+                []
+            );
+
+            if (newVideoItems.length > 0) {
+                const CHUNK_SIZE = 50;
+                for (let i = 0; i < newVideoItems.length; i += CHUNK_SIZE) {
+                    const chunk = newVideoItems.slice(i, i + CHUNK_SIZE);
+                    const videoIds = chunk
+                        .map(({ item }) => item.snippet.resourceId.videoId)
+                        .join(',');
+
+                    const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${ytApiKey}`;
+
+                    try {
+                        const detailsResponse = await axios.get(ytDetailsUrl);
+                        const videoDetailsMap = new Map(
+                            detailsResponse.data.items.map(item => [
+                                item.id,
+                                item.contentDetails,
+                            ])
+                        );
+
+                        for (const { item, position } of chunk) {
+                            const videoId = item.snippet.resourceId.videoId;
+                            const videoDetails = videoDetailsMap.get(videoId);
+                            if (videoDetails) {
+                                const durationInSeconds = parseISO8601Duration(
+                                    videoDetails.duration
+                                );
+                                const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                                const title = item.snippet.title;
+
+                                newVideosToInsert.push({
+                                    sourceName: title,
+                                    url: videoUrl,
+                                    isWatched: false,
+                                    studentId,
+                                    subject,
+                                    duration: durationInSeconds,
+                                    lastConfirmedMoment: 0,
+                                    playList: {
+                                        id: ytId,
+                                        position,
                                         playlistTitle:
                                             name ||
                                             item.snippet

@@ -218,6 +218,14 @@ export const uploadBookSource = async (req, res) => {
     const file = req.file;
 
     try {
+        const teacher = await Users.findOne({
+            where: { id: req.userId },
+        });
+
+        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+
+        if (teacher.role !== 'teacher') return;
+
         const student = await Users.findOne({
             where: { id: studentId, role: 'student' },
         });
@@ -237,7 +245,7 @@ export const uploadBookSource = async (req, res) => {
             const fileNameToUse = file.originalname || file.name;
             const uniqueName = `${Date.now()}-${fileNameToUse}`;
 
-            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/book_sources/${subject}/${uniqueName}`;
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/book_sources/${subject}/${uniqueName}`;
             pullZoneURL = `https://cdn.teachflow.net/${studentName}/book_sources/${subject}/${uniqueName}`;
 
             await axios.put(uploadUrl, file.buffer, {
@@ -305,23 +313,28 @@ export const uploadBookSource = async (req, res) => {
 export const deleteBookSource = async (req, res) => {
     const { path, studentName, studentId, pullZoneURL, subject, sourceName } =
         req.body;
-
-    if (path) {
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${studentName}/book_sources/${subject}/${path}`;
-
-        try {
-            await fetch(deleteUrl, {
-                method: 'DELETE',
-                headers: { AccessKey: KEY },
-            });
-        } catch (cdnError) {
-            console.log(
-                'File not found on CDN or CDN error, proceeding to DB deletion...'
-            );
-        }
-    }
-
     try {
+        const teacher = await Users.findOne({
+            where: { id: req.userId },
+        });
+
+        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+
+        if (path) {
+            const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/book_sources/${subject}/${path}`;
+
+            try {
+                await fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: { AccessKey: KEY },
+                });
+            } catch (cdnError) {
+                console.log(
+                    'File not found on CDN or CDN error, proceeding to DB deletion...'
+                );
+            }
+        }
+
         const student = await Users.findOne({
             where: { id: studentId, role: 'student' },
         });
@@ -370,6 +383,12 @@ export const uploadVideoSourceURL = async (req, res) => {
     const { studentId, subject, url, type, ytId, name } = req.body;
 
     try {
+        const teacher = await Users.findOne({
+            where: { id: req.userId },
+        });
+
+        if (teacher.role !== 'teacher') return;
+
         const student = await Users.findOne({
             where: { id: studentId, role: 'student' },
         });
@@ -515,6 +534,12 @@ export const deleteVideoSourceURL = async (req, res) => {
     const { url, videoSubject, studentId, playlistId } = req.body;
 
     try {
+        const teacher = await Users.findOne({
+            where: { id: req.userId },
+        });
+
+        if (teacher.role !== 'teacher') return;
+
         const student = await Users.findOne({
             where: { id: studentId, role: 'student' },
         });

@@ -12,6 +12,7 @@ import StudentVideos from './studentVideos.model.js';
 import StudentVideoQuestions from './studentVideoQuestions.model.js';
 import StudySchedule from './studySchedule.model.js';
 import Subscription from './subscription.model.js';
+import Payment from './payment.model.js';
 
 const models = {
     Users,
@@ -28,6 +29,7 @@ const models = {
     StudentVideoQuestions,
     StudySchedule,
     Subscription,
+    Payment,
 };
 
 Object.values(models).forEach(model => {

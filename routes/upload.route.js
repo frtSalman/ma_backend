@@ -10,13 +10,19 @@ import {
     createTestPDF,
     deleteAllUQURL,
 } from '../controllers/unsolvedQustion.controller.js';
+import { verifyPayment } from '../middlewares/verifyPayment.js';
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.use(verifyToken, verifyCsrfToken);
 
-router.post('/add-unsolved-question-path', upload.array('files'), uploadUQ);
+router.post(
+    '/add-unsolved-question-path',
+    verifyPayment,
+    upload.array('files'),
+    uploadUQ
+);
 
 router.put('/update-unsolved-question-view', updateUQAppearance);
 

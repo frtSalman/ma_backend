@@ -97,11 +97,14 @@ export const uploadUQ = async (req, res) => {
     }
 
     try {
+        const teacher = await Users.findOne({ where: { id: teacherId } });
+        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+
         // Promise.all kullanarak tüm dosyaları BunnyCDN'e paralel olarak yüklüyoruz.
         // Bu sayede 3 fotoğraf yüklemek 1 fotoğraf yüklemekle neredeyse aynı sürede biter.
         const uploadPromises = req.files.map(async (file, index) => {
             // İsim çakışmasını önlemek için index'i de ekliyoruz
-            const uniqueName = `${studentName}/unsolved-questions/${subject}/${topic}/${Date.now()}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
+            const uniqueName = `${teacherName}/${studentName}/unsolved-questions/${subject}/${topic}/${Date.now()}.webp`; // Frontend'de webp yapıldığını varsayıyoruz
 
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
             const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
@@ -136,7 +139,6 @@ export const uploadUQ = async (req, res) => {
 
         // Tüm paralel işlemlerin bitmesini bekle
         const uploadedData = await Promise.all(uploadPromises);
-
         // Frontend'e yüklenen tüm dosyaların bilgilerini dizi (array) olarak dön
         res.json({
             success: true,
@@ -310,8 +312,13 @@ export const deleteAllUQURL = async (req, res) => {
 
     try {
         const student = await Users.findOne({ where: { id: studentId } });
+        const teacher = await Users.findOne({
+            where: { id: student?.teacherId },
+        });
 
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${student.name}/unsolved-questions`;
+        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${student.name}/unsolved-questions`;
 
         console.trace(deleteUrl);
 

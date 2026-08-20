@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import models from '../models/index.model.js';
 import { processExamData } from '../pipeline/mainProcessor.js';
 
-const { Exam, Users } = models;
+const { Exam, Users, Subscription } = models;
 
 const n8nWebhookUrl =
     process.env.NODE_ENV === 'production'
@@ -81,6 +81,8 @@ export const getExamResults = async (req, res) => {
 export const uploadExam = async (req, res) => {
     const { studentId } = req.body;
 
+    const teacherId = req.userId;
+
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({
             success: false,
@@ -89,9 +91,28 @@ export const uploadExam = async (req, res) => {
     }
 
     try {
+        const subscription = await Subscription.findOne({
+            where: { userId: teacherId },
+            order: [['createdAt', 'DESC']],
+        });
+
+        if (
+            subscription.aiAnalysedExamNum >=
+            subscription.aiAnalysedExamNumQuota
+        )
+            return;
+
         const student = await Users.findOne({
             where: { id: studentId },
         });
+
+        const teacher = await Users.findOne({
+            where: { id: teacherId },
+        });
+
+        if (teacher.role !== 'teacher') return;
+
+        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
 
         if (!student) {
             return res.status(404).json({
@@ -106,7 +127,7 @@ export const uploadExam = async (req, res) => {
             const uniqueId = crypto.randomUUID();
 
             const fileName =
-                `${student.name}/examResults/` +
+                `${teacherName}/${student.name}/examResults/` +
                 `${uniqueId}-Exam_result-${originalName}`;
 
             const safeFilename = fileName.replace(/\s+/g, '-');
@@ -181,7 +202,7 @@ export const uploadExam = async (req, res) => {
             // DB
             return Exam.create({
                 studentId,
-                teacherId: student.teacherId,
+                teacherId: req.userId,
                 path: pullZoneURL,
                 analysis: results,
                 scoreSummary,
@@ -192,6 +213,10 @@ export const uploadExam = async (req, res) => {
         });
 
         const results = await Promise.allSettled(examPromises);
+
+        await teacher.increment({ aiAnalysedExamNum: results.length });
+
+        await subscription.increment({ aiAnalysedExamNum: results.length });
 
         const successful = results.filter(
             result => result.status === 'fulfilled'
@@ -392,11 +417,19 @@ export const examOCRTest = async (req, res) => {
 export const deleteExamURL = async (req, res) => {
     const { path, id, studentName } = req.body;
 
-    const safeStudentName = studentName.replace(/\s+/g, '-');
-
-    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeStudentName}/${path}`;
-
     try {
+        const teacher = await Users.findOne({
+            where: { id: req.userId },
+        });
+
+        if (teacher.role !== 'teacher') return;
+
+        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+
+        const safeStudentName = studentName.replace(/\s+/g, '-');
+
+        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${safeStudentName}/${path}`;
+
         await Exam.destroy({
             where: { id },
         });
@@ -428,6 +461,12 @@ export const updateExam = async (req, res) => {
         req.body.data;
 
     try {
+        const teacher = await Users.findOne({
+            where: { id: req.userId },
+        });
+
+        if (teacher.role !== 'teacher') return;
+
         await Exam.update(
             {
                 analysis,

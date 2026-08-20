@@ -23,6 +23,10 @@ const Users = db.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        surname: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         grade: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -31,6 +35,15 @@ const Users = db.define(
             type: DataTypes.ENUM('teacher', 'student', 'admin', 'parent'),
             allowNull: false,
             defaultValue: 'teacher',
+        },
+        accountType: {
+            type: DataTypes.ENUM('admin', 'guest', 'normal', 'trial'),
+            allowNull: false,
+            defaultValue: 'normal',
+        },
+        isTermsAccepted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
         teacherId: {
             type: DataTypes.UUID,
@@ -61,6 +74,37 @@ const Users = db.define(
         logo: {
             type: DataTypes.STRING,
             allowNull: true,
+        },
+        tckNo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        adress: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        city: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        country: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: 'Turkey',
+        },
+        gsm: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        aiAnalysedExamNum: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0,
+        },
+        aiSolvedQuestionNum: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0,
         },
         lastLogin: DataTypes.DATE,
         isVerified: DataTypes.BOOLEAN,
@@ -160,6 +204,11 @@ Users.associate = models => {
     Users.hasMany(models.Subscription, {
         foreignKey: 'userId',
         as: 'subscriptions',
+        onDelete: 'CASCADE',
+    });
+    Users.hasMany(models.Payment, {
+        foreignKey: 'userId',
+        as: 'payments',
         onDelete: 'CASCADE',
     });
 };

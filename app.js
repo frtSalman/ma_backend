@@ -15,7 +15,7 @@ import examRoutes from './routes/exam.route.js';
 import scheduleRoutes from './routes/studySchedule.route.js';
 import studentProgressRoutes from './routes/studentProgress.route.js';
 import studentVideosRoutes from './routes/studentVideos.route.js';
-import subscribeRoutes from './routes/subdcribe.route.js';
+import paymentRoutes from './routes/payment.route.js';
 import { generateTokenAndSetCookie } from './utils/generateTokenAndSetCookie.js';
 import { generateCSRFToken } from './utils/generateCSRFToken.js';
 import { verifyToken } from './middlewares/verifyToken.js';
@@ -27,14 +27,47 @@ const PORT = 5000;
 const allowedOrigins = [
     'https://app.teachflow.net',
     'https://api.teachflow.net',
+    'http://192.168.1.104:3000',
     'http://localhost:3000',
     'https://n8n.teachflow.net:5678',
 ];
 
 app.use(express.json()); // allow us to parse incoming request from req.body
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // allow us to parse incoming cookies
 
 app.use(
+    cors((req, callback) => {
+        const is3DSCallback = req.path === '/api/payment/3ds-callback';
+
+        callback(null, {
+            origin: (origin, done) => {
+                if (!origin || (is3DSCallback && origin === 'null')) {
+                    return done(null, true);
+                }
+
+                if (allowedOrigins.includes(origin)) {
+                    return done(null, true);
+                }
+
+                console.warn('Blocked CORS for origin:', origin);
+                return done(new Error('Not allowed by CORS'));
+            },
+            credentials: true,
+            methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
+            allowedHeaders: [
+                'Content-Type',
+                'Authorization',
+                'X-Custom-Header',
+                'AccessKey',
+                'X-CSRF-Token',
+                'X-XSRF-TOKEN',
+            ],
+        });
+    })
+);
+
+/* app.use(
     cors({
         origin: (origin, callback) => {
             // allow requests with no origin (mobile apps, curl, Postman)
@@ -58,7 +91,7 @@ app.use(
             'X-XSRF-TOKEN',
         ],
     })
-);
+); */
 
 app.get('/api/csrf-token', async (req, res) => {
     const csrfToken = await generateCSRFToken(res);
@@ -90,12 +123,12 @@ app.use('/api/progress', studentProgressRoutes);
 
 app.use('/api/student-videos', studentVideosRoutes);
 
-app.use('/api/subscribe', subscribeRoutes);
+app.use('/api/payment', paymentRoutes);
 
-db.sync()
-    .then(() =>
-        app.listen(PORT, () =>
+db.sync({ alter: true })
+    .then(() => {
+        return app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)
-        )
-    )
+        );
+    })
     .catch(err => console.trace(err));

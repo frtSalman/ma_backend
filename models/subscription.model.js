@@ -17,38 +17,13 @@ const Subscription = db.define(
                 key: 'id',
             },
         },
-        customerReferenceCode: {
+        conversationId: {
             type: DataTypes.STRING,
             allowNull: true,
-        },
-        productReferenceCode: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        pricingPlanReferenceCode: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        subscriptionReferenceCode: {
-            type: DataTypes.STRING,
-            allowNull: false,
             unique: true,
         },
-        status: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: 'PENDING',
-        },
-        paymentStatus: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        price: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: true,
-        },
-        currency: {
-            type: DataTypes.STRING,
+        callbackData: {
+            type: DataTypes.JSONB,
             allowNull: true,
         },
         trialEndDate: {
@@ -59,12 +34,32 @@ const Subscription = db.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
-        canceledAt: {
-            type: DataTypes.DATE,
+        studentNum: {
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
-        rawResponse: {
-            type: DataTypes.JSONB,
+        aiAnalysedExamNumQuota: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 100,
+        },
+        aiSolvedQuestionNumQuota: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 500,
+        },
+        aiAnalysedExamNum: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0,
+        },
+        aiSolvedQuestionNum: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0,
+        },
+        canceledAt: {
+            type: DataTypes.DATE,
             allowNull: true,
         },
     },

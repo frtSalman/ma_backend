@@ -13,11 +13,11 @@ import {
 } from '../utils/sendEmail.js';
 import passport from 'passport';
 
-const { Users, Invitation } = models;
+const { Users, Invitation, Subscription } = models;
 
 // creating user only teachers
 export const signup = async (req, res) => {
-    const { email, name, password } = req.body;
+    const { email, name, surname, password } = req.body;
     try {
         //Firt verification
         if (!email || !name || !password) {
@@ -45,6 +45,7 @@ export const signup = async (req, res) => {
         const user = await Users.create({
             email,
             name,
+            surname,
             password: password.trim(),
             verificationToken,
             verificationTokenExpiresAt,
@@ -78,7 +79,28 @@ export const sendStudentInvitation = async (req, res) => {
     const { email, teacherId } = req.body;
 
     try {
+        const userSubscription = await Subscription.findOne({
+            where: { userId: teacherId },
+            order: [['createdAt', 'DESC']],
+        });
+
+        const students = await Users.findAll({
+            where: { teacherId, role: 'student' },
+        });
+
         const ınvToken = generateToken();
+
+        if (
+            userSubscription &&
+            userSubscription?.studentNum !== null &&
+            students.length >= userSubscription.studentNum
+        ) {
+            return res.status(409).json({
+                success: false,
+                message:
+                    'Planınıza ait öğrenci kotanızı doldurdunuz. Daha fazla davetiye yollayamazsınız.',
+            });
+        }
 
         await Invitation.create({
             email,
@@ -88,14 +110,14 @@ export const sendStudentInvitation = async (req, res) => {
 
         await sendStudentInvitationEmail(email, ınvToken);
 
-        res.status(200).json({
+        return res.status(200).json({
             succes: true,
             message:
                 'Öğrenci kayıt davetiyesi başarılı bir şekilde gönderildi. 🛩️',
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             // 500 Internal Server Error
             success: false,
             message: 'Sunucu hatası oluştu.',
@@ -288,7 +310,7 @@ export const parentSignup = async (req, res) => {
     }
 };
 
-export const teacherSignup = async (req, res) => {
+/* export const teacherSignup = async (req, res) => {
     const token = req.params.token;
     const { email, name, password, grade } = req.body;
 
@@ -331,7 +353,7 @@ export const teacherSignup = async (req, res) => {
             message: 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */
 
 export const verifyEmail = async (req, res) => {
     const { code } = req.body;
@@ -556,6 +578,8 @@ export const updateAccount = async (req, res) => {
 
     try {
         const user = await Users.findOne({ where: { id } });
+
+        if (user.role !== 'teacher') return;
 
         if (!user) {
             return res.status(401).json({
