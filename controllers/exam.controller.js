@@ -113,7 +113,7 @@ export const uploadExam = async (req, res) => {
 
         if (teacher.role !== 'teacher') return;
 
-        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
         if (!student) {
             return res.status(404).json({
@@ -131,11 +131,11 @@ export const uploadExam = async (req, res) => {
                 `${teacherName}/${student.name}/examResults/` +
                 `${uniqueId}-Exam_result-${originalName}`;
 
-            const safeFilename = fileName.replace(/\s+/g, '-');
+            //const safeFilename = fileName.replace(/\s+/g, '-');
 
-            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeFilename}`;
+            const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${fileName}`;
 
-            const pullZoneURL = `https://cdn.teachflow.net/${safeFilename}`;
+            const pullZoneURL = `https://cdn.teachflow.net/${fileName}`;
 
             // BunnyCDN
             await axios.put(uploadUrl, file.buffer, {
@@ -426,7 +426,7 @@ export const deleteExamURL = async (req, res) => {
 
         if (teacher.role !== 'teacher') return;
 
-        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
         const safeStudentName = studentName.replace(/\s+/g, '-');
 

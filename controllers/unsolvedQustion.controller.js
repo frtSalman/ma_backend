@@ -98,7 +98,7 @@ export const uploadUQ = async (req, res) => {
 
     try {
         const teacher = await Users.findOne({ where: { id: teacherId } });
-        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
         // Promise.all kullanarak tüm dosyaları BunnyCDN'e paralel olarak yüklüyoruz.
         // Bu sayede 3 fotoğraf yüklemek 1 fotoğraf yüklemekle neredeyse aynı sürede biter.
@@ -316,7 +316,7 @@ export const deleteAllUQURL = async (req, res) => {
             where: { id: student?.teacherId },
         });
 
-        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
         const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${student.name}/unsolved-questions`;
 

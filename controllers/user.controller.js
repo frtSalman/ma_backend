@@ -222,7 +222,7 @@ export const uploadBookSource = async (req, res) => {
             where: { id: req.userId },
         });
 
-        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
         if (teacher.role !== 'teacher') return;
 
@@ -318,7 +318,7 @@ export const deleteBookSource = async (req, res) => {
             where: { id: req.userId },
         });
 
-        const teacherName = (teacher.name + ' ' + teacher.surname || '').trim();
+        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
 
         if (path) {
             const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/book_sources/${subject}/${path}`;
