@@ -19,7 +19,7 @@ const router = express.Router();
 router.use(verifyToken, verifyCsrfToken);
 
 router.get('/get-all-schedules', getAllSchedules);
-router.get('/get-student-schedules/:studentId', getStudentSchedules);
+router.get('/get-student-schedules/:teacherId/:studentId', getStudentSchedules);
 router.post('/create-schedule', verifyPayment, createSchedule);
 router.post('/create-bulk-schedule', verifyPayment, createBulkSchedule);
 router.post(

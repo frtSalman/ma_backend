@@ -51,8 +51,7 @@ export const getAllSchedules = async (req, res) => {
 
 export const getStudentSchedules = async (req, res) => {
     try {
-        const { studentId } = req.params;
-        const teacherId = req.userId;
+        const { teacherId, studentId } = req.params;
 
         const schedules = await StudySchedule.findAll({
             where: { teacherId, studentId },
