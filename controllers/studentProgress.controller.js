@@ -14,8 +14,13 @@ export const getStudentBookProgress = async (req, res) => {
             });
         }
 
+        const grade =
+            student.grade === 'KPSS' || student.grade === 'DGS'
+                ? '12'
+                : student.grade;
+
         let edLevel = 'lise';
-        if (student.grade && parseInt(student.grade) < 9) {
+        if (grade && parseInt(grade) < 9) {
             edLevel = 'ortaokul';
         }
 
@@ -38,6 +43,8 @@ export const getStudentBookProgress = async (req, res) => {
                 ['id', 'ASC'],
             ],
         });
+
+        console.trace(topics.slice(0, 10));
 
         const studentBooksForSubject = student.books[subject];
 
@@ -95,6 +102,35 @@ export const getStudentBookProgress = async (req, res) => {
         res.status(200).json({ success: true, data: result });
     } catch (error) {
         console.error('İlerleme Getirme Hatası:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Veriler getirilirken hata oluştu.',
+        });
+    }
+};
+
+export const getBPForSchedule = async (req, res) => {
+    const { studentId, subject } = req.params;
+
+    try {
+        const progresses = await StudentBookProgress.findAll({
+            where: { studentId, subject },
+            include: [
+                {
+                    model: Cirriculum,
+                    as: 'topic',
+                    attributes: [
+                        'id',
+                        'topic',
+                        'tema',
+                        'subject',
+                        'gradeLevel',
+                    ],
+                },
+            ],
+        });
+        return res.status(200).json({ success: true, data: progresses });
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: 'Veriler getirilirken hata oluştu.',
