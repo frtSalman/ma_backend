@@ -7,7 +7,7 @@ import Subscription from '../models/subscription.model.js';
 const { Payment, Users } = models;
 
 const plans = {
-    aylık: { price: 1500, addPayPer: 20, monthNum: 1 },
+    aylık: { price: 1, addPayPer: 20, monthNum: 1 },
     ucAylık: { price: 3900, addPayPer: 50, monthNum: 3 },
     altıAylık: { price: 6900, addPayPer: 80, monthNum: 6 },
     yıllık: { price: 12900, addPayPer: 120, monthNum: 12 },
@@ -86,7 +86,7 @@ const createIyzipayClient = () =>
     new Iyzipay({
         apiKey: process.env.PAYMENT_API_KEY,
         secretKey: process.env.PAYMENT_SECRET_KEY,
-        uri: 'https://sandbox-api.iyzipay.com',
+        uri: 'https://api.iyzipay.com',
     });
 
 const sanitizePaymentRequest = data => ({
