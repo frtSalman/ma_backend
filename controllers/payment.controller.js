@@ -1,13 +1,11 @@
 import Iyzipay from 'iyzipay';
 import { v4 as uuidv4 } from 'uuid';
-
 import models from '../models/index.model.js';
-import Subscription from '../models/subscription.model.js';
 
-const { Payment, Users } = models;
+const { Payment, Users, Subscription } = models;
 
 const plans = {
-    aylık: { price: 1, addPayPer: 20, monthNum: 1 },
+    aylık: { price: 1500, addPayPer: 20, monthNum: 1 },
     ucAylık: { price: 3900, addPayPer: 50, monthNum: 3 },
     altıAylık: { price: 6900, addPayPer: 80, monthNum: 6 },
     yıllık: { price: 12900, addPayPer: 120, monthNum: 12 },
