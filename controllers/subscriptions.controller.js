@@ -3,7 +3,7 @@ import models from '../models/index.model.js';
 const { Subscription } = models;
 
 export const getSubscription = async (req, res) => {
-    const { id } = req.params;
+    const id = req.userId;
 
     try {
         const subscription = await Subscription.findOne({

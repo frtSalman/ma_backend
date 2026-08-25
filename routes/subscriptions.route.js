@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.use(verifyToken, verifyCsrfToken);
 
-router.get('/get-subscription/:id', getSubscription);
+router.get('/get-subscription', getSubscription);
 
 export default router;
