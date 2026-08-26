@@ -98,12 +98,16 @@ export const postSolution = async (req, res) => {
         const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${uniqueName}`;
         const pullZoneURL = `https://cdn.teachflow.net/${uniqueName}`;
 
+        console.trace('Bunnycdn yükleme başladı');
+
         await axios.put(uploadUrl, req.file.buffer, {
             headers: {
                 AccessKey: KEY,
                 'Content-Type': req.file.mimetype,
             },
         });
+
+        console.trace(uniqueName);
 
         const solution = await Solution.create({
             path,
@@ -112,6 +116,8 @@ export const postSolution = async (req, res) => {
             qId,
             solutionContentLink: pullZoneURL,
         });
+
+        console.trace(solution);
 
         return res.json({
             success: true,
