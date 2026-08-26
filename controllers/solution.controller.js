@@ -49,7 +49,8 @@ export async function getSolution(req, res) {
         }
 
         return res.status(200).json({
-            data: record.solution,
+            success: true,
+            data: record,
         });
     } catch (error) {
         console.error(error);
