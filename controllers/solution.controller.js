@@ -115,6 +115,7 @@ export const postSolution = async (req, res) => {
             teacherId,
             qId,
             solutionContentLink: pullZoneURL,
+            createdAt: new Date().toISOString(),
         });
 
         console.trace(solution);
