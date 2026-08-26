@@ -22,6 +22,12 @@ const Solution = db.define(
 
         solution: {
             type: DataTypes.TEXT,
+            allowNull: true,
+        },
+
+        solutionContentLink: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
 
         createdAt: {
