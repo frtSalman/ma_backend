@@ -185,6 +185,7 @@ export const deleteSolution = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'Çözüm başarıyla silindi.',
+            qId,
         });
     } catch (error) {
         console.error('deleteSolution error:', error);
