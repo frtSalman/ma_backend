@@ -4,6 +4,7 @@ import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 import {
     getSolution,
     postSolution,
+    deleteSolution,
 } from '../controllers/solution.controller.js';
 import multer from 'multer';
 import { verifyPayment } from '../middlewares/verifyPayment.js';
@@ -22,5 +23,7 @@ router.post(
 );
 
 router.get('/:qId', getSolution);
+
+router.delete('/:qId', deleteSolution);
 
 export default router;

@@ -44,7 +44,7 @@ export async function getSolution(req, res) {
         if (!record) {
             return res.status(404).json({
                 success: false,
-                message: 'Solution not found',
+                message: 'Çözüm henüz yüklenmemiş.',
             });
         }
 
@@ -130,6 +130,72 @@ export const postSolution = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Sunucu hatası oluştu veya BunnyCDN bağlantısı başarısız.',
+        });
+    }
+};
+
+export const deleteSolution = async (req, res) => {
+    const { qId } = req.params;
+
+    try {
+        const record = await Solution.findOne({
+            where: { qId },
+        });
+
+        if (!record) {
+            return res.status(404).json({
+                success: false,
+                message: 'Silinecek çözüm bulunamadı.',
+            });
+        }
+
+        if (record.solutionContentLink) {
+            const filePath = new URL(
+                record.solutionContentLink
+            ).pathname.substring(1);
+            const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${filePath}`;
+
+            const bunnyResponse = await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    AccessKey: KEY,
+                },
+            });
+
+            if (!bunnyResponse.ok) {
+                const bunnyError = await bunnyResponse.text();
+
+                console.error('Bunny Storage silme hatası:', {
+                    status: bunnyResponse.status,
+                    statusText: bunnyResponse.statusText,
+                    response: bunnyError,
+                    deleteUrl,
+                });
+
+                throw new Error(
+                    `Bunny Storage ${bunnyResponse.status}: ${bunnyError}`
+                );
+            }
+        }
+
+        await Solution.destroy({
+            where: { qId },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Çözüm başarıyla silindi.',
+        });
+    } catch (error) {
+        console.error('deleteSolution error:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Çözüm silinirken sunucu hatası oluştu.',
+            error:
+                process.env.NODE_ENV === 'development'
+                    ? error.message
+                    : undefined,
         });
     }
 };
