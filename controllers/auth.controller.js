@@ -15,6 +15,8 @@ import passport from 'passport';
 
 const { Users, Invitation, Subscription } = models;
 
+const TRIAL_DURATION_DAYS = 3;
+
 // creating user only teachers
 export const signup = async (req, res) => {
     const { email, name, surname, password } = req.body;
