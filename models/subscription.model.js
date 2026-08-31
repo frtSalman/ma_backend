@@ -34,6 +34,20 @@ const Subscription = db.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
+        studentNumQuota: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 10,
+        },
+        subStatus: {
+            type: DataTypes.ENUM('active', 'passive', 'trial'),
+            allowNull: false,
+            defaultValue: 'trial',
+        },
+        subPlan: {
+            type: DataTypes.JSON,
+            allowNull: true,
+        },
         studentNum: {
             type: DataTypes.INTEGER,
             allowNull: true,
@@ -41,12 +55,12 @@ const Subscription = db.define(
         aiAnalysedExamNumQuota: {
             type: DataTypes.INTEGER,
             allowNull: true,
-            defaultValue: 100,
+            defaultValue: 8,
         },
         aiSolvedQuestionNumQuota: {
             type: DataTypes.INTEGER,
             allowNull: true,
-            defaultValue: 500,
+            defaultValue: 150,
         },
         aiAnalysedExamNum: {
             type: DataTypes.INTEGER,

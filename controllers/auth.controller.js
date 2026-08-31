@@ -92,8 +92,8 @@ export const sendStudentInvitation = async (req, res) => {
 
         if (
             userSubscription &&
-            userSubscription?.studentNum !== null &&
-            students.length >= userSubscription.studentNum
+            userSubscription?.studentNumQuota !== null &&
+            students.length >= userSubscription.studentNumQuota
         ) {
             return res.status(409).json({
                 success: false,
@@ -363,6 +363,8 @@ export const verifyEmail = async (req, res) => {
             where: { verificationToken: code },
         });
 
+        const userId = user?.id;
+
         const now = new Date();
         // now do the expiry check in JS
         if (
@@ -380,6 +382,30 @@ export const verifyEmail = async (req, res) => {
         user.verificationTokenExpiresAt = null;
         user.isVerified = true;
         await user.save();
+
+        // Create trial Plan
+
+        const existingTrial = await Subscription.findOne({
+            where: { userId, subStatus: 'trial' },
+            order: [['createdAt', 'DESC']],
+        });
+
+        if (existingTrial) {
+            return res.status(409).json({
+                success: 'false',
+                message: 'Bu kullanıcı için trial plan daha önce oluşturulmuş.',
+            });
+        }
+
+        const trialEndDate = new Date();
+        trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DURATION_DAYS);
+
+        const trialSubscription = await Subscription.create({
+            userId,
+            subStatus: 'trial',
+            trialEndDate,
+            nextBillingDate: trialEndDate,
+        });
 
         // sending welcome email
 

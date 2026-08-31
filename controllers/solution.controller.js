@@ -1,6 +1,8 @@
 import axios from 'axios';
 import models from '../models/index.model.js';
 
+const { Subscription } = models;
+
 const KEY = process.env.BUNNY_KEY;
 
 const BUNNY_ZONE = 'teachflow';
@@ -60,6 +62,63 @@ export async function getSolution(req, res) {
         });
     }
 }
+
+export const aiSolution = async (req, res) => {
+    const data = req.body;
+    const teacherId = req.userId;
+
+    try {
+        const teacher = await Users.findOne({
+            where: { id: teacherId },
+        });
+
+        const subscription = await Subscription.findOne({
+            where: { userId: teacherId },
+            order: [['createdAt', 'DESC']],
+        });
+
+        if (
+            teacher.accountType === 'normal' &&
+            subscription.aiSolvedQuestionNum >=
+                subscription.aiSolvedQuestionNumQuota
+        ) {
+            return res.status(404).json({
+                message: 'AI soru çözüm kotanızı doldurdunuz.',
+            });
+        }
+
+        const n8nRes = await fetch(
+            'https://n8n.teachflow.net/webhook/719fd416-2c0a-47b1-9bf4-f7df5a2874b1',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                credentials: 'omit',
+            }
+        );
+        const result = await n8nRes.json();
+
+        console.log(result);
+
+        if (result.status === true) {
+            await subscription.increment({ aiSolvedQuestionNum: 1 });
+        } else {
+            throw new Error('AI çözümü otomasyon hatası.');
+        }
+
+        return res.json({
+            success: true,
+            message: `Çözüm içeriği başarıyla yüklendi.`,
+            data: result,
+        });
+    } catch (error) {
+        console.error('Yükleme hatası:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Sunucu hatası oluştu.',
+        });
+    }
+};
 
 export const postSolution = async (req, res) => {
     const { qId, studentId, unsolvedQURL } = req.body;

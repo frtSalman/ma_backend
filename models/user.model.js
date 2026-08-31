@@ -37,7 +37,7 @@ const Users = db.define(
             defaultValue: 'teacher',
         },
         accountType: {
-            type: DataTypes.ENUM('admin', 'guest', 'normal', 'trial'),
+            type: DataTypes.ENUM('admin', 'guest', 'normal'),
             allowNull: false,
             defaultValue: 'normal',
         },

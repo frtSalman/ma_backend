@@ -5,6 +5,7 @@ import {
     getSolution,
     postSolution,
     deleteSolution,
+    aiSolution,
 } from '../controllers/solution.controller.js';
 import multer from 'multer';
 import { verifyPayment } from '../middlewares/verifyPayment.js';
@@ -21,6 +22,8 @@ router.post(
     upload.single('file'),
     postSolution
 );
+
+router.post('/ai-solution', verifyPayment, aiSolution);
 
 router.get('/:qId', getSolution);
 

@@ -4,7 +4,6 @@ import {
     complete3DSPayment,
     initializePayment,
 } from '../controllers/payment.controller.js';
-import { verifyCsrfToken } from '../middlewares/verifyCsrfToken.js';
 
 const router = express.Router();
 

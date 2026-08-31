@@ -5,15 +5,42 @@ import models from '../models/index.model.js';
 const { Payment, Users, Subscription } = models;
 
 const plans = {
-    aylık: { price: 1500, addPayPer: 20, monthNum: 1 },
-    ucAylık: { price: 3900, addPayPer: 50, monthNum: 3 },
-    altıAylık: { price: 6900, addPayPer: 80, monthNum: 6 },
-    yıllık: { price: 12900, addPayPer: 120, monthNum: 12 },
+    aylık: {
+        price: 1500,
+        addPayPer: 20,
+        monthNum: 1,
+        questionQuota: 3000,
+        examAnalysisQuota: 160,
+    },
+    ucAylık: {
+        price: 3900,
+        addPayPer: 50,
+        monthNum: 3,
+        questionQuota: 9000,
+        examAnalysisQuota: 480,
+    },
+    altıAylık: {
+        price: 6900,
+        addPayPer: 80,
+        monthNum: 6,
+        questionQuota: 18000,
+        examAnalysisQuota: 960,
+    },
+    yıllık: {
+        price: 12900,
+        addPayPer: 120,
+        monthNum: 12,
+        questionQuota: 36000,
+        examAnalysisQuota: 1920,
+    },
 };
 
-// pricePlan = {plan:yıllık,studentNum:30}
-
-const calculatePrice = ({ plan, studentNum } = {}) => {
+const calculatePrice = ({
+    plan,
+    studentNum,
+    questionQuotaFactor,
+    examAnalyseQuotaFactor,
+} = {}) => {
     const selectedPlan = plans[plan];
 
     if (!selectedPlan) {
@@ -26,9 +53,20 @@ const calculatePrice = ({ plan, studentNum } = {}) => {
         return null;
     }
 
+    const aiCostsForQuestionSolve =
+        questionQuotaFactor >= 1 ? questionQuotaFactor * 100 : 0;
+
+    const aiCostsForExamAnalysis =
+        examAnalyseQuotaFactor >= 1 ? examAnalyseQuotaFactor * 500 : 0;
+
     const extraStudentCount = Math.max(0, normalizedStudentNum - 20);
 
-    return selectedPlan.price + selectedPlan.addPayPer * extraStudentCount;
+    return (
+        selectedPlan.price +
+        selectedPlan.addPayPer * extraStudentCount +
+        aiCostsForExamAnalysis +
+        aiCostsForQuestionSolve
+    );
 };
 
 const calculateNextBillingDate = ({ plan } = {}) => {
@@ -46,25 +84,20 @@ const calculateNextBillingDate = ({ plan } = {}) => {
     return nextBillingDate;
 };
 
-const calculateExamAnalysisQuota = ({ plan } = {}, studentNum) => {
-    const selectedPlan = plans[plan];
-
-    if (!selectedPlan) {
-        return null;
-    }
-
-    return selectedPlan.monthNum * studentNum * 5;
+const calculateExtraQuotas = ({
+    questionQuotaFactor,
+    examAnalyseQuotaFactor,
+}) => {
+    const q = questionQuotaFactor * 3000;
+    const e = examAnalyseQuotaFactor * 160;
+    return { extraQuestionSolveNum: q, extraExamAnalysisNum: e };
 };
 
 const isActiveSubscription = subscription => {
-    if (!subscription?.nextBillingDate) {
-        return false;
+    if (subscription?.subStatus === 'active') {
+        return true;
     }
-
-    return (
-        new Date(subscription.nextBillingDate) > new Date() &&
-        !subscription.canceledAt
-    );
+    return false;
 };
 
 const paymentSuccessRedirectUrl =
@@ -84,7 +117,7 @@ const createIyzipayClient = () =>
     new Iyzipay({
         apiKey: process.env.PAYMENT_API_KEY,
         secretKey: process.env.PAYMENT_SECRET_KEY,
-        uri: 'https://api.iyzipay.com',
+        uri: 'https://sandbox-api.iyzipay.com',
     });
 
 const sanitizePaymentRequest = data => ({
@@ -143,7 +176,7 @@ export const initializePayment = async (req, res) => {
 
     const teacherId = req.userId;
 
-    // pricePlan = {plan:yıllık,studentNum:30}
+    // pricePlan = {plan:yıllık,studentNum:30,questionQuotaFactor:2,examAnalysisFactor:1}
 
     const price = calculatePrice(pricePlan);
 
@@ -182,12 +215,12 @@ export const initializePayment = async (req, res) => {
             });
         }
 
-        const activeSubscription = await Subscription.findOne({
+        const subscription = await Subscription.findOne({
             where: { userId: teacherId },
             order: [['createdAt', 'DESC']],
         });
 
-        if (isActiveSubscription(activeSubscription)) {
+        if (isActiveSubscription(subscription)) {
             return res.status(409).json({
                 success: false,
                 message: 'Aktif bir aboneliğiniz var. Yeni ödeme başlatılamaz.',
@@ -407,25 +440,26 @@ export const complete3DSPayment = async (req, res) => {
         }
 
         const existingSubscription = await Subscription.findOne({
-            where: { conversationId },
+            where: { userId: paymentRecord.userId },
         });
 
-        if (existingSubscription) {
-            return redirectToPaymentResult(res, paymentSuccessRedirectUrl);
-        }
+        const pricePlan = paymentRecord?.sendData?.pricePlan;
 
-        const examAnalyseQuota = calculateExamAnalysisQuota(
-            storedPaymentData.pricePlan,
-            paymentRecord?.sendData?.pricePlan?.studentNum
-        );
+        const calculatedExtraQuotaObject = calculateExtraQuotas(pricePlan);
 
-        await Subscription.create({
-            userId: paymentRecord.userId,
+        await existingSubscription.update({
             conversationId,
+            subStatus: 'active',
+            subPlan: pricePlan,
             nextBillingDate,
-            studentNum: paymentRecord?.sendData?.pricePlan?.studentNum,
             callbackData: resultData,
-            aiAnalysedExamNumQuota: examAnalyseQuota,
+            studentNumQuota: pricePlan.studentNum,
+            aiAnalysedExamNumQuota:
+                plans[pricePlan.plan].examAnalysisQuota +
+                calculatedExtraQuotaObject.extraExamAnalysisNum,
+            aiSolvedQuestionNumQuota:
+                plans[pricePlan.plan].questionQuota +
+                calculatedExtraQuotaObject.extraQuestionSolveNum,
         });
 
         return redirectToPaymentResult(res, paymentSuccessRedirectUrl);

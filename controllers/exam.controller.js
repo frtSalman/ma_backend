@@ -104,8 +104,11 @@ export const uploadExam = async (req, res) => {
             teacher.accountType === 'normal' &&
             subscription.aiAnalysedExamNum >=
                 subscription.aiAnalysedExamNumQuota
-        )
-            return;
+        ) {
+            return res.status(404).json({
+                message: 'Deneme analizi kotanız dolmuştuştur.',
+            });
+        }
 
         const student = await Users.findOne({
             where: { id: studentId },
