@@ -39,7 +39,7 @@ const calculatePrice = ({
     plan,
     studentNum,
     questionQuotaFactor,
-    examAnalyseQuotaFactor,
+    examAnalysisQuotaFactor,
 } = {}) => {
     const selectedPlan = plans[plan];
 
@@ -48,16 +48,18 @@ const calculatePrice = ({
     }
 
     const normalizedStudentNum = Number(studentNum);
+    const normalizedQQF = Number(questionQuotaFactor);
+    const normalizedEAQF = Number(examAnalysisQuotaFactor);
 
     if (!Number.isFinite(normalizedStudentNum) || normalizedStudentNum < 0) {
         return null;
     }
 
     const aiCostsForQuestionSolve =
-        questionQuotaFactor >= 1 ? questionQuotaFactor * 100 : 0;
+        normalizedQQF >= 1 ? normalizedQQF * 100 : 0;
 
     const aiCostsForExamAnalysis =
-        examAnalyseQuotaFactor >= 1 ? examAnalyseQuotaFactor * 500 : 0;
+        normalizedEAQF >= 1 ? normalizedEAQF * 500 : 0;
 
     const extraStudentCount = Math.max(0, normalizedStudentNum - 20);
 
@@ -86,10 +88,10 @@ const calculateNextBillingDate = ({ plan } = {}) => {
 
 const calculateExtraQuotas = ({
     questionQuotaFactor,
-    examAnalyseQuotaFactor,
+    examAnalysisQuotaFactor,
 }) => {
-    const q = questionQuotaFactor * 3000;
-    const e = examAnalyseQuotaFactor * 160;
+    const q = Number(questionQuotaFactor) * 3000;
+    const e = Number(examAnalysisQuotaFactor) * 160;
     return { extraQuestionSolveNum: q, extraExamAnalysisNum: e };
 };
 
