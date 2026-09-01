@@ -44,8 +44,6 @@ export const getStudentBookProgress = async (req, res) => {
             ],
         });
 
-        console.trace(topics.slice(0, 10));
-
         const studentBooksForSubject = student.books[subject];
 
         if (!studentBooksForSubject)

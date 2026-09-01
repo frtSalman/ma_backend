@@ -11,7 +11,6 @@ import {
     sendTeacherInvitationEmail,
     sendParentInvitationEmail,
 } from '../utils/sendEmail.js';
-import passport from 'passport';
 
 const { Users, Invitation, Subscription } = models;
 
