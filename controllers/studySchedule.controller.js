@@ -153,6 +153,9 @@ export const createBulkSchedule = async (req, res) => {
     try {
         const schedules = req.body.schedules;
 
+        console.time('Bulk Schedule Creation Time');
+        console.log('Bulk Schedule başladı.');
+
         const newSchedules = schedules.map(schedule => ({
             ...schedule,
             id: undefined, // Ensure the id is not set, so Sequelize can auto-generate it
@@ -166,7 +169,11 @@ export const createBulkSchedule = async (req, res) => {
             });
         }
 
+        await StudySchedule.destroy({
+            where: { studentId: schedules[0].studentId },
+        });
         await StudySchedule.bulkCreate(newSchedules);
+        console.timeEnd('Bulk Schedule Creation Time');
         return res
             .status(201)
             .json({ message: 'Programlar başarıyla oluşturuldu.' });

@@ -63,6 +63,13 @@ const calculatePrice = ({
 
     const extraStudentCount = Math.max(0, normalizedStudentNum - 20);
 
+    console.trace(
+        selectedPlan.price +
+            selectedPlan.addPayPer * extraStudentCount +
+            aiCostsForExamAnalysis +
+            aiCostsForQuestionSolve
+    );
+
     return (
         selectedPlan.price +
         selectedPlan.addPayPer * extraStudentCount +
@@ -338,13 +345,13 @@ export const complete3DSPayment = async (req, res) => {
     const { conversationId, paymentId, conversationData, status, mdStatus } =
         callbackData;
 
-    console.log('3DS CALLBACK GELDİ', {
+    /* console.log('3DS CALLBACK GELDİ', {
         method: req.method,
         origin: req.get('origin'),
         query: req.query,
         body: req.body,
     });
-
+ */
     if (!conversationId) {
         return redirectToPaymentResult(
             res,
