@@ -126,7 +126,7 @@ const createIyzipayClient = () =>
     new Iyzipay({
         apiKey: process.env.PAYMENT_API_KEY,
         secretKey: process.env.PAYMENT_SECRET_KEY,
-        uri: 'https://sandbox-api.iyzipay.com',
+        uri: 'https://api.iyzipay.com',
     });
 
 const sanitizePaymentRequest = data => ({
