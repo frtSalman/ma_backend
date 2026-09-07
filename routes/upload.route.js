@@ -15,8 +15,6 @@ import { verifyPayment } from '../middlewares/verifyPayment.js';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.use(verifyToken, verifyCsrfToken);
-
 router.post(
     '/add-unsolved-question-path',
     verifyPayment,
@@ -24,13 +22,28 @@ router.post(
     uploadUQ
 );
 
-router.put('/update-unsolved-question-view', updateUQAppearance);
+router.put(
+    '/update-unsolved-question-view',
+    verifyToken,
+    verifyCsrfToken,
+    updateUQAppearance
+);
 
-router.get('/get-unsolved-question-path', getUQURL);
+router.get('/get-unsolved-question-path', verifyToken, getUQURL);
 
-router.delete('/delete-unsolved-question/:id', deleteUQURL);
+router.delete(
+    '/delete-unsolved-question/:id',
+    verifyToken,
+    verifyCsrfToken,
+    deleteUQURL
+);
 
-router.delete('/delete-all-unsolved-questions/:studentId', deleteAllUQURL);
+router.delete(
+    '/delete-all-unsolved-questions/:studentId',
+    verifyToken,
+    verifyCsrfToken,
+    deleteAllUQURL
+);
 
 router.post('/create-test', createTestPDF);
 

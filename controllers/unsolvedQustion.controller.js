@@ -328,6 +328,8 @@ export const createTestPDF = async (req, res) => {
         testTitle = 'Konu Tarama Testi',
     } = req.body;
 
+    console.trace('createTestPDF criteria:', criteria);
+
     if (
         !studentId ||
         !teacherId ||
