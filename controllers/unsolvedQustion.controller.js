@@ -229,6 +229,90 @@ export const deleteUQURL = async (req, res) => {
     }
 };
 
+export const deleteBatchUQURL = async (req, res) => {
+    const { studentId, questionIds } = req.body;
+
+    // 1. Girdi kontrolü
+    if (!Array.isArray(questionIds) || questionIds.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Geçerli soru ID listesi gönderilmedi.',
+        });
+    }
+
+    try {
+        // 2. DB'den soruları bul (studentId varsa güvenliği sağlamak için filtreye ekleyin)
+        const whereClause = { id: questionIds };
+        if (studentId) whereClause.studentId = studentId;
+
+        const questions = await UnsolvedQuestion.findAll({
+            where: whereClause,
+        });
+
+        if (!questions.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'Silinecek sorular bulunamadı.',
+            });
+        }
+
+        const foundQuestionIds = questions.map(q => q.id);
+
+        // 3. Bunny Storage'dan paralel silme işlemi
+        await Promise.allSettled(
+            questions.map(async question => {
+                try {
+                    const filePath = new URL(
+                        question.imageUrl
+                    ).pathname.substring(1);
+                    const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${filePath}`;
+
+                    const bunnyResponse = await fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: { AccessKey: KEY },
+                    });
+
+                    // 404 (zaten yok) dışındaki hataları logla
+                    if (!bunnyResponse.ok && bunnyResponse.status !== 404) {
+                        const bunnyError = await bunnyResponse.text();
+                        console.warn(
+                            `Bunny silme uyarısı (${bunnyResponse.status}):`,
+                            bunnyError
+                        );
+                    }
+                } catch (err) {
+                    console.error('Bunny URL parse/silme hatası:', err.message);
+                }
+            })
+        );
+
+        // 4. Veritabanından bağlı çözümleri ve soruları sil
+        await Solution.destroy({
+            where: { qId: foundQuestionIds },
+        });
+
+        await UnsolvedQuestion.destroy({
+            where: { id: foundQuestionIds },
+        });
+
+        return res.json({
+            success: true,
+            message: 'Seçilen sorular ve bağlı çözümleri başarıyla silindi.',
+        });
+    } catch (error) {
+        console.error('deleteBatchUQURL error:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Sorular silinirken sunucu hatası oluştu.',
+            error:
+                process.env.NODE_ENV === 'development'
+                    ? error.message
+                    : undefined,
+        });
+    }
+};
+
 export const deleteAllUQURL = async (req, res) => {
     const { studentId } = req.params;
 

@@ -9,6 +9,7 @@ import {
     updateUQAppearance,
     createTestPDF,
     deleteAllUQURL,
+    deleteBatchUQURL,
 } from '../controllers/unsolvedQustion.controller.js';
 import { verifyPayment } from '../middlewares/verifyPayment.js';
 
@@ -36,6 +37,13 @@ router.delete(
     verifyToken,
     verifyCsrfToken,
     deleteUQURL
+);
+
+router.delete(
+    '/delete-batch-unsolved-questions',
+    verifyToken,
+    verifyCsrfToken,
+    deleteBatchUQURL
 );
 
 router.delete(
