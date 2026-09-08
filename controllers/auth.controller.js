@@ -600,7 +600,7 @@ export const checkAuth = async (req, res) => {
 };
 
 export const updateAccount = async (req, res) => {
-    const { email, name, grade } = req.body;
+    const { email, name, grade, tckNo, adress, city, gsm } = req.body;
     const id = req.userId;
 
     try {
@@ -619,6 +619,10 @@ export const updateAccount = async (req, res) => {
         user.name = name;
         user.email = email;
         user.grade = grade;
+        user.tckNo = tckNo;
+        user.adress = adress;
+        user.city = city;
+        user.gsm = gsm;
 
         await user.save();
 
