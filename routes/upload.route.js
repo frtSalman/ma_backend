@@ -18,6 +18,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.post(
     '/add-unsolved-question-path',
+    verifyToken,
     verifyPayment,
     upload.array('files'),
     uploadUQ
