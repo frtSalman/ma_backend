@@ -6,7 +6,7 @@ const { Payment, Users, Subscription } = models;
 
 const plans = {
     aylık: {
-        price: 15,
+        price: 1500,
         addPayPer: 20,
         monthNum: 1,
         questionQuota: 3000,
