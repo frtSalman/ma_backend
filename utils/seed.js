@@ -10,7 +10,7 @@ async function seedDatabase() {
         await sequelize.sync();
 
         // Mevcut verileri temizlemek istersen (Dikkat: Sadece ilk kurulumda açın!)
-        // await Cirriculum.destroy({ where: {} });
+        await Cirriculum.destroy({ where: {} });
 
         const topicsToInsert = [];
 

@@ -313,130 +313,193 @@ export const xHData = {
         'Dünya ve Ahiret Hayatı',
         'Güncel Dini Meseleler',
     ],
-    'Branş Deneme': ['TYT Deneme', 'AYT Deneme'],
 };
 
 export const mHData = {
     Matematik: {
         '9. Sınıf': {
-            '1. Tema - Sayılar - 9. Sınıf': [
-                'Gerçek Sayıların Üslü Ve Köklü Gösterimleri İle Yapılan İşlemler',
-                'Gerçek Sayı Aralıklarının Gösteriminde Ve Aralıklarla İlgili İşlemlerde Küme Sembol Ve İşlemleri',
-                'Sayı Kümelerinin Özellikleri',
-                'Gerçek Sayıların İşlem Özellikleri',
+            '1. TEMA – Sayılar (9. SINIF)': [
+                'Gerçek Sayıların Üslü ve Köklü Gösterimleri ile Yapılan İşlemler',
+                'Gerçek Sayı Aralıklarının Gösterimi ve Aralıklarla İlgili İşlemlerde Küme Sembollerinin Kullanımı',
+                'Sayı Kümeleri ve İşlem Özellikleri',
+                'Gerçek Sayıların İşlem Özelliklerini Cebirsel Olarak İfade Etme',
             ],
-            '2. Tema - Nicelikler ve Değişimler - 9. Sınıf': [
-                'Gerçek Sayılarda Tanımlı Doğrusal Fonksiyonlar Ve Nitel Özellikleri',
-                'Gerçek Sayılarda Tanımlı Mutlak Değer Fonksiyonları Ve Nitel Özellikleri',
-                'Doğrusal Fonksiyonlarla İfade Edilebilen Denklem Ve Eşitsizlikler İçeren Problemler',
+            '2. TEMA – Nicelikler ve Değişimler (9. SINIF)': [
+                'Doğrusal Fonksiyonlar ve Nitel Özellikleri',
+                'Mutlak Değer Fonksiyonu ve Nitel Özellikleri',
+                'Doğrusal Fonksiyonlarla İfade Edilebilen Denklem ve Eşitsizlikler İçeren Problemler',
             ],
-            '3. Tema - Geometrik Şekiller - 9. Sınıf': [
-                'Üçgende Açı Ve Kenarlarla İlgili Özellikler',
+            '3.TEMA – Geometrik Şekiller (9. SINIF)': [
+                'Üçgende Açı ve Kenarla İlgili Özellikler ve Bu Özellikler Arasındaki İlişkiler',
             ],
-            '4. Tema - Eşlik ve Benzerlik - 9. Sınıf': [
+            '4.TEMA – Eşlik ve Benzerlik': [
                 'Geometrik Dönüşümler',
-                'İki Üçgenin Eş Veya Benzer Olması İçin GEREKLİ Olan Asgari Koşullar',
-                'Bir Üçgenden Hareketle Ona Benzer Üçgenler Oluşturma',
-                'Tales, Öklid Ve Pisagor Teoremleri',
-                'Eşlik Ve Benzerlikle İlgili Problemler',
+                'Eşlik ve Benzerlik Koşulları',
+                'Benzer Üçgenler Oluşturma',
+                'Tales, Öklid ve Pisagor Teoremleri',
+                'Eşlik ve Benzerlik Problemleri',
             ],
-            '5. Tema - Algoritma ve Bilişim - 9. Sınıf': [
-                'Algoritma Temelli Yaklaşımlarla Problem Çözme',
-                'Algoritmik Yapılar İçerisindeki Mantık Bağlaçları Ve Niceleyiciler',
-                'Algoritmalarda Ve Matematiksel İspatlarda Mantık Bağlaçları Ve Niceleyiciler',
+            '5.TEMA – Algoritma ve Bilişim (9. SINIF)': [
+                'Algoritma Temelli Problemler',
+                'Mantık Bağlaçları ve Niceleyiciler',
+                'Mantık Bağlaçları ve Niceleyicilerin Algoritmik Problemlerde Kullanımı',
             ],
-            '6. Tema - İstatistiksel Araştırma Süreci - 9. Sınıf': [
-                'Tek Nicel Değişkenli Veri Dağılımları İle Çalışma Ve Veriye Dayalı Karar Verme',
-                'Başkaları Tarafından Oluşturulan Tek Nicel Değişkenli Veri Dağılımlarına Dayalı Sonuç Veya Yorumları Tartışabilme',
+            '6.TEMA – İstatistiksel Araştırma Süreci (9.SINIF)': [
+                'Tek Nicel Değişkenli Veri Dağılımları',
+                'Başkaları Tarafından Oluşturulan Tek Nicel Değişkenli Veri Dağılımlarını İnceleme',
             ],
-            '7. Tema - Veriden Olasılığa - 9. Sınıf': [
-                'Olayların Olasılığını Gözleme Dayalı Tahmin Etme',
-                'Olayların Olasılığına İlişkin Tümevarımsal Akıl Yürütme',
+            '7.TEMA – Veriden Olasılığa (9. SINIF)': [
+                'Deneysel Olasılık',
+                'Teorik Olasılık',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Geometrik Şekiller - 10. Sınıf': [
-                'Dik Üçgende Trigonometrik Oranlar Ve Trigonometrik Özdeşlikler',
-                'Üçgende Yardımcı Elemanlar Ve Bunlar Arasındaki İlişkiler',
-                'Üçgende Alan',
-                'Sinüs Ve Kosinüs Teoremleri',
+            '1.TEMA – Geometrik Şekiller (10. SINIF)': [
+                'Dik Üçgende Trigonometrik Oranlar ve Trigonometrik Özdeşlikler',
+                'Üçgende Yardımcı Elemanlar',
+                'Üçgenin Alanı',
+                'Sinüs ve Kosinüs Teoremleri',
             ],
-            '2. Tema - İstatistiksel Araştırma Süreci - 10. Sınıf': [
-                'İki Kategorik Değişkenin İlişkililiğini İçeren İstatistiksel Problemi Oluşturma, Veri Toplama, Analiz Etme Ve Yorumlama',
-                'Başkaları Tarafından Oluşturulan İki Kategorik Değişkenli Verilerin İlişkililiğine Dayalı İstatistiksel Sonuç Veya Yorumları Tartışma',
+            '2.TEMA – İstatistiksel Araştırma Süreci (10. SINIF)': [
+                'İki Kategorik Değişkenli Veriler',
+                'Başkaları Tarafından Oluşturulan İki Kategorik Değişkenli Verileri İnceleme',
             ],
-            '3. Tema - Sayılar - 10. Sınıf': [
-                'Bir Doğal Sayı İle Asal Çarpanları Ve Bölenleri Arasındaki İlişkiler',
-                'En Büyük Ortak Bölen-En Küçük Ortak Kat',
-                'Bölünebilme Özelliklerini Kullanarak Kalan Bulma',
+            '3.TEMA – Sayılar (10.SINIF)': [
+                'Bir Doğal Sayının Asal Çarpanları, Bölenleri',
+                'En Büyük Ortak Bölen, En Küçük Ortak Kat',
+                'Bölünebilme',
             ],
-            '4. Tema - Nicelikler ve Değişimler - 10. Sınıf': [
-                'Gerçek Sayılarda Tanımlı Fonksiyonların Nitel Özellikleri',
-                'Gerçek Sayılarda Tanımlı Karesel Fonksiyonlar Ve Nitel Özellikleri',
-                'Gerçek Sayılarda Tanımlı Karekök Fonksiyonlar Ve Nitel Özellikleri',
-                'Gerçek Sayılarda Tanımlı Rasyonel Fonksiyonlar Ve Nitel Özellikleri',
-                'Doğrusal, Karesel, Karekök Ve Rasyonel Referans Fonksiyonlar İle Bu Fonksiyonlardan Türetilebilen Fonksiyonların Ters Fonksiyonları',
-                'Doğrusal, Karesel, Karekök, Rasyonel Referans Fonksiyonlar Ve Bunlardan Türetilen Fonksiyonlarla İfade Edilebilen Denklem Ve Eşitsizlikler İçeren Problemlerin Çözümü',
+            '4.TEMA – Nicelikler ve Değişimler (10. SINIF)': [
+                'Gerçek Sayılarda Fonksiyon Olma Şartları',
+                'Karesel Fonksiyon ve Nitel Özellikleri',
+                'Karekök Fonksiyonu ve Nitel Özellikleri',
+                'Rasyonel Fonksiyon ve Nitel Özellikleri',
+                'Doğrusal, Karesel, Karekök ve Rasyonel Fonksiyonların Ters Fonksiyonları',
+                'Gerçek Sayılarda Tanımlı Fonksiyonlarla İfade Edilebilen Denklem ve Eşitsizlikler İçeren Problemler',
             ],
-            '5. Tema - Sayma, Algoritma ve Bilişim - 10. Sınıf': [
+            '5.TEMA – Sayma, Algoritma ve Bilişim (10. SINIF)': [
                 'Sayma Stratejileri',
-                'Cebirsel Ve Fonksiyonel İşlemlerin Algoritmik Yapısı',
+                'Cebirsel ve Fonksiyonel İşlemlerin Algoritmik Yapısı',
             ],
-            '6. Tema - Analitik İnceleme - 10. Sınıf': [
-                'Dik Koordinat Sisteminde İki Nokta Arasındaki Uzaklık Ve Bir Doğru Parçasını Belli Oranda Bölme',
-                'Dik Koordinat Sisteminde Doğrunun Özellikleri Ve Analitik İncelenmesi',
+            '6.TEMA – Analitik İnceleme': [
+                'Dik Koordinat Sisteminde Noktanın Analitik İncelenmesi',
+                'Dik Koordinat Sisteminde Doğrunun Analitik İncelenmesi',
             ],
-            '7. Tema - Veriden Olasılığa - 10. Sınıf': [
-                'Koşullu Olasılık, Bağımlı Ve Bağımsız Olaylar',
+            '7.TEMA – Veriden Olasılığa (10. SINIF)': [
+                'Koşullu Olasılık',
                 'Bayes Teoremi',
+            ],
+        },
+        '11. Sınıf': {
+            '1. TEMA - İstatistiksel Araştırma Süreci (11. SINIF)': [
+                'İki Nicel Değişkenli Veriler',
+                'Başkaları Tarafından Oluşturulan İki Nicel Değişkenli Verileri İnceleme',
+            ],
+            '2. TEMA - Geometrik Şekiller (11. SINIF)': [
+                'Dörtgenlerin Özellikleri',
+                'Özel Dörtgenler Arasındaki İlişkiler',
+                'Çokgenlerin Sınıflandırılması',
+                'Dışbükey Çokgenlerin Özellikleri',
+                'Çokgenlerle İlgili Problemler',
+            ],
+            '3. TEMA: Nicelikler Ve Değişimler (1) (11. SINIF)': [
+                'Trigonometrik Fonksiyonlar ve Nitel Özellikleri',
+                'Trigonometrik Fonksiyonlarla İfade Edilebilen Denklemler İçeren Problemler',
+            ],
+            '4. TEMA: Nicelikler Ve Değişimler (2) (11. SINIF)': [
+                'Üstel Fonksiyonlar ve Nitel Özellikleri',
+                'Üstel Fonksiyonların Ters Fonksiyonları',
+                'Logaritmik Fonksiyonlar ve Nitel Özellikleri',
+                'Üstel ve Logaritmik Fonksiyonlarla İfade Edilebilen Denklem ve Eşitsizlikler İçeren Problemler',
+            ],
+            '5. TEMA: Nicelikler Ve Değişimler (3) (11. SINIF)': [
+                'Fonksiyonların Bileşkesi',
+                'Fonksiyonlarda Dört İşlem',
+            ],
+        },
+        '12. Sınıf': {
+            '1. TEMA: Nicelikler Ve Değişimler (1) (12. SINIF)': [
+                'Aritmetik ve Geometrik Diziler',
+                'Gerçek Sayı Dizileri',
+            ],
+            '2. TEMA: Nicelikler Ve Değişimler (2) (12. SINIF)': [
+                'Doğrusal ve Karesel Fonksiyonlar ile Polinom Fonksiyonlar Arasındaki İlişki',
+                'Polinom Fonksiyonlar ve Nitel Özellikleri',
+                'Polinom ve Rasyonel Fonksiyonlarla İfade Edilebilen Denklem ve Eşitsizlikler İçeren Problemler',
+            ],
+            '3. Tema: Geometrik Şekiller (12. SINIF)': [
+                'Çemberin Elemanları',
+                'Çemberin Açı, Kiriş ve Teğet Özellikleri',
+                'Çember ve Daire ile İlgili Problemler',
+            ],
+            '4. TEMA: Geometrik Cisimler': [
+                'Dik Prizma ve Dik Dairesel Silindir',
+                'Dik Piramit, Dik Dairesel Koni ve Küre',
+                'Geometrik Cisimlerle İlgili Problemler',
+            ],
+            '5. TEMA: Değişimin Matematiği (1)': [
+                'Grafik Temsili Verilen Fonksiyonların Limiti',
+                'Cebirsel Temsili Verilen Fonksiyonların Limiti',
+                'Fonksiyonların Limitinde Belirsizlik Durumları',
+                'Fonksiyonların Sürekliliği',
+            ],
+            '6. Tema: Değişimin Matematiği (2)': [
+                'Fonksiyonların Türevi',
+                'Fonksiyonun Türevinin Olmadığı Noktalar',
+                'Fonksiyonel İşlemlerin Türevi',
+            ],
+            '7. TEMA: Değişimin Matematiği (3)': [
+                'Türevin Geometrik Yorumu',
+                'Türev Uygulamaları',
+            ],
+            '5. TEMA: Hazır Veriler Üzerinde Çalışma': [
+                'Toplumsal ve Bilimsel Durumlara İlişkin Hazır Veriler',
             ],
         },
     },
     Fizik: {
         '9. Sınıf': {
-            '1. Tema - Fizik Bilimi Ve Kariyer Keşfi - 9. Sınıf': [
+            '1.TEMA – Fizik Bilimi ve Kariyer Keşfi': [
                 'Fizik Bilimi',
                 'Fizik Biliminin Alt Dalları',
                 'Fizik Bilimine Yön Verenler',
                 'Fizik Bilimi İle İlgili Kariyer Keşfi',
             ],
-            '2. Tema - Kuvvet Ve Hareket - 9. Sınıf': [
-                'Temel Ve Türetilmiş Nicelikler',
-                'Skaler Ve Vektörel Nicelikler',
+            '2.TEMA – Kuvvet ve Hareket (9. SINIF)': [
+                'Temel ve Türetilmiş Nicelikler',
+                'Skaler ve Vektörel Nicelikler',
                 'Vektörler',
                 'Doğadaki Temel Kuvvetler',
-                'Hareket Ve Hareket Türleri',
+                'Hareket ve Hareket Türleri',
             ],
-            '3. Tema - Akışkanlar - 9. Sınıf': [
+            '3.TEMA – Akışkanlar': [
                 'Basınç',
                 'Sıvılarda Basınç',
                 'Açık Hava Basıncı',
                 'Kaldırma Kuvveti',
                 'Bernoulli İlkesi',
             ],
-            '4. Tema - Enerji - 9. Sınıf': [
-                'İç Enerji, Isı Sıcaklık Arasındaki İlişki',
-                'Isı, Öz Isı, Isı Sığası Ve Sıcaklık Farkı Arasındaki İlişki',
+            '4.TEMA – Enerji (9. SINIF)': [
+                'İç Enerji, Isı ve Sıcaklık Arasındaki İlişki',
+                'Isı, Öz Isı, Isı Sığası ve Sıcaklık Farkı Arasındaki İlişki',
                 'Hâl Değişimi',
                 'Isıl Denge',
-                'ISI Aktarım Yolları',
+                'Isı Aktarım Yolları',
                 'Isı İletim Hızı',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Kuvvet Ve Hareket - 10. Sınıf': [
+            '1.TEMA – Kuvvet ve Hareket (10. SINIF)': [
                 'Sabit Hızlı Hareket',
                 'Bir Boyutta Sabit İvmeli Hareket',
-                'Serbest Düşme',
-                'İki Boyutta Sabit İvmeli Hareket',
             ],
-            '2. Tema - Enerji - 10. Sınıf': [
-                'İş, Enerji Ve Güç',
+            '2.TEMA – Enerji (10. SINIF)': [
+                'İş, Enerji ve Güç',
                 'Enerji Biçimleri',
                 'Mekanik Enerji',
                 'Enerji Kaynakları',
             ],
-            '3. Tema - Elektrik - 10. Sınıf': [
+            '3.TEMA – Elektrik': [
                 'Basit Elektrik Devreleri',
                 'Elektrik Akımı',
                 'Ohm Yasası',
@@ -445,334 +508,672 @@ export const mHData = {
                 'Elektrik Akımının Oluşturabileceği Tehlikelere Karşı Alınması Gereken Önlemler',
                 'Topraklamanın Önemi',
             ],
-            '4. Tema - Dalgalar - 10. Sınıf': [
+            '4.TEMA – Dalgalar (11. SINIF)': [
+                'Periyodik Hareketler',
                 'Dalgaların Temel Kavramları',
                 'Dalgaların Sınıflandırılması',
-                'Dalgaların Yayılma Süratini Etkileyen Etmenler',
-                'Periyodik Hareketler',
-                'Su Dalgalarında Yansıma Ve Kırılma',
-                'Rezonans Ve Deprem',
+                'Dalgaların Yayılma Süratini Etkileyen Etmenler',
+                'Su Dalgalarında Yansıma ve Kırılma',
+                'Rezonans ve Deprem',
+            ],
+        },
+        '11. Sınıf': {
+            '1. TEMA - Kuvvet Ve Hareket (11. SINIF)': [
+                'Serbest Düşme',
+                'İki Boyutta Sabit İvmeli Hareket',
+                'Newton Hareket Yasaları',
+                'Sürtünme Kuvveti',
+                'Limit Hız',
+                'Çembersel Hareket',
+            ],
+            '2. TEMA -  Elektrik Ve Manyetizma': [
+                'Elektriksel Kuvvet ve Elektriksel Alan',
+                'Manyetik Alan ve Manyetik Kuvvet',
+                'İndüksiyon Akımı',
+                'Transformatörler',
+            ],
+            '3. TEMA -  Optik': [
+                'Işık Şiddeti, Işık Akısı ve Aydınlanma',
+                'Düzlem Aynalar',
+                'Küresel Aynalar',
+                'Kırılma',
+                'Görünür Derinlik',
+                'Fiber Optik',
+                'Prizmalar',
+                'Mercekler',
+            ],
+        },
+        '12. Sınıf': {
+            '1. TEMA -  Kuvvet Ve Hareket (12. SINIF)': [
+                'Tork',
+                'Denge',
+                'İtme (İmpuls) ve Momentum',
+                'Momentumun Korunumu',
+                'Eylemsizlik Momenti',
+                'Açısal Momentum',
+            ],
+            '2. TEMA -  Enerji (12. SINIF)': [
+                'Yay Sabiti',
+                'Yayın Esneklik Potansiyel Enerjisi',
+                'Sürtünme Kuvvetinin Yaptığı İş',
+                'Enerjinin Korunumu',
+                'Verim',
+            ],
+            '3. TEMA -  Dalgalar (12. SINIF)': [
+                'Su Dalgalarında Kırınım',
+                'Işıkta Kırınım',
+                'Su Dalgalarında Girişim',
+                'Işıkta Girişim',
+                'Elektromanyetik Dalgalar',
+                'Işık Renkleri',
+                'Mekanik veya Elektromanyetik Dalgaların Kullanıldığı Cihazlar',
+            ],
+            '4. TEMA -  Madde Ve Doğası': [
+                'Siyah Cisim Işıması',
+                'Fotoelektrik Etki',
+                'Yarı İletkenlik',
+                'Süper İletkenlik',
+                'Standart Model',
+                'Modern Atom Teorisi',
+                'Nükleer Enerji',
             ],
         },
     },
     Kimya: {
         '9. Sınıf': {
-            '1. Tema - Etkileşim - 9. Sınıf': [
+            '1.TEMA – Etkileşim (9. SINIF)': [
                 'Kimya Hayattır',
                 'Atomdan Periyodik Tabloya',
             ],
-            '2. Tema - Çeşitlilik - 9. Sınıf': [
+            '2.TEMA – Çeşitlilik (9. SINIF)': [
                 'Etkileşimler',
                 'Etkileşimden Maddeye',
             ],
-            '3. Tema - Sürdürülebilirlik - 9. Sınıf': [
-                'Nanoparçacıklar Ve Ekolojik Sürdürülebilirlik',
+            '3.TEMA – Sürdürülebilirlik (9. SINIF)': [
+                'Nanoparçacıklar ve Ekolojik Sürdürülebilirlik',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Etkileşim - 10. Sınıf': [
-                'Kimyasal Tepkimeler',
-                'Gazlar',
+            '1.TEMA – Etkileşim (10. SINIF)': ['Kimyasal Tepkimeler', 'Gazlar'],
+            '2.TEMA – Çeşitlilik (10. SINIF)': ['Çözeltiler'],
+            '3.TEMA – Sürdürülebilirlik (10. SINIF)': [
+                'Yeşil Kimya, Çevresel ve Ekolojik Sürdürülebilirlik',
             ],
-            '2. Tema - Çeşitlilik - 10. Sınıf': ['Çözelitiler'],
-            '3. Tema - Sürdürülebilirlik - 10. Sınıf': [
-                'Yeşil Kimya, Çevresel Ve Ekolojik Sürdürülebilirlik',
+        },
+        '11. Sınıf': {
+            '1.TEMA – Etkileşim (11. SINIF)': [
+                'Enerji',
+                'Kimyasal Tepkimelerde Hız',
+            ],
+            '2.TEMA – Çeşitlilik (11. SINIF)': [
+                'Denge',
+                'Asit ve Baz Çözeltilerinde Denge',
+                'Çözünürlük Dengesi',
+            ],
+            '3.TEMA – Sürdürülebilirlik (11. SINIF)': [
+                'Nanoteknoloji ve Sürdürülebilirlik',
+            ],
+        },
+        '12. Sınıf': {
+            '1.TEMA – Etkileşim (12. SINIF)': [
+                'İndirgenme-Yükseltgenme Tepkimeleri',
+                'Elektrokimyasal Hücreler',
+            ],
+            '2.TEMA – Çeşitlilik (12. SINIF)': [
+                'Organik Kimyaya Giriş',
+                'Organik Bileşikler',
+            ],
+            '3.TEMA – Sürdürülebilirlik (12. SINIF)': [
+                'Nanobilim, Yeşil Kimya ve Sürdürülebilirlik',
             ],
         },
     },
     Biyoloji: {
         '9. Sınıf': {
-            '1. Tema - Yaşam - 9. Sınıf': [
-                'Biyolojinin Önemi Ve Biyolojideki Dönüm Noktalarının İnsan Hayatına Katkıları',
-                'Bilim, Bilimin Doğası Ve Bilimsel Araştırma Süreçleri',
-                'Bilimsel Araştırmaların Bilim Etiğine Uygunluğu',
-                'Canlıların OrtAK Özellikleri',
-                'Sınıflandırmada Temel Yaklaşımlar Ve Modern Sınıflandırma',
-                'Sınıflandırmada Üç Üst Âlem (Domain) Sistemi',
-                'Biyoçeşitlilik',
-            ],
-            '2. Tema - Organizasyon - 9. Sınıf': [
-                'İnorganik Moleküller',
-                'Organik Moleküller',
-                'Organik Moleküllerin Tayininde Kullanılan Ayıraçlar',
-                'Enzim Aktivitesini Etkileyen Koşullar',
-                'Hücre Ve Alt Birimleri',
-                'Hücre Zarından Madde Geçişleri',
-                'Küçük Moleküllerin Hareketleri: Difüzyon Ve Ozmoz',
-                'Hücre, Doku, Organ Ve Sistemlerin Organizasyonu',
+            '1.TEMA – Yaşam': ['Yaşam Bilimi: Biyoloji', 'Temel Bileşenler'],
+            '2.TEMA – Organizasyon': [
+                'Hücrenin Organizasyonu',
+                'Sınıflandırma ve Biyoçeşitlilik',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Enerji - 10. Sınıf': [
-                'Canlılık İçin Enerjinin Önemi',
-                'Işık Enerjisi Kullanılarak Besin Sentezi (Fotosentez)',
-                'Fotosentezde Kullanılan Ve Üretilen Maddeler',
-                'Işık Enerjisi Kullanılmadan Besin Sentezi (Kemosentez)',
-                'Sindirim',
-                'İnsanda Sindirim',
-                'Hüresel Solunum',
-                'Besinlerin Solunuma Katılma Yolları',
-                'Fermantasyon',
-                'Enerji-Metabolizma İlişkisi',
+            '1.TEMA – Enerji': ['Güneşten Besinlere', 'Besinlerden Enerjiye'],
+            '2.TEMA – Ekoloji': ['Ekosistemler', 'Ekolojik Sürdürülebilirlik'],
+        },
+        '11. Sınıf': {
+            '1. TEMA -  Tepki': [
+                'Canlılık ve Tepki',
+                'Bitkilerde Tepki',
+                'Hayvanlarda Tepki',
+                'Uyartıya Mekanik Tepki',
+                'Bağışıklık',
             ],
-            '2. Tema - Ekoloji - 10. Sınıf': [
-                'Ekosistemin Bileşenleri',
-                'Komünitelerde Ve Popülasyonlarda Görülen Etkileşimler Ve Değişimler',
-                'Ekosistemdeki Madde Ve Enerji Akışı',
-                'Madde Döngüleri',
-                'Ekolojik Sürdürülebilirliğin Önemi',
-                'Ekolojik Sürdürülebilirliği Kısaltan Durumlar',
-                'Ekolojik Ayak İzinin Küçülmesi',
-                'Doğal Kaynakların Ve Biyoçeşitliliğin Korunması',
-                'Atık Yönetimi',
+            '2. TEMA -  Homeostazi': [
+                'Homeostazi ve Canlılar İçin Önemi',
+                'Homeostazinin Sağlanamadığı Durumlarda Oluşabilecek Sağlık Problemleri',
+            ],
+        },
+        '12. Sınıf': {
+            '1. TEMA - Üreme': [
+                'Hücre Bölünmeleri ve Üreme',
+                'Üreme Çeşitleri',
+                'Üreme ve Gelişme',
+            ],
+            '2. TEMA - Gen': [
+                'Nükleik Asitler ve Gen İfadesi',
+                'Kalıtım',
+                'Biyoteknoloji',
             ],
         },
     },
     Türkçe: {
         '9. Sınıf': {
-            '1. Tema - Sözün İnceliği - 9. Sınıf': [
-                'Okuma: Şiir',
-                'Okuma: Deneme',
-                'Edebiyat Atölyesi: Yazma',
-                'Dinleme/İzleme: Mülakat',
-                'Edebiyat Atölyesi: Konuşma',
-            ],
-            '2. Tema - Anlam Arayışı - 9. Sınıf': [
-                'Okuma: Hikâye',
-                'Okuma: Anı',
-                'Edebiyat Atölyesi: Konuşma',
-                'Dinleme/İzleme: Şiir',
-                'Edebiyat Atölyesi: Yazma',
-            ],
-            '3. Tema - Anlamın Yapı Taşları - 9. Sınıf': [
-                'Okuma: Hikâye',
-                'Okuma: Gezi Yazısı',
-                'Edebiyat Atölyesi: Konuşma',
+            '1.TEMA – Sözün İnceliği': [
+                'Okuma',
+                'Yazma',
                 'Dinleme/İzleme',
-                'Edebiyat Atölyesi: Yazma',
+                'Konuşma',
             ],
-            '4. Tema - Dilin Zenginliği - 9. Sınıf': [
-                'Okuma: Roman',
-                'Okuma: Eleştiri',
-                'Edebiyat Atölyesi: Konuşma',
-                'Dinleme/İzleme: Otobiyografi',
-                'Edebiyat Atölyesi: Yazma',
+            '2.TEMA – Anlam Arayışı': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '3.TEMA – Anlamın Yapı Taşları': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '4.TEMA – Dilin Zenginliği': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Sözün Ezgisi - 10. Sınıf': [
-                'Okuma (Koşuk)',
-                'Okuma (Türkü - Turnalar)',
-                'Konuşma (Şiir Dinletisi Hazırlama)',
-                'Dinleme/İzleme (Masal - Mercan Kız)',
-                'Yazma (Masalı Film Şeridi Haline Getirme)',
+            '1.TEMA – Sözün Ezgisi': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
             ],
-            '2. Tema - Kelimelerin Ritmi - 10. Sınıf': [
-                'Okuma (Gazel)',
-                'Okuma (Saf Şiir - Kaldırımlar)',
-                'Yazma (Öğretici Metni Edebi Metne Dönüştürme)',
-                'Dinleme/İzleme (Söyleşi (Edebi))',
-                'Konuşma (Podcast (Sesli Blog) Hazırlama)',
+            '2.TEMA – Kelimelerin Ritmi': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
             ],
-            '3. Tema - Dünden Bugüne - 10. Sınıf': [
-                'Okuma (Destan (Oğuz Kağan Destanı))',
-                'Okuma (Mesnevi (Harnâme))',
-                'Konuşma (Türk Destanlarıyla İlgili Bir Sunum Yapma)',
-                'Dinleme/İzleme (Fabl (Aslan Ve Av Hayvanları))',
-                'Yazma (Bir Fabl Yazma)',
+            '3.TEMA – Dünden Bugüne': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
             ],
-            '4. Tema - Nesillerin Mirası - 10. Sınıf': [
-                'Okuma (Dede Korkut Hikayeleri (Salur Kazan’ın Yedi Başlı Ejderhayı Öldürdüğü Boy))',
-                'Okuma (Tanzimat Şiiri (Hürriyet Kasidesi))',
-                'Konuşma (Dede Korkut Hikâyelerinden Birini Canlandırma)',
-                'Dinleme/İzleme (Milli Edebiyat Döneminde Hikâye (Kaç Yerinden))',
-                'Yazma (Kaç Yerinden Adlı Hikâyeyi Şiir Hâline Getirme)',
+            '4.TEMA – Nesillerin Mirası': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+        },
+        '11. Sınıf': {
+            '1. TEMA - Bir Diyeceğim Var!': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '2. TEMA - Kültür Yolculuğu': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '3. TEMA - Yaşamın İzinde': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '4. TEMA - Hayatın Aynası': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+        },
+        '12. Sınıf': {
+            '1. TEMA - Benim Yolculuğum': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '2. TEMA - Toplumun Ahengi': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '3. TEMA - Hayatın Dengesi': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
+            ],
+            '4. TEMA - Hayalimdeki Yarın': [
+                'Okuma',
+                'Yazma',
+                'Dinleme/İzleme',
+                'Konuşma',
             ],
         },
     },
     Tarih: {
         '9. Sınıf': {
-            '1. Tema - Geçmişin İnşa Sürecinde Tarih - 9. Sınıf': [
+            '1. TEMA - Geçmişin İnşa Sürecinde Tarih': [
                 'Tarih Öğrenmenin Faydaları',
                 'Tarihin Doğası',
                 'Tarihsel Bilginin Üretim Süreci',
-                'Tarih Araştırma Ve Yazımında Dijital Dönüşüm',
+                'Tarih Araştırma ve Yazımında Dijitalleşme',
             ],
-            '2. Tema - Eski Çağ Medeniyetleri - 9. Sınıf': [
-                'Tarım Devrimi’nin Eski Çağ’a Etkileri',
-                'Eski Çağ’da Yönetenler Ve Savaşanlar',
-                'Eski Çağ’da Hukuk',
-                'Eski Çağ’da İnanç, Bilim Ve Sanat',
+            '2. TEMA - Eski Çağ Medeniyetleri': [
+                'Tarım Devrimi’nin Eski Çağ Medeniyetlerindeki Yerleşmeye ve Ekonomiye Etkisi',
+                'Eski Çağ Medeniyetlerinde Yönetim ve Ordu',
+                'Eski Çağ Medeniyetlerinde Hukuk',
+                'Eski Çağ’da İnançlar ile Bilim ve Sanat Anlayışları',
                 'Türklerde Konargöçer Yaşam',
             ],
-            '3. Tema - Orta Çağ Medeniyetleri - 9. Sınıf': [
-                'Orta Çağ’daki Kitlesel Göçler',
-                'Orta Çağ’daki Siyasi Ve Askerî Gelişmeler',
-                'Orta Çağ’da Ticaret Yoları',
-                'Orta Çağ’da Bilim, Kültür Ve Sanat',
+            '3. TEMA - Orta Çağ Medeniyetleri': [
+                'Orta Çağ’da Yaşanan Kitlesel Göçler',
+                'Orta Çağ’daki Başlıca Devletlerin Yönetim ve Ordu Yapıları',
+                'Orta Çağ’daki Ticaret Yolları',
+                'Orta Çağ’daki Başlıca Medeniyet Havzalarında Bilim, Kültür ve Sanat',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Türkistan’dan Türkiye’ye (1040 – 1299) - 10. Sınıf': [
-                'Önemli Askerî Mücadelelerin Türk Tarihinin Seyrine Etkileri',
-                'Türkistan’dan Türkiye’ye Türklerde Devlet Ve Ordu Teşkilatları',
-                'Türklerde Sosyoekonomik Hayat Ve Şehirleşme',
-                'Türk-İslam Medeniyetinde Bilim, Kültür, Eğitim Ve Sanat',
+            '1. TEMA - Türkistan’Dan Türkiye’Ye (1040-1299)': [
+                'Türkistan’dan Türkiye’ye Uzanan Süreçte Meydana Gelen Önemli Askerî Mücadeleler',
+                'Türkistan’dan Türkiye’ye Uzanan Süreçte Türk Devlet ve Ordu Teşkilatında Meydana Gelen Değişim',
+                'Türkistan’dan Türkiye’ye Uzanan Süreçte Türklerin Sosyal Yaşamları ve Ekonomik Faaliyetleri',
+                'Türk-İslam Medeniyetinin Bilim, Kültür, Eğitim ve Sanat Alanlarında Ortaya Çıkardığı Etkiler',
             ],
-            '2. Tema - Beylikten Devlete Osmanlı (1299 – 1453) - 10. Sınıf': [
-                'Osmanlı Devleti’nin Kuruluşuna Dair Görüşler',
-                'Beylikten Devlete Siyasi Ve Askerî Gelişmeler',
-                'Osmanlı Devleti’nde Ordu, Hukuk Ve Toprak Sistemi',
-                'Osmanlı Devleti’nin İskân Ve İstimalet Politikası',
-                'Osmanlı Devleti’nin İlim Ve İrfan Geleneği',
+            '2. TEMA - Beylikten Devlete Osmanlı (1299-1453)': [
+                'Osmanlı Devleti’nin Kuruluşuna Dair Farklı Görüşler',
+                'Osmanlı Devleti’nin Anadolu ve Rumeli’deki Siyasi ve Askerî Mücadeleleri',
+                'Osmanlı Devleti’nin Devletleşme Süreci ile Ordu, Hukuk ve Toprak Sistemleri Arasındaki İlişkiler',
+                'Osmanlı Devleti’nin Fethettiği Topraklarda Kalıcı Olabilmek İçin İzlediği Politikalar',
+                'Osmanlı Devleti’nin İlim ve İrfan Geleneğinin Oluşmasında Mekânların ve Kişilerin Etkisi',
             ],
-            '3. Tema - Cihan Devleti Osmanlı (1453 – 1683) - 10. Sınıf': [
-                'Osmanlı Devleti’nin Cihan Devleti Hâline Gelmesi',
-                'Osmanlı Devleti’nin Yönetim Ve Ordu Yapısında Değişim',
-                'Avrupalıların Sömürgeci Politikaları',
-                'Osmanlı Devleti’nde İsyanlar',
-                'Osmanlı Devleti’NDE Bilim, Kültür, Eğitim Ve Sanat',
+            '3. TEMA - Cihan Devleti Osmanlı (1453-1683)': [
+                '1453-1683 Yılları Arasındaki Siyasi ve Askerî Mücadeleler',
+                'Osmanlı Devleti’nin Yönetim ve Ordu Yapısında Meydana Gelen Değişim',
+                'Avrupa’nın Sömürgeci Politikalarının Etkileri',
+                'Osmanlı Devleti’ndeki Önemli İsyanların Neden ve Sonuçları',
+                '1453-1683 Yılları Arasında Osmanlı Devleti’nde Bilim, Kültür, Eğitim ve Sanat Alanında Yaşanan Gelişmeler',
+            ],
+        },
+        '11. Sınıf': {
+            '1. TEMA - Değişen Dünyada Osmanlı Devleti (1683-1789)': [
+                'Osmanlı Devleti’nin 1683-1789 Yılları Arasındaki Siyasi ve Askerî Mücadeleleri',
+                'Lale Devri’nin Devlet ve Toplum Hayatına Etkileri',
+                '1755 Lizbon ve 1766 İstanbul Depremlerinin Etkileri',
+                'Sanayi Devrimi’nin Meydana Getirdiği Siyasi, Sosyal ve Ekonomik Değişim',
+            ],
+            '2. TEMA - Dönüşüm Sürecinde Osmanlı (1789-1908)': [
+                'Fransız İhtilali’nin Devlet ve Toplum Hayatında Meydana Getirdiği Değişim',
+                '1789-1908 Yılları Arasında Osmanlı Devleti’nde Meydana Gelen Siyasi, Askerî ve İdari Gelişmeler',
+                '1789-1908 Yılları Arasında Osmanlı Devleti’nde Bilim, Sanat ve Teknoloji Alanlarında Meydana Gelen Gelişmeler',
+                'Osmanlı Devleti’nde Sanayileşme Çabaları',
+            ],
+            '3. TEMA - Savaşlar Sarmalında Osmanlı (1908- 1918)': [
+                '1908-1918 Yılları Arasında Osmanlı Devleti’nde Meydana Gelen Siyasi ve Askerî Gelişmeler',
+                '1908-1918 Yılları Arasında Gerçekleşen Kitlesel Göç ve Salgınlar',
+                'Osmanlı Devleti’nin İnsanlık Tarihine Katkıları',
             ],
         },
     },
     Coğrafya: {
         '9. Sınıf': {
-            '1. Tema - Coğrafyanın Doğası - 9. Sınıf': ['Coğrafya Bilimi'],
-            '2. Tema - Mekânsal Bilgi Teknolojileri - 9. Sınıf': [
-                'Harita Okuryazarlığı',
+            '1.TEMA – Coğrafyanın Doğası (9. SINIF)': [
+                'Coğrafya Biliminin Konusu ve Bölümleri',
+                'Niçin Coğrafya Öğrenmeliyiz?',
+                'Coğrafya Biliminin Gelişimi',
             ],
-            '3. Tema - Doğal Sistemler Ve Süreçler - 9. Sınıf': [
-                'İklim Sistemini Anlamak',
+            '2.TEMA – Mekânsal Bilgi Teknolojileri (9. SINIF)': [
+                'Mekânın Aynası Haritalar',
+                'Türkiye’nin Coğrafi Konumu',
+                'Mekânsal Bilgi Teknolojilerinin Bileşenleri',
             ],
-            '4. Tema - Beşeri Sistemler Ve Süreçler - 9. Sınıf': [
-                'Nüfus Dinamikleri',
+            '3.TEMA – Doğal Sistemler ve Süreçler (9. SINIF)': [
+                'Hava Olayları ve Günlük Hayata Etkileri',
+                'İklim Sisteminin Bileşen ve Değişkenleri',
+                'İklim Türleri',
+                'İklim Sisteminde Yaşanan Değişiklikler',
             ],
-            '5. Tema - Ekonomik Faaliyetler Ve Etkileri - 9. Sınıf': [
+            '4.TEMA – Beşeri Sistemler ve Süreçler (9. SINIF)': [
+                'Nüfusun Tarihsel Değişimi ve Geleceği',
+                'Nüfusun Dağılışı ve Hareketleri',
+                'Demografik Dönüşüm ve Nüfus Piramitleri',
+                'Nüfusla İlgili Fırsat, Sorun ve Politikalar',
+            ],
+            '5.TEMA – Ekonomik Faaliyetler ve Etkileri (9. SINIF)': [
                 'Ekonomik Faaliyetleri Etkileyen Coğrafi Faktörler',
             ],
-            '6. Tema - Afetler Ve Sürdürülebilir Çevre - 9. Sınıf': ['Afetler'],
-            '7. Tema - Bölgeler, Ülkeler Ve Küresel Bağlantılar - 9. Sınıf': [
-                'Bölge Ve Bölge Sınırı',
+            '6.TEMA – Afetler ve Sürdürülebilir Çevre (9. SINIF)': [
+                'Tehlike, Risk ve Afet',
+                'Afet Türleri',
+                'Bütüncül Afet Yönetimi',
+            ],
+            '7.TEMA – Bölgeler, Ülkeler ve Küresel Bağlantılar (9. SINIF)': [
+                'Bölge ve Bölge Sınırı',
             ],
         },
         '10. Sınıf': {
-            '1. Tema - Coğrafyanın Doğası - 10. Sınıf': ['Coğrafi Bakış'],
-            '2. Tema - Mekânsal Bilgi Teknolojileri - 10. Sınıf': [
-                'CBS Ve Uzaktan Algılamanın Uygulama Alanları',
+            '1.TEMA – Coğrafyanın Doğası (10. SINIF)': ['Coğrafi Bakış'],
+            '2.TEMA – Mekânsal Bilgi Teknolojileri (10. SINIF)': [
+                'CBS ve Uzaktan Algılamanın Uygulama Alanları',
                 'Mekânsal Verilerin Haritalara Aktarılması',
             ],
-            '3. Tema - Doğal Sistemler Ve Süreçler - 10. Sınıf': [
+            '3.TEMA – Doğal Sistemler ve Süreçler (10. SINIF)': [
                 'Tektonik Süreçler',
-                'İklim Ve Kayaç Yapısının Aşınma Ve Çözünme Süreçlerine Etkisi',
-                'Aşınma, Taşınma Ve Biriktirme Süreçlerinin Yeryüzünün Şekillenmesine Etkisi',
-                'Yeryüzü Şekilleri İle İlgili Gözlem Ve Saha Çalışmaları',
-                'Yeryüzü Şekilleri İle Beşeri Faaliyetler Arasındaki Etkileşim',
+                'İklim ve Kayaç Yapısının Aşınma ve Çözünme Süreçlerine Etkisi',
+                'Aşınım ve Birikim Süreçlerinin Yeryüzü Şekillerinin Oluşumuna Etkisi',
+                'Yeryüzü Şekilleri ile İlgili Gözlem ve Saha Çalışması',
+                'Yeryüzü Şekilleri ile Beşerî Faaliyetler Arasındaki Etkileşim',
             ],
-            '4. Tema - Beşeri Sistemler Ve Süreçler - 10. Sınıf': [
-                'Yerleşmelerin Kuruluşu Ve Gelişimi',
+            '4.TEMA – Beşeri Sistemler ve Süreçler (10. SINIF)': [
+                'Yerleşmelerin Kuruluşu ve Gelişimi',
                 'Yerleşmelerin Fonksiyonları',
             ],
-            '5. Tema - Ekonomik Faaliyetler Ve Etkileri - 10. Sınıf': [
+            '5.TEMA – Ekonomik Faaliyetler ve Etkileri (10. SINIF)': [
                 'Ekonomik Faaliyetlerin Özellikleri',
-                'Ekonomik Sektörler Ve Gelişmişlik',
+                'Ekonomik Sektörler ve Gelişmişlik',
                 'Türkiye Ekonomisinin Sektörel Dağılımı',
             ],
-            '6. Tema - Afetler Ve Sürdürülebilir Çevre - 10. Sınıf': [
+            '6.TEMA – Afetler ve Sürdürülebilir Çevre (10. SINIF)': [
                 'Afetlerle Mücadelede İyi Uygulama Örnekleri',
                 'Afetlere Karşı Dirençli Yaşam Alanları',
                 'Afetlerden Korunma',
                 'Afet Bilinci',
             ],
-            '7. Tema - Bölgeler, Ülkeler Ve Küresel Bağlantılar - 10. Sınıf': [
+            '7.TEMA – Bölgeler, Ülkeler ve Küresel Bağlantılar (10. SINIF)': [
                 'Türk Kültürünün Mekânsal Özellikleri',
+            ],
+        },
+        '11. Sınıf': {
+            '1.TEMA – Coğrafyanın Doğası (11. SINIF)': [
+                'Mekânsal Sorunlar Karşısında Coğrafya Bilimi',
+            ],
+            '2.TEMA – Mekânsal Bilgi Teknolojileri (11. SINIF)': [
+                'Web Tabanlı CBS Uygulamaları',
+            ],
+            '3.TEMA – Doğal Sistemler ve Süreçler (11. SINIF)': [
+                'Su Kaynakları',
+                'Türkiye’deki Su Kaynaklarının Etkileri',
+            ],
+            '4.TEMA – Beşeri Sistemler ve Süreçler (11. SINIF)': [
+                'Yerleşmelerin Mekânsal Organizasyonları',
+                'Yerleşmelerin Etki Alanları',
+            ],
+            '5.TEMA – Ekonomik Faaliyetler ve Etkileri (11. SINIF)': [
+                'Tarımsal Faaliyetler ve Gıda Güvencesi',
+                'Tarım Uygulamalarında Sürdürülebilirlik',
+                'Stratejik ve Kritik Madenler',
+                'Enerji Kaynakları',
+                'Sanayileşmenin Mekânsal Etkileri',
+            ],
+            '6.TEMA – Afetler ve Sürdürülebilir Çevre (11. SINIF)': [
+                'Gezegen Sınırı',
+                'Küresel İklim Değişikliği',
+                'Türkiye’de Suyun Sürdürülebilir Kullanımı',
+            ],
+            '7.TEMA – Bölgeler, Ülkeler ve Küresel Bağlantılar (11. SINIF)': [
+                'Türkiye’nin Kültürel Hinterlandı',
+                'Tarımsal Üretim: Örnek Ülke',
+                'Sanayileşme Süreci: Örnek Ülkeler',
+                'Madencilik Faaliyetleri: Örnek Ülke',
+                'Enerji Kaynakları: Örnek Ülkeler',
+            ],
+        },
+        '12. Sınıf': {
+            '1.TEMA – Coğrafyanın Doğası (12. SINIF)': [
+                'Geleceğin Dünyasında Coğrafya Bilimi',
+            ],
+            '2.TEMA – Mekânsal Bilgi Teknolojileri (12. SINIF)': [
+                'Web Tabanlı CBS Uygulamaları ve Tematik Haritalar',
+            ],
+            '3.TEMA – Doğal Sistemler ve Süreçler (12. SINIF)': [
+                'Toprak Oluşumu',
+                'Türkiye’de Toprakların Kullanımı',
+                'Coğrafi Faktörlerin Bitki Türlerinin Çeşitliliği ve Dağılışına Etkisi',
+            ],
+            '4.TEMA – Beşeri Sistemler ve Süreçler (12. SINIF)': [
+                'Kültür-Mekân Etkileşimi',
+                'Kültürel Peyzaj ve Sürdürülebilirlik',
+            ],
+            '5.TEMA – Ekonomik Faaliyetler ve Etkileri (12. SINIF)': [
+                'Ulaşım Sistemleri',
+                'Küresel Ticaret',
+                'Turizm Faaliyetleri',
+            ],
+            '6.TEMA – Afetler ve Sürdürülebilir Çevre (12. SINIF)': [
+                'Türkiye’de Toprağın Sürdürülebilir Kullanımı',
+                'Türkiye’de Bitki Türlerinin Değişim ve Sürekliliği',
+                'Çevre Sorunlarının Önlenmesine Yönelik Politika ve Uygulamalar',
+                'Çevresel Organizasyonlar ve Anlaşmalar',
+                'Çevre Sorunlarına Çözümler',
+                'Ortak Doğal ve Kültürel Miras',
+            ],
+            '7.TEMA – Bölgeler, Ülkeler ve Küresel Bağlantılar (12. SINIF)': [
+                'Uluslararası Birliktelik ve Anlaşmazlıklar',
+                'Ulaşım Sistemleri: Örnek Ülkeler',
+                'Ticari Faaliyetler: Örnek Ülke',
+                'Turizm Faaliyetleri: Örnek Ülkeler',
             ],
         },
     },
     Felsefe: {
         '10. Sınıf': {
-            '1. Tema - Felsefenin Doğası - 10. Sınıf': [
+            '1. TEMA - Felsefenin Doğası': [
                 'Felsefenin Anlamı',
-                'Felsefi Düşüncenin Gelişimi',
                 'Felsefi Düşüncenin Özellikleri',
-                'Felsefi Soruların Temel Özellikleri',
+                'Felsefi Düşüncenin Gelişimi',
+                'Felsefi Sorunun Temel Özellikleri',
                 'Felsefenin Diğer Alanlarla İlişkisi',
-                'Felsefenin Bireysel Ve Toplumsal İşlevi',
+                'Felsefenin Bireysel ve Toplumsal İşlevi',
             ],
-            '2. Tema - Felsefe, Mantık Ve Argümantasyon - 10. Sınıf': [
-                'Düşünme Ve Dil İlişkisi',
-                'Mantık Ve Argümantasyonun Temel Kavramları',
+            '2. TEMA - Felsefe, Mantık Ve Argümantasyon': [
+                'Düşünme ve Dil İlişkisi',
+                'Mantık ve Argümantasyonun Temel Kavramları',
                 'Argümantasyonun Yapısı',
             ],
-            '3. Tema - Varlık Felsefesi - 10. Sınıf': [
-                'Varlık Felsefesinin Konusu Ve Temel Kavramları',
-                'Varlık Felsefesinin Temel Problemleri',
+            '3. TEMA - Varlık Felsefesi': [
+                'Varlık Felsefesinin Konusu ve Temel Kavramları',
+                'Varlık Felsefesinin Temel Problemleri (Varlığın Var Olup Olmadığı, Varlığın Ne Olduğu)',
             ],
-            '4. Tema - Bilgi Felsefesi - 10. Sınıf': [
-                'Bilgi Felsefesinin Konusu Ve Temel Kavramları',
-                'Bilgi Felsefesinin Temel Problemleri',
+            '4. TEMA - Bilgi Felsefesi': [
+                'Bilgi Felsefesinin Konusu ve Temel Kavramları',
+                'Bilgi Felsefesinin Temel Problemleri (Bilginin İmkânı, Kaynağı ve Doğruluk Ölçütleri)',
             ],
-            '5. Tema - Ahlak Felsefesi - 10. Sınıf': [
-                'Ahlak Felsefesinin Konusu Ve Temel Kavramları',
-                'Ahlak Felsefesinin Temel Problemleri',
+            '5. TEMA - Ahlak Felsefesi': [
+                'Ahlak Felsefesinin Konusu ve Temel Kavramları',
+                'Ahlak Felsefesinin Temel Problemleri (Evrensel Ahlak Yasasının İmkânı Özgürlük-Sorumluluk İlişkisi)',
             ],
-            '6. Tema - Estetik Ve Sanat Felsefesi - 10. Sınıf': [
-                'Estetik Ve Sanat Felsefesinin Konusu Ve Temel Kavramları',
-                'Estetik Ve Sanat Felsefesinin Temel Problemleri',
+            '6. TEMA - Estetik Ve Sanat Felsefesi': [
+                'Estetik ve Sanat Felsefesinin Konusu ve Temel Kavramları',
+                'Estetik ve Sanat Felsefesinin Temel Problemleri (Sanatın Ne Olduğu, Güzellik ve Ortak Estetik Yargıların İmkânı)',
             ],
-            '7. Tema - Siyaset Felsefesi - 10. Sınıf': [
-                'Siyaset Felsefesinin Konusu Ve Temel Kavramları',
-                'Siyaset Felsefesinin Temel Problemleri',
+            '7. TEMA - Siyaset Felsefesi': [
+                'Siyaset Felsefesinin Konusu ve Temel Kavramları',
+                'Siyaset Felsefesinin Temel Problemleri (Devletin Kökeni, İktidarın Kaynağı ve Meşruiyeti, İdeal Düzen ve Ütopyalar)',
             ],
-            '8. Tema - Din Felsefesi - 10. Sınıf': [
-                'Din Felsefesinin Konusu Ve Temel Kavramları',
-                'Din Felsefesinin Temel Problemleri',
+            '8. TEMA - Din Felsefesi': [
+                'Din Felsefesinin Konusu ve Temel Kavramları',
+                'Din Felsefesinin Temel Problemleri (Tanrı’nın Varlığına İlişkin Görüşler, Tanrı’nın Varlığına Yönelik argüman, Evrenin Sonluluğu ve Sonsuzluğu, Ruhun Ölümsüzlüğü)',
             ],
-            '9. Tema - Bilim Felsefesi - 10. Sınıf': [
-                'Bilim Felsefesinin Konusu Ve Temel Kavramları',
-                'Bilim Felsefesinin Temel Problemleri',
+            '9. TEMA - Bilim Felsefesi': [
+                'Bilim Felsefesinin Konusu ve Temel Kavramları',
+                'Bilim Felsefesinin Temel Problemleri (Bilimin Ne Olduğu, Bilimi Oluşturan Unsurlar)',
+            ],
+        },
+        '11. Sınıf': {
+            '1. TEMA - Çevre Sorunları Ve Felsefe': [
+                'Çevre ve İnsan İlişkisi',
+                'Çevre Etiği (İnsan Merkezci Etik, Canlı Merkezci Etik, Çevre Merkezci Etik)',
+            ],
+            '2. TEMA - Teknoloji Ve Hayat': [
+                'Teknoloji ve İnsan Hayatı',
+                'Teknoloji Bağlamında Ontolojik Problemler (Ontolojik Anlam Kaybı, Yabancılaşma)',
+                'Teknoloji Bağlamında Aksiyolojik Problemler (Güvenlik Sorunları, Değerlerin Tahribatı, Ahlaki Eylemin İmkânı)',
+            ],
+            '3. TEMA - Akıl Ve İnanç': [
+                'Akıl-İnanç İlişkisine Yönelik Felsefi Sorular ve Problemler',
+                'Akıl-İnanç İlişkisine Yönelik Felsefi Görüş ve Argümanlar',
+            ],
+            '4. TEMA - Edebiyat Ve Felsefe': [
+                'Edebiyat Felsefe İlişkisi',
+                'Edebiyat Felsefe İlişkisi Problemleri (Edebî Unsurlara Felsefi Bakış, Edebî Unsurlarla Felsefe Yapma)',
+            ],
+            '5. TEMA - Hayatın Anlamı': [
+                'Hayatın Anlamına Yönelik Felsefi Sorular ve Problemler (Mutluluk ve Hayat İlişkisi, Varoluş ve Kendi Olma)',
+                'Hayatın Anlamına Yönelik Felsefi Görüş ve Argümanlar',
+            ],
+            '6. TEMA - Hukuk Ve Felsefe': [
+                'Hukuk ve İnsan',
+                'Hukukun Doğasına Yönelik Felsefi Problemler [Hukukun Gereği ve Önemi, Hukukun Kaynağı (Doğal Hukuk, Pozitif Hukuk), Ahlak-Hukuk İlişkisi]',
             ],
         },
     },
     'Din Kültürü ve Ahlak Bilgisi': {
         '9. Sınıf': {
-            '1. Tema - Allah-İnsan İlişkisi - 9. Sınıf': [
-                'İnsan Ve İnsanın Yaratılışı',
+            '1. TEMA - Allah-İnsan İlişkisi': [
+                'İnsan ve İnsanın Yaratılışı',
                 'Doğruyu Arayan Bir Varlık Olarak İnsan',
-                'İbadet Ve Dua Eden Bir Varlık Olarak İnsan',
+                'İbadet ve Dua Eden Bir Varlık Olarak İnsan',
                 'Kur’an’dan Mesajlar',
             ],
-            '2. Tema - İslam’da İnanç Esasları - 9. Sınıf': [
-                'İman Ve İmanın Mahiyeti',
-                'İslamda İman Esasları',
-                'İmanın Bireye Ve Topluma Kazandırdıkları',
+            '2. TEMA - İslam’Da İnanç Esasları': [
+                'İman ve İmanın mahiyeti',
+                'İslam’da İman Esasları',
+                'İmanın Bireye ve Topluma Kazandırdıkları',
                 'Kur’an’dan Mesajlar',
             ],
-            '3. Tema - İslam’da İbadetler - 9. Sınıf': [
+            '3. TEMA - İslam’Da İbadetler': [
                 'İslam’da İbadetin Kapsamı',
                 'İslam’da Temel İbadetler',
-                'İnsan Ve İbadet',
+                'İnsan ve İbadet',
                 'Kur’an’dan Mesajlar',
             ],
-            '4. Tema - İslam’da Ahlak İlkeleri - 9. Sınıf': [
+            '4. TEMA - İslam’Da Ahlak İlkeleri': [
                 'İslam’da Ahlakın Mahiyeti',
                 'Ahlakın Temel Unsurları',
-                'Ahlaki Tutum Ve Davranışlar',
+                'Ahlaki Tutum ve Davranışlar',
                 'Kur’an’dan Mesajlar',
             ],
-            '5. Tema - Kur’an’a Göre Hz. Muhammed - 9. Sınıf': [
-                'Hz. Muhammed’in Beşeri Ve Peygamberlik Yönü',
+            '5. TEMA - Kur’An’A Göre Hz. Muhammed': [
+                'Hz. Muhammed’in Beşerî ve Peygamberlik Yönü',
                 'Hz. Muhammed’in Örnekliği',
-                'Kültürümüzde Hz. Muhammed Ve Ehlibeyt Sevgisi',
+                'Kültürümüzde Hz. Muhammed ve Ehlibeyt Sevgisi',
                 'Kur’an’dan Mesajlar',
             ],
-        },
-    },
-    'Branş Deneme': {
-        '9. Sınıf': {
-            'Tema Yok': ['TYT Deneme', 'AYT Deneme'],
         },
         '10. Sınıf': {
-            'Tema Yok': ['TYT Deneme', 'AYT Deneme'],
+            '1. TEMA - İslam’Da Varlık Ve Bilgi': [
+                'İslam’da Bilgi ve Bilginin Kaynakları',
+                'Allah-Âlem İlişkisi',
+                'Kur’an’dan Mesajlar',
+            ],
+            '2. TEMA - Allah’ı Tanımak': [
+                'Allah’ın Varlığının Delilleri',
+                'Allah’ı İsim ve Sıfatlarıyla Tanımak',
+                'Kur’an’dan Mesajlar',
+            ],
+            '3. TEMA - İslam’ın Evrensel Mesajları': [
+                'İslam’ın Tevhit İlkesi',
+                'İslam’da Adalet ve Eşitlik',
+                'İslam ve Barış',
+                'Kur’an’dan Mesajlar',
+            ],
+            '4. TEMA - Din, Çevre Ve Teknoloji': [
+                'İnsan, Çevre ve Ahlak',
+                'Teknoloji ve Ahlak',
+                'Çevre ve Teknoloji',
+                'Kur’an’dan Mesajlar',
+            ],
+            '5. TEMA - İslam Düşüncesinde İtikadi-Siyasi Ve Fıkhi Yorumlar': [
+                'Dinî Yorum Farklılıklarının Sebepleri',
+                'İslam Düşüncesinde İtikadi-Siyasi ve Fıkhi Yorumlar',
+                'Kur’an’dan Mesajlar',
+            ],
+        },
+        '11. Sınıf': {
+            '1. TEMA - Kader, İrade Ve Sorumluluk': [
+                'İnsan ve Kader',
+                'Akıl, İrade ve Sorumluluk Sahibi Bir Varlık Olarak İnsan',
+                'Kur’an’dan Mesajlar',
+            ],
+            '2. TEMA - Din, Felsefe, Bilim Ve Sanat': [
+                'Din',
+                'Din, Felsefe ve Bilim',
+                'Din ve Sanat',
+                'Kur’an’dan Mesajlar',
+            ],
+            '3. TEMA - İslam Medeniyeti Ve Gönül Coğrafyamız': [
+                'Medeniyetin Oluşumu',
+                'İslam Medeniyetinin İzleri',
+                'İslam Medeniyetinin Bugünü ve Geleceği',
+                'Kur’an’dan Mesajlar',
+            ],
+            '4. TEMA - İnançla İlgili Meseleler': [
+                'İnançla İlgili Felsefi Yaklaşımlar',
+                'Kötülük Problemi',
+                'Yeni Dinî Hareketler ve Din İstismarı',
+                'Kur’an’dan Mesajlar',
+            ],
+            '5. TEMA - Yahudilik Ve Hristiyanlık': [
+                'Yahudilik',
+                'Hristiyanlık',
+            ],
+        },
+        '12. Sınıf': {
+            '1. TEMA - Kur’An-ı Kerim': [
+                'Kur’an-ı Kerim’in Tarihi',
+                'Kur’an-ı Kerim’in Ana Konuları ve Temel Özellikleri',
+                'Kur’an-ı Kerim’in Anlaşılmasında Temel İlkeler',
+                'Kur’an-ı Kerim ve Kültürümüz',
+                'Kur’an’dan Mesajlar',
+            ],
+            '2. TEMA - Din Ve Aile': [
+                'İslam’da Aile',
+                'Aile İçi İletişim',
+                'Aile ve Ahlaki Değerler',
+                'Kur’an’dan Mesajlar',
+            ],
+            '3. TEMA - Güncel Dinî Meseleler': [
+                'Dinî Meselelerin Çözümünde Temel İlke ve Yöntemler',
+                'Gıda Maddeleriyle İlgili Meseleler',
+                'Bağımlılıkla İlgili Meseleler',
+                'Günlük Hayatla İlgili Meseleler',
+                'Kur’an’dan Mesajlar',
+            ],
+            '4. TEMA - İslam Düşüncesinde Tasavvufi Yorumlar': [
+                'Tasavvufi Düşüncenin Oluşumu',
+                'Tasavvufi Düşüncenin Ahlaki Boyutu',
+                'Kültürümüzde Etkin Olan Tasavvufi Yorumlar',
+                'Alevilik Bektaşilikte Temel Kavramlar ve Cem Erkânı',
+                'Kur’an’dan Mesajlar',
+            ],
+            '5. TEMA - Hint Ve Çin Dinleri': [
+                'Hinduizm',
+                'Budizm',
+                'Sihizm',
+                'Konfüçyanizm',
+                'Taoizm',
+            ],
         },
     },
 };
