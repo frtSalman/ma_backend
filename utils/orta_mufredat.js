@@ -955,6 +955,7 @@ export const mMData = {
             ],
         },
     },
+    'Genel Deneme': {},
 };
 
 export const xMData = {
@@ -1018,4 +1019,5 @@ export const xMData = {
         'Science',
         'Natural Forces',
     ],
+    'Genel Deneme': [],
 };

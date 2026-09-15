@@ -313,6 +313,7 @@ export const xHData = {
         'Dünya ve Ahiret Hayatı',
         'Güncel Dini Meseleler',
     ],
+    'Genel Deneme': [],
 };
 
 export const mHData = {
@@ -1176,4 +1177,5 @@ export const mHData = {
             ],
         },
     },
+    'Genel Deneme': {},
 };
