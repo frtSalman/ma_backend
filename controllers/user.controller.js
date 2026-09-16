@@ -345,15 +345,23 @@ export const deleteBookSource = async (req, res) => {
                 .json({ success: false, message: 'Öğrenci bulunamadı.' });
         }
 
+        console.trace(student.books);
+
         const existingBooks = student.books || {};
 
         let updatedBookSources = { ...existingBooks };
 
-        const updatedSubjectBooks = updatedBookSources[subject].filter(
-            bookItem => bookItem.url !== pullZoneURL
-        );
-
-        updatedBookSources[subject] = updatedSubjectBooks;
+        if (pullZoneURL) {
+            const updatedSubjectBooks = updatedBookSources[subject].filter(
+                bookItem => bookItem.url !== pullZoneURL
+            );
+            updatedBookSources[subject] = updatedSubjectBooks;
+        } else {
+            const updatedSubjectBooks = updatedBookSources[subject].filter(
+                bookItem => bookItem.sourceName !== sourceName
+            );
+            updatedBookSources[subject] = updatedSubjectBooks;
+        }
 
         await Users.update(
             {
