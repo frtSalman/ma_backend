@@ -316,41 +316,46 @@ export const deleteBatchUQURL = async (req, res) => {
 export const deleteAllUQURL = async (req, res) => {
     const { studentId } = req.params;
 
-    console.trace(studentId);
-
     try {
-        const student = await Users.findOne({ where: { id: studentId } });
-        const teacher = await Users.findOne({
-            where: { id: student?.teacherId },
-        });
-
-        const teacherName = (teacher.name + ' ' + teacher.surname).trim();
-
-        const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${student.name}/unsolved-questions`;
-
-        console.trace(deleteUrl);
-
-        // 1. Öğrencinin tüm çözülemeyen sorularını bul
         const questions = await UnsolvedQuestion.findAll({
             where: { studentId },
             attributes: ['id'],
         });
 
-        // 2. Bunny Storage klasörünü sil
-        const bunnyResponse = await fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: {
-                AccessKey: KEY,
-            },
-        });
+        const deletePromise = Promise.allSettled(
+            questions.map(async question => {
+                try {
+                    const fullUrl = question.imageUrl;
 
-        if (!bunnyResponse.ok) {
-            const bunnyError = await bunnyResponse.text();
+                    const pathOnly = decodeURIComponent(
+                        new URL(fullUrl).pathname
+                    );
 
-            throw new Error(
-                `Bunny silme işlemi başarısız: ${bunnyResponse.status} ${bunnyError}`
-            );
-        }
+                    const bunnyDeleteUrl = `https://${baseHost}/${BUNNY_ZONE}${pathOnly}`;
+
+                    const bunnyResponse = await fetch(bunnyDeleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            AccessKey: KEY,
+                        },
+                    });
+
+                    if (!bunnyResponse.ok && bunnyResponse.status !== 404) {
+                        const bunnyError = await bunnyResponse.text();
+                        console.warn(
+                            `Bunny silme işlemi başarısız: ${bunnyResponse.status} ${bunnyError}`
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        'Bunny silme işlemi sırasında hata oluştu:',
+                        error
+                    );
+                }
+            })
+        );
+
+        await deletePromise;
 
         // 3. Solution kayıtlarını sil
         if (questions.length > 0) {
