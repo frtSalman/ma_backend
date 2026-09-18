@@ -202,24 +202,51 @@ export const updateSchedule = async (req, res) => {
             studentId,
         } = req.body;
 
+        const teacherId = req.userId;
+
+        const isAllDays = req.body.isAllDays;
+
         const schedule = await StudySchedule.findByPk(id);
 
         if (!schedule) {
             return res.status(404).json({ message: 'Program bulunamadı.' });
         }
 
-        await schedule.update({
-            day,
-            timeRange,
-            subject,
-            topic,
-            tematic,
-            explanation,
-            workType,
-            generalRep,
-            bookSources,
-            videoSources,
-        });
+        if (!isAllDays) {
+            await schedule.update({
+                day,
+                deadline: getNearestDateForDay(day),
+                timeRange,
+                subject,
+                topic,
+                tematic,
+                explanation,
+                workType,
+                generalRep,
+                bookSources,
+                videoSources,
+            });
+        } else {
+            for (const day of weekDays) {
+                await StudySchedule.create({
+                    teacherId,
+                    studentId: schedule.studentId,
+                    studentName: schedule.studentName,
+                    day,
+                    deadline: getNearestDateForDay(day),
+                    timeRange,
+                    subject,
+                    topic,
+                    tematic,
+                    explanation,
+                    workType,
+                    generalRep,
+                    bookSources,
+                    videoSources,
+                });
+            }
+            await schedule.destroy();
+        }
 
         return res.status(200).json(schedule);
     } catch (error) {
