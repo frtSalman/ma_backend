@@ -319,13 +319,23 @@ export const deleteAllUQURL = async (req, res) => {
     try {
         const questions = await UnsolvedQuestion.findAll({
             where: { studentId },
-            attributes: ['id'],
+            attributes: ['id', 'imageUrl'],
         });
 
-        const deletePromise = Promise.allSettled(
+        if (!questions.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'Silinecek soru bulunamadı.',
+            });
+        }
+
+        const questionIds = questions.map(q => q.id);
+
+        await Promise.allSettled(
             questions.map(async question => {
                 try {
                     const fullUrl = question.imageUrl;
+                    if (!fullUrl) return;
 
                     const pathOnly = decodeURIComponent(
                         new URL(fullUrl).pathname
@@ -345,7 +355,7 @@ export const deleteAllUQURL = async (req, res) => {
                     if (!bunnyResponse.ok && bunnyResponse.status !== 404) {
                         const bunnyError = await bunnyResponse.text();
                         console.warn(
-                            `Bunny silme işlemi başarısız:${bunnyDeleteUrl} ${bunnyResponse.status} ${bunnyError}`
+                            `Bunny silme işlemi başarısız: ${bunnyDeleteUrl} ${bunnyResponse.status} ${bunnyError}`
                         );
                     }
                 } catch (error) {
@@ -357,23 +367,24 @@ export const deleteAllUQURL = async (req, res) => {
             })
         );
 
-        await deletePromise;
+        // 3. Solution ve UnsolvedQuestion kayıtlarını sil
+        await Solution.destroy({
+            where: {
+                qId: questionIds,
+            },
+        });
 
-        // 3. Solution kayıtlarını sil
-        if (questions.length > 0) {
-            const questionIds = questions.map(q => q.id);
-
-            await Solution.destroy({
-                where: {
-                    qId: questionIds,
-                },
-            });
-        }
+        await UnsolvedQuestion.destroy({
+            where: {
+                id: questionIds,
+            },
+        });
 
         // 4. Başarılı
         return res.json({
             success: true,
-            message: `${studentName} adlı öğrencinin tüm çözülemeyen soruları silindi.`,
+            message:
+                'Öğrencinin tüm çözülemeyen soruları ve bağlı çözümleri başarıyla silindi.',
         });
     } catch (error) {
         console.error('deleteAllUQURL error:', error);
