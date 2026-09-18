@@ -345,7 +345,7 @@ export const deleteAllUQURL = async (req, res) => {
                     if (!bunnyResponse.ok && bunnyResponse.status !== 404) {
                         const bunnyError = await bunnyResponse.text();
                         console.warn(
-                            `Bunny silme işlemi başarısız: ${bunnyResponse.status} ${bunnyError}`
+                            `Bunny silme işlemi başarısız:${bunnyDeleteUrl} ${bunnyResponse.status} ${bunnyError}`
                         );
                     }
                 } catch (error) {
