@@ -333,6 +333,8 @@ export const deleteAllUQURL = async (req, res) => {
 
                     const bunnyDeleteUrl = `https://${baseHost}/${BUNNY_ZONE}${pathOnly}`;
 
+                    console.trace('Bunny silme URL:', bunnyDeleteUrl);
+
                     const bunnyResponse = await fetch(bunnyDeleteUrl, {
                         method: 'DELETE',
                         headers: {
