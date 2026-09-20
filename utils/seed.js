@@ -1,6 +1,12 @@
 import sequelize from './database.js';
-import { xHData, mHData } from './lise_mufredat.js';
-import { mMData, xMData } from './orta_mufredat.js';
+//import { xHData, mHData } from './lise_mufredat.js';
+//import { mMData, xMData } from './orta_mufredat.js';
+import {
+    kpss_lisans,
+    kpss_onlisans,
+    ales,
+    dgs,
+} from './kpss_dgs_ales_mufredat.js';
 import Cirriculum from '../models/cirriculum.model.js';
 
 async function seedDatabase() {
@@ -10,7 +16,7 @@ async function seedDatabase() {
         await sequelize.sync();
 
         // Mevcut verileri temizlemek istersen (Dikkat: Sadece ilk kurulumda açın!)
-        await Cirriculum.destroy({ where: {} });
+        //await Cirriculum.destroy({ where: {} });
 
         const topicsToInsert = [];
 
@@ -22,7 +28,7 @@ async function seedDatabase() {
                     subjectData.forEach(topic => {
                         topicsToInsert.push({
                             educationLevel,
-                            curriculumVersion: 'eski', // İhtiyaca göre 'eski' veya 'yeni'
+                            curriculumVersion: '-', // İhtiyaca göre 'eski' veya 'yeni'
                             gradeLevel: defaultGrade, // 'Lise Genel' veya 'Ortaokul Genel'
                             subject,
                             tema: null,
@@ -40,7 +46,7 @@ async function seedDatabase() {
                             gradeData.forEach(topic => {
                                 topicsToInsert.push({
                                     educationLevel,
-                                    curriculumVersion: 'maarif',
+                                    curriculumVersion: '-',
                                     gradeLevel,
                                     subject,
                                     tema: null,
@@ -57,7 +63,7 @@ async function seedDatabase() {
                                     topics.forEach(topic => {
                                         topicsToInsert.push({
                                             educationLevel,
-                                            curriculumVersion: 'maarif',
+                                            curriculumVersion: '-',
                                             gradeLevel, // '9. Sınıf' vb.
                                             subject,
                                             tema, // '1. Tema - İnsan İlişkisi...' vb.
@@ -74,12 +80,12 @@ async function seedDatabase() {
 
         console.log('Veriler çözümleniyor...');
         // Lise müfredatını işle (Düz listeler için varsayılan sınıf: 'Lise Genel' veya 'YKS')
-        parseCurriculum(xHData, 'lise', 'Lise Genel');
-        parseCurriculum(mHData, 'lise', 'Maarif');
+        parseCurriculum(kpss_lisans, 'mezun', 'Kpss Lisans');
+        parseCurriculum(kpss_onlisans, 'mezun', 'Kpss Ön Lisans');
 
         // Ortaokul müfredatını işle (Düz listeler için varsayılan sınıf: 'Ortaokul Genel' veya 'LGS')
-        parseCurriculum(mMData, 'ortaokul', 'Maarif');
-        parseCurriculum(xMData, 'ortaokul', 'Ortaokul Genel');
+        parseCurriculum(dgs, 'mezun', 'DGS');
+        parseCurriculum(ales, 'mezun', 'ALES');
 
         console.log(
             `Toplam ${topicsToInsert.length} adet konu bulundu. Veritabanına yazılıyor...`
