@@ -10,11 +10,11 @@ const Cirriculum = db.define(
             primaryKey: true,
         },
         educationLevel: {
-            type: DataTypes.ENUM('ortaokul', 'lise'),
+            type: DataTypes.ENUM('ortaokul', 'lise', 'mezun'),
             allowNull: false,
         },
         curriculumVersion: {
-            type: DataTypes.ENUM('eski', 'maarif'),
+            type: DataTypes.ENUM('eski', 'maarif', '-'),
             allowNull: false,
         },
         gradeLevel: {
