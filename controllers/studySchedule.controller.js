@@ -85,15 +85,7 @@ export const createSchedule = async (req, res) => {
 
         const isAllDays = req.body.isAllDays;
 
-        if (
-            !teacherId ||
-            !studentId ||
-            !day ||
-            !timeRange ||
-            !subject ||
-            !topic ||
-            !workType
-        ) {
+        if (!teacherId || !studentId || !day || !timeRange || !subject) {
             return res.status(400).json({
                 message:
                     'Eksik alanlar var. Lütfen tüm zorunlu alanları doldurun.',

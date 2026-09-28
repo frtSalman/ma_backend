@@ -37,7 +37,7 @@ const StudySchedule = db.define(
         },
         topic: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         tematic: {
             type: DataTypes.STRING,
@@ -65,13 +65,7 @@ const StudySchedule = db.define(
         workType: {
             type: DataTypes.STRING,
             defaultValue: 'Konu Anlatımı',
-            allowNull: false,
-            enum: [
-                'Konu Anlatımı',
-                'Soru Çözümü',
-                'Branş Deneme',
-                'Çıkmış Sorular',
-            ],
+            allowNull: true,
         },
         bookSources: {
             // [{sourceName: 'Kitap Adı', url: 'https://...'}, ...]
