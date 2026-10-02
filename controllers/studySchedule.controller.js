@@ -269,6 +269,33 @@ export const deleteSchedule = async (req, res) => {
     }
 };
 
+export const deleteFilteredSchedules = async (req, res) => {
+    try {
+        const { ids } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: 'Geçersiz id listesi.' });
+        }
+
+        const deletedCount = await StudySchedule.destroy({
+            where: { id: ids },
+        });
+
+        if (deletedCount === 0) {
+            return res.status(404).json({ message: 'Programlar bulunamadı.' });
+        }
+
+        return res
+            .status(200)
+            .json({ message: 'Programlar başarıyla silindi.' });
+    } catch (error) {
+        console.error('Error deleting schedule:', error);
+        return res
+            .status(500)
+            .json({ message: 'Sunucu hatası: Program silinemedi.' });
+    }
+};
+
 export const deleteAllSchedule = async (req, res) => {
     try {
         const { studentId } = req.params;

@@ -8,7 +8,8 @@ import {
     deleteAllSchedule, // Import the new controller function
     createSchedulePDF,
     createBulkSchedule,
-    getStudentSchedules, // Import the new controller function
+    getStudentSchedules,
+    deleteFilteredSchedules, // Import the new controller function
 } from '../controllers/studySchedule.controller.js';
 import { verifyPayment } from '../middlewares/verifyPayment.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -30,6 +31,7 @@ router.post(
 router.put('/update-schedule/:id', verifyPayment, updateSchedule);
 router.delete('/delete-schedule/:id', verifyPayment, deleteSchedule);
 router.delete('/delete-all-schedules/:studentId', deleteAllSchedule);
+router.delete('/delete-filtered-schedules', deleteFilteredSchedules);
 router.patch('/update-schedule-status/:id', updateScheduleStatus);
 
 export default router;
