@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import db from './utils/database.js';
+import { removeLegacyStudentVideoIndexes } from './utils/removeLegacyStudentVideoIndexes.js';
 import authRoutes from './routes/auth.route.js';
 import timeTableRoutes from './routes/timeTable.route.js';
 import userRoutes from './routes/user.route.js';
@@ -141,6 +142,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 
 db.sync({ alter: true })
+    .then(() => removeLegacyStudentVideoIndexes(db))
     .then(() => {
         return app.listen(PORT, () =>
             console.log(`🚀 Server is running on port ${PORT}`)

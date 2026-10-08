@@ -112,23 +112,26 @@ export const uploadVideoSourceURL = async (req, res) => {
                 .json({ success: false, message: 'Öğrenci bulunamadı.' });
         }
 
-        // ÇÖZÜM 1: 'subject' filtresini kaldırdık.
-        // Öğrencinin daha önce HANGİ derste eklemiş olursa olsun tüm videolarını getiriyoruz.
         const existingVideos = await StudentVideos.findAll({
-            where: { studentId },
+            attributes: ['url'],
+            where: {
+                studentId,
+                subject,
+                ...(type === 'playlist' && ytId
+                    ? { 'playList.id': ytId }
+                    : {}),
+            },
+            raw: true,
         });
 
-        // Tüm var olan URL'leri hızlı kontrol için bir Set içine alıyoruz (Performans artışı sağlar)
         const existingUrls = new Set(existingVideos.map(v => v.url));
 
         const ytApiKey = process.env.YOUTUBE_API_KEY;
         if (!ytApiKey) {
-            return res
-                .status(500)
-                .json({
-                    success: false,
-                    message: 'YouTube API anahtarı yapılandırılmamış.',
-                });
+            return res.status(500).json({
+                success: false,
+                message: 'YouTube API anahtarı yapılandırılmamış.',
+            });
         }
 
         if (type === 'playlist' && ytId) {
@@ -151,13 +154,11 @@ export const uploadVideoSourceURL = async (req, res) => {
                     nextPageToken = response.data.nextPageToken;
                     if (!nextPageToken) fetchMore = false;
                 } catch (playlistError) {
-                    return res
-                        .status(500)
-                        .json({
-                            success: false,
-                            message:
-                                'YouTube oynatma listesi alınırken bir hata oluştu. IDyi kontrol edin.',
-                        });
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            'YouTube oynatma listesi alınırken bir hata oluştu. IDyi kontrol edin.',
+                    });
                 }
             }
 
@@ -175,7 +176,7 @@ export const uploadVideoSourceURL = async (req, res) => {
 
                     const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
 
-                    // ÇÖZÜM 2: Set kullanarak hem DB'de var mı, hem de az önce aynı listeye ekledik mi kontrolü
+                    // Yalnızca bu oynatma listesindeki tekrarları atla.
                     if (
                         !existingUrls.has(videoUrl) &&
                         title !== 'Private video' &&
@@ -240,19 +241,19 @@ export const uploadVideoSourceURL = async (req, res) => {
                             }
                         }
                     } catch (apiError) {
-                        return res
-                            .status(500)
-                            .json({
-                                success: false,
-                                message:
-                                    'YouTube video detayları alınırken bir hata oluştu.',
-                            });
+                        return res.status(500).json({
+                            success: false,
+                            message:
+                                'YouTube video detayları alınırken bir hata oluştu.',
+                        });
                     }
                 }
             }
 
             if (newVideosToInsert.length > 0) {
-                await StudentVideos.bulkCreate(newVideosToInsert);
+                await StudentVideos.bulkCreate(newVideosToInsert, {
+                    ignoreDuplicates: true,
+                });
             } else {
                 return res.json({
                     success: false,
@@ -270,13 +271,11 @@ export const uploadVideoSourceURL = async (req, res) => {
             }
 
             if (!ytId) {
-                return res
-                    .status(400)
-                    .json({
-                        success: false,
-                        message:
-                            'Tekli video yüklemek için video IDsi (ytId) gerekli.',
-                    });
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        'Tekli video yüklemek için video IDsi (ytId) gerekli.',
+                });
             }
 
             const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ytId}&key=${ytApiKey}`;
@@ -287,12 +286,10 @@ export const uploadVideoSourceURL = async (req, res) => {
                     !detailsResponse.data.items ||
                     detailsResponse.data.items.length === 0
                 ) {
-                    return res
-                        .status(404)
-                        .json({
-                            success: false,
-                            message: 'YouTube videosu bulunamadı.',
-                        });
+                    return res.status(404).json({
+                        success: false,
+                        message: 'YouTube videosu bulunamadı.',
+                    });
                 }
 
                 const videoDetails =
@@ -311,13 +308,11 @@ export const uploadVideoSourceURL = async (req, res) => {
                     lastConfirmedMoment: 0,
                 });
             } catch (apiError) {
-                return res
-                    .status(500)
-                    .json({
-                        success: false,
-                        message:
-                            'YouTube video detayları alınırken bir hata oluştu.',
-                    });
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        'YouTube video detayları alınırken bir hata oluştu.',
+                });
             }
         }
 
@@ -377,13 +372,14 @@ export const deleteVideoSourceURL = async (req, res) => {
                 .json({ success: false, message: 'Öğrenci bulunamadı.' });
         }
 
+        const scope = { studentId, ...(subject ? { subject } : {}) };
         if (playList) {
             await StudentVideos.destroy({
-                where: { 'playList.id': playList.id },
+                where: { ...scope, 'playList.id': playList.id },
             });
         } else {
             await StudentVideos.destroy({
-                where: { url },
+                where: { ...scope, url, playList: null },
             });
         }
 

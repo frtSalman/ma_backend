@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, literal } from 'sequelize';
 import db from '../utils/database.js';
 
 const StudentVideos = db.define(
@@ -41,8 +41,14 @@ const StudentVideos = db.define(
         timestamps: true,
         indexes: [
             {
+                name: 'student_videos_student_subject_playlist_url_unique',
                 unique: true,
-                fields: ['studentId', 'sourceName'],
+                fields: [
+                    'studentId',
+                    'subject',
+                    literal('COALESCE("playList"->>\'id\', \'\')'),
+                    'url',
+                ],
             },
         ],
     }
