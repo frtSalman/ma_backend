@@ -5,6 +5,12 @@ import dotenv from 'dotenv';
 // Veri dosyalarından importlar (dosya yollarını kendi yapına göre ayarla)
 import { xHData, mHData } from './lise_mufredat.js';
 import { mMData, xMData } from './orta_mufredat.js';
+import {
+    kpss_onlisans,
+    kpss_lisans,
+    ales,
+    dgs,
+} from './kpss_dgs_ales_mufredat.js';
 import { generateEmbeddings } from './embeddings.js';
 
 dotenv.config();
@@ -55,6 +61,58 @@ function prepareDocuments() {
         });
     }
 
+    for (const [subject, topics] of Object.entries(kpss_onlisans)) {
+        topics.forEach(topic => {
+            docs.push({
+                text: `${subject} - ${topic}`,
+                payload: {
+                    subject,
+                    topicName: topic,
+                    sourceSet: 'kpss_onlisans',
+                },
+            });
+        });
+    }
+
+    for (const [subject, topics] of Object.entries(kpss_lisans)) {
+        topics.forEach(topic => {
+            docs.push({
+                text: `${subject} - ${topic}`,
+                payload: {
+                    subject,
+                    topicName: topic,
+                    sourceSet: 'kpss_lisans',
+                },
+            });
+        });
+    }
+
+    for (const [subject, topics] of Object.entries(ales)) {
+        topics.forEach(topic => {
+            docs.push({
+                text: `${subject} - ${topic}`,
+                payload: {
+                    subject,
+                    topicName: topic,
+                    sourceSet: 'ales',
+                },
+            });
+        });
+    }
+
+    for (const [subject, topics] of Object.entries(dgs)) {
+        topics.forEach(topic => {
+            docs.push({
+                text: `${subject} - ${topic}`,
+                payload: {
+                    subject,
+                    topicName: topic,
+                    sourceSet: 'dgs',
+                },
+            });
+        });
+    }
+
     // mHData & mMData İşleme (Nested: Ders -> Sınıf -> Tema -> Konular)
     const processNestedData = (data, sourceName) => {
         for (const [subject, grades] of Object.entries(data)) {
@@ -79,6 +137,8 @@ function prepareDocuments() {
 
     processNestedData(mHData, 'mHData');
     processNestedData(mMData, 'mMData');
+    /*  processNestedData(kpss_onlisans, 'kpss_onlisans');
+    processNestedData(kpss_lisans, 'kpss_lisans'); */
 
     return docs;
 }

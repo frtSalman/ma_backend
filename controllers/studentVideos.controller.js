@@ -103,37 +103,40 @@ export const getVideoQuestions = async (req, res) => {
 };
 
 export const uploadVideoSourceURL = async (req, res) => {
-    // Destructure the new type and ytId parameters sent from the frontend
     const { studentId, subject, url, type, ytId, name } = req.body;
 
     try {
         if (!studentId) {
-            return res.status(404).json({
-                success: false,
-                message: 'Öğrenci bulunamadı.',
-            });
+            return res
+                .status(404)
+                .json({ success: false, message: 'Öğrenci bulunamadı.' });
         }
 
-        const videos = await StudentVideos.findAll({
-            where: { studentId, subject },
+        // ÇÖZÜM 1: 'subject' filtresini kaldırdık.
+        // Öğrencinin daha önce HANGİ derste eklemiş olursa olsun tüm videolarını getiriyoruz.
+        const existingVideos = await StudentVideos.findAll({
+            where: { studentId },
         });
+
+        // Tüm var olan URL'leri hızlı kontrol için bir Set içine alıyoruz (Performans artışı sağlar)
+        const existingUrls = new Set(existingVideos.map(v => v.url));
 
         const ytApiKey = process.env.YOUTUBE_API_KEY;
         if (!ytApiKey) {
-            return res.status(500).json({
-                success: false,
-                message: 'YouTube API anahtarı yapılandırılmamış.',
-            });
+            return res
+                .status(500)
+                .json({
+                    success: false,
+                    message: 'YouTube API anahtarı yapılandırılmamış.',
+                });
         }
 
         if (type === 'playlist' && ytId) {
-            const playListId = new Date().getTime(); // Generate a unique playlist ID based on timestamp
-
+            const playListId = new Date().getTime();
             let allPlaylistItems = [];
             let nextPageToken = '';
             let fetchMore = true;
 
-            // Fetch all videos in the playlist, handling YouTube's 50-item pagination limit
             while (fetchMore) {
                 const pageTokenParam = nextPageToken
                     ? `&pageToken=${nextPageToken}`
@@ -148,15 +151,13 @@ export const uploadVideoSourceURL = async (req, res) => {
                     nextPageToken = response.data.nextPageToken;
                     if (!nextPageToken) fetchMore = false;
                 } catch (playlistError) {
-                    console.error(
-                        'YouTube playlist fetch error: ',
-                        playlistError.response?.data || playlistError.message
-                    );
-                    return res.status(500).json({
-                        success: false,
-                        message:
-                            'YouTube oynatma listesi alınırken bir hata oluştu. IDyi kontrol edin.',
-                    });
+                    return res
+                        .status(500)
+                        .json({
+                            success: false,
+                            message:
+                                'YouTube oynatma listesi alınırken bir hata oluştu. IDyi kontrol edin.',
+                        });
                 }
             }
 
@@ -171,16 +172,18 @@ export const uploadVideoSourceURL = async (req, res) => {
                     ) {
                         return items;
                     }
+
                     const videoUrl = `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`;
-                    const isVideoAlreadyAdded = videos.some(
-                        videoItem => videoItem.url === videoUrl
-                    );
+
+                    // ÇÖZÜM 2: Set kullanarak hem DB'de var mı, hem de az önce aynı listeye ekledik mi kontrolü
                     if (
-                        !isVideoAlreadyAdded &&
+                        !existingUrls.has(videoUrl) &&
                         title !== 'Private video' &&
                         title !== 'Deleted video'
                     ) {
                         items.push({ item, position: index });
+                        // Videoyu bulduğumuz için Set'e ekliyoruz ki aynı liste içinde tekrar çıkarsa atlasın
+                        existingUrls.add(videoUrl);
                     }
                     return items;
                 },
@@ -194,7 +197,6 @@ export const uploadVideoSourceURL = async (req, res) => {
                     const videoIds = chunk
                         .map(({ item }) => item.snippet.resourceId.videoId)
                         .join(',');
-
                     const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${ytApiKey}`;
 
                     try {
@@ -238,21 +240,17 @@ export const uploadVideoSourceURL = async (req, res) => {
                             }
                         }
                     } catch (apiError) {
-                        console.error(
-                            'YouTube API error: ',
-                            apiError.response?.data || apiError.message
-                        );
-                        // Stop and return an error if a chunk fails.
-                        return res.status(500).json({
-                            success: false,
-                            message:
-                                'YouTube video detayları alınırken bir hata oluştu.',
-                        });
+                        return res
+                            .status(500)
+                            .json({
+                                success: false,
+                                message:
+                                    'YouTube video detayları alınırken bir hata oluştu.',
+                            });
                     }
                 }
             }
 
-            // If there are videos to insert, add them in a single batch
             if (newVideosToInsert.length > 0) {
                 await StudentVideos.bulkCreate(newVideosToInsert);
             } else {
@@ -263,12 +261,8 @@ export const uploadVideoSourceURL = async (req, res) => {
                 });
             }
         } else {
-            // Standard single video upload logic
-            const isVideoAlreadyAdded = videos.some(
-                videoItem => videoItem.url === url
-            );
-
-            if (isVideoAlreadyAdded) {
+            // Tekli video ekleme mantığı
+            if (existingUrls.has(url)) {
                 return res.json({
                     success: false,
                     message: 'Bu video kaynağı zaten eklenmiş.',
@@ -276,11 +270,13 @@ export const uploadVideoSourceURL = async (req, res) => {
             }
 
             if (!ytId) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Tekli video yüklemek için video IDsi (ytId) gerekli.',
-                });
+                return res
+                    .status(400)
+                    .json({
+                        success: false,
+                        message:
+                            'Tekli video yüklemek için video IDsi (ytId) gerekli.',
+                    });
             }
 
             const ytDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ytId}&key=${ytApiKey}`;
@@ -291,10 +287,12 @@ export const uploadVideoSourceURL = async (req, res) => {
                     !detailsResponse.data.items ||
                     detailsResponse.data.items.length === 0
                 ) {
-                    return res.status(404).json({
-                        success: false,
-                        message: 'YouTube videosu bulunamadı.',
-                    });
+                    return res
+                        .status(404)
+                        .json({
+                            success: false,
+                            message: 'YouTube videosu bulunamadı.',
+                        });
                 }
 
                 const videoDetails =
@@ -313,15 +311,13 @@ export const uploadVideoSourceURL = async (req, res) => {
                     lastConfirmedMoment: 0,
                 });
             } catch (apiError) {
-                console.error(
-                    'YouTube API error: ',
-                    apiError.response?.data || apiError.message
-                );
-                return res.status(500).json({
-                    success: false,
-                    message:
-                        'YouTube video detayları alınırken bir hata oluştu.',
-                });
+                return res
+                    .status(500)
+                    .json({
+                        success: false,
+                        message:
+                            'YouTube video detayları alınırken bir hata oluştu.',
+                    });
             }
         }
 
@@ -333,10 +329,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                     : 'Video kaynağı oluşturuldu.',
         });
     } catch (error) {
-        console.error(
-            'Video upload error: ',
-            error.response?.data || error.message
-        );
+        console.error('Video upload error: ', error.message);
         res.status(500).json({
             success: false,
             message: 'Sunucu hatası oluştu.',
