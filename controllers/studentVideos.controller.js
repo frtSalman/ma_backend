@@ -117,9 +117,7 @@ export const uploadVideoSourceURL = async (req, res) => {
             where: {
                 studentId,
                 subject,
-                ...(type === 'playlist' && ytId
-                    ? { 'playList.id': ytId }
-                    : {}),
+                ...(type === 'playlist' && ytId ? { 'playList.id': ytId } : {}),
             },
             raw: true,
         });
