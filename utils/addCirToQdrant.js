@@ -25,7 +25,7 @@ const qdrant = new QdrantClient({
     apiKey: process.env.QUADRANT_API_KEY,
 });
 
-const COLLECTION_NAME = 'mufredat_collection';
+const COLLECTION_NAME = 'mufredat_collection_v2';
 const VECTOR_SIZE = 768; // nomic-embed-text boyutu
 
 // 2. VERİLERİ DÜZLEŞTİRME (FLATTENING)
