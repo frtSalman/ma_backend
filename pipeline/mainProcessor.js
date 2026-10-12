@@ -11,7 +11,14 @@ async function processExamData(aiJsonPayload, grade) {
     try {
         const sourceSet =
             aiJsonPayload.header.examType !== 'LGS'
-                ? ['xHData', 'mHData']
+                ? [
+                      'xHData',
+                      'mHData',
+                      'kpps_onlisans',
+                      'kpss_lisans',
+                      'ales',
+                      'dgs',
+                  ]
                 : ['xMData', 'mMData'];
 
         const gradeLevel =
@@ -29,6 +36,10 @@ async function processExamData(aiJsonPayload, grade) {
                       '11. Sınıf',
                       '12. Sınıf',
                       'Lise Genel',
+                      'Kpss Ön Lisans',
+                      'Kpss Lisans',
+                      'ALES',
+                      'DGS',
                   ];
 
         // DB'den mevcut aliasları ve master topicleri çekiyoruz (Örnek)

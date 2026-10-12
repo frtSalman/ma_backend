@@ -31,7 +31,7 @@ async function searchInQdrant(normalizedInput, subject, sourceSet) {
 
         const inputVector = await getEmbedding(normalizedInput);
 
-        const searchResult = await qdrant.search('mufredat_collection', {
+        const searchResult = await qdrant.search('mufredat_collection_v2', {
             vector: inputVector,
             limit: 1,
             filter: {
