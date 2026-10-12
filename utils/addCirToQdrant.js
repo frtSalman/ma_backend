@@ -137,8 +137,6 @@ function prepareDocuments() {
 
     processNestedData(mHData, 'mHData');
     processNestedData(mMData, 'mMData');
-    /*  processNestedData(kpss_onlisans, 'kpss_onlisans');
-    processNestedData(kpss_lisans, 'kpss_lisans'); */
 
     return docs;
 }

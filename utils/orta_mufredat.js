@@ -955,23 +955,6 @@ export const mMData = {
             ],
         },
     },
-    'Dil Bilgisi': [
-        'Fiilimsiler',
-        'Sözcükte Anlam',
-        'Deyimler ve Atasözleri',
-        'Söz Sanatları',
-        'Cümlede Anlam',
-        'Parçada Anlam',
-        'Cümlenin Ögeleri',
-        'Noktalama İşaretleri',
-        'Metin Türleri',
-        'Fiillerde Çatı',
-        'Cümle Türleri',
-        'Yazım Kuralları',
-        'Anlatım Bozukluğu',
-        'Sözel Mantık',
-        'Tablo Grafik',
-    ],
     'T.C. İnkılap Tarihi ve Atatürkçülük': {
         '8. Sınıf': {
             '1. TEMA - Mustafa Kemal’in Hayatı': [
