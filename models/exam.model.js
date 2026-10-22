@@ -31,6 +31,10 @@ const Exam = db.define('Exam', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    examType: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     examDate: {
         type: DataTypes.DATE,
         allowNull: true,

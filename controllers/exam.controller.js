@@ -212,6 +212,7 @@ export const uploadExam = async (req, res) => {
                 scoreSummary,
                 totalPoint: aiJsonPayload?.data?.header?.totalPoint,
                 examTitle: aiJsonPayload?.data?.header?.examName,
+                examType: aiJsonPayload?.data?.header?.examType,
                 examDate: settledDate,
             });
         });
