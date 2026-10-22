@@ -248,128 +248,6 @@ export const uploadExam = async (req, res) => {
     }
 };
 
-/* export const uploadExam = async (req, res) => {
-    const { studentId } = req.body;
-
-    if (!req.files || req.files.length === 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Herhangi bir dosya yüklenmedi.',
-        });
-    }
-
-    try {
-        // 1. Bu await KALMAK ZORUNDA. Çünkü öğrencinin bilgilerine ihtiyacımız var.
-        const student = await Users.findOne({
-            where: { id: studentId },
-        });
-
-        if (!student) {
-            return res
-                .status(404)
-                .json({ success: false, message: 'Öğrenci bulunamadı.' });
-        }
-
-        // 2. ARKA PLAN İŞLEMİNİ TANIMLIYORUZ (İçerideki awaitler sırayı korur)
-        const processFilesInBackground = async () => {
-            for (const file of req.files) {
-                try {
-                    const originalName = file.originalname || file.name;
-                    const fileName = `${student.name}/examResults/${Date.now()}-Exam_result-${originalName}`;
-                    const safeFilename = fileName.replace(/\s+/g, '-');
-                    const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${safeFilename}`;
-                    const pullZoneURL = `https://cdn.teachflow.net/${safeFilename}`;
-
-                    // BunnyCDN'e yüklenmesini beklemeliyiz ki n8n dosyayı bulabilsin
-                    await axios.put(uploadUrl, file.buffer, {
-                        headers: {
-                            AccessKey: KEY,
-                            'Content-Type': file.mimetype,
-                        },
-                    });
-
-                    // n8n'den yanıt gelmesini bekliyoruz
-                    const aiJsonPayload = await axios.post(n8nWebhookUrl, {
-                        path: pullZoneURL,
-                    });
-
-                    const results = await processExamData(
-                        aiJsonPayload.data,
-                        student?.grade
-                    );
-
-                    const analysis = Object.groupBy(
-                        results,
-                        item => item.subject
-                    );
-
-                    const scoreSummary = Object.entries(analysis).reduce(
-                        (acc, [subject, topics]) => {
-                            if (!acc[subject]) {
-                                acc[subject] = { D: 0, Y: 0, SS: 0, NET: 0 };
-                            }
-
-                            topics.forEach(topic => {
-                                acc[subject]['D'] += +topic.D || 0;
-                                acc[subject]['Y'] += +topic.Y || 0;
-                                acc[subject]['SS'] += +topic.T || 0;
-                            });
-
-                            acc[subject]['NET'] =
-                                acc[subject]['D'] - acc[subject]['Y'] * 0.25;
-                            acc[subject]['subject'] = subject;
-
-                            return acc;
-                        },
-                        {}
-                    );
-
-                    const settledDate = setDate(
-                        aiJsonPayload?.data?.header?.examDate
-                    );
-
-                    // DB'ye kaydet
-                    await Exam.create({
-                        studentId: studentId,
-                        teacherId: student?.teacherId,
-                        path: pullZoneURL,
-                        analysis: results,
-                        scoreSummary,
-                        totalPoint: aiJsonPayload?.data.header?.totalPoint,
-                        examTitle: aiJsonPayload?.data.header?.examName,
-                        examDate: settledDate,
-                    });
-                } catch (bgError) {
-                    // Arka planda patlayan dosyalar sunucuyu çökertmesin diye buraya catch ekliyoruz
-                    console.error(
-                        'Arka plan işlenirken hata oluştu:',
-                        bgError.message
-                    );
-                }
-            }
-        };
-
-        // 3. FONKSİYONU ÇAĞIRIYORUZ AMA BAŞINA AWAIT KOYMUYORUZ! (Sihir burada)
-        // Express bu işlemin bitmesini beklemeden hemen alt satıra geçecek.
-        processFilesInBackground();
-
-        // 4. KULLANICIYA ANINDA CEVAP DÖNÜYORUZ
-        return res.json({
-            success: true,
-            message:
-                'Dosyalar yüklendi ve analize gönderildi. İşlem arka planda devam ediyor. ✅',
-        });
-    } catch (error) {
-        console.trace(error.message);
-        return res.status(500).json({
-            success: false,
-            message: !studentId
-                ? 'Lütfen bir öğrenci seçiniz.'
-                : 'Sunucu hatası oluştu.',
-        });
-    }
-}; */
-
 export const examOCRTest = async (req, res) => {
     const { path, grade } = req.body;
 
@@ -381,30 +259,10 @@ export const examOCRTest = async (req, res) => {
 
         const result = await processExamData(aiJsonPayload.data, grade);
 
-        const scoreSummary = Object.entries(aiJsonPayload.data.analysis).reduce(
-            (acc, [subject, topics]) => {
-                if (!acc[subject]) {
-                    acc[subject] = { D: 0, Y: 0, SS: 0, NET: 0 };
-                }
-
-                topics.forEach(topic => {
-                    acc[subject]['D'] += +topic.D || 0;
-                    acc[subject]['Y'] += +topic.Y || 0;
-                    acc[subject]['SS'] += +topic.T || 0;
-                });
-
-                acc[subject]['NET'] =
-                    acc[subject]['D'] - acc[subject]['Y'] * 0.25;
-                acc[subject]['subject'] = subject;
-
-                return acc;
-            },
-            {}
-        );
-
         return res.json({
             success: true,
             message: 'Deneme sonuçları test edildi.',
+            examType: aiJsonPayload?.data?.header?.examType,
             result,
         });
     } catch (error) {
