@@ -212,7 +212,7 @@ export const deleteSolution = async (req, res) => {
             const filePath = new URL(
                 record.solutionContentLink
             ).pathname.substring(1);
-            const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${filePath}`;
+            const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${record?.solutionContentLink}`;
 
             const bunnyResponse = await fetch(deleteUrl, {
                 method: 'DELETE',
