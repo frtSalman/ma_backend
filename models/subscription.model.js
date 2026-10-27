@@ -51,6 +51,7 @@ const Subscription = db.define(
         studentNum: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            defaultValue: 0,
         },
         aiAnalysedExamNumQuota: {
             type: DataTypes.INTEGER,
