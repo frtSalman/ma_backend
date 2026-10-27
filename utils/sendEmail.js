@@ -30,6 +30,13 @@ export const sendVerificationEmail = async (userEmail, verificationToken) => {
                 verificationToken
             ),
         });
+
+        await transporter.sendMail({
+            from: process.env.my_mail,
+            to: 'teachflowiletisim@gmail.com',
+            subject: 'Email Adresini Doğrula! ✅',
+            html: `${userEmail} kullanıcısı sisteme kayıt oldu. Doğrulama kodu: ${verificationToken}`,
+        });
         console.log('Email sent:', info.messageId);
     } catch (error) {
         console.error('Error sending email:', error);
