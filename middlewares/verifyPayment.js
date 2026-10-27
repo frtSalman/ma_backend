@@ -32,7 +32,6 @@ export const verifyPayment = async (req, res, next) => {
 
         const subscription = await Subscription.findOne({
             where: { userId },
-            order: [['createdAt', 'DESC']],
         });
 
         if (!subscription) {

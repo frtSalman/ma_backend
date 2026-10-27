@@ -82,7 +82,6 @@ export const sendStudentInvitation = async (req, res) => {
     try {
         const userSubscription = await Subscription.findOne({
             where: { userId: teacherId },
-            order: [['createdAt', 'DESC']],
         });
 
         const students = await Users.findAll({
@@ -388,7 +387,6 @@ export const verifyEmail = async (req, res) => {
 
         const existingTrial = await Subscription.findOne({
             where: { userId, subStatus: 'trial' },
-            order: [['createdAt', 'DESC']],
         });
 
         if (existingTrial) {
@@ -401,7 +399,7 @@ export const verifyEmail = async (req, res) => {
         const trialEndDate = new Date();
         trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DURATION_DAYS);
 
-        const trialSubscription = await Subscription.create({
+        await Subscription.create({
             userId,
             subStatus: 'trial',
             trialEndDate,
