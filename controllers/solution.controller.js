@@ -74,7 +74,6 @@ export const aiSolution = async (req, res) => {
 
         const subscription = await Subscription.findOne({
             where: { userId: teacherId },
-            order: [['createdAt', 'DESC']],
         });
 
         console.log(teacher);
