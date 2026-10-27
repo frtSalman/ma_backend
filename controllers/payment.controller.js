@@ -226,7 +226,6 @@ export const initializePayment = async (req, res) => {
 
         const subscription = await Subscription.findOne({
             where: { userId: teacherId },
-            order: [['createdAt', 'DESC']],
         });
 
         if (isActiveSubscription(subscription)) {
