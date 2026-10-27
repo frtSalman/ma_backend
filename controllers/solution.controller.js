@@ -77,6 +77,9 @@ export const aiSolution = async (req, res) => {
             order: [['createdAt', 'DESC']],
         });
 
+        console.log(teacher);
+        console.log(subscription);
+
         if (
             teacher.accountType === 'normal' &&
             subscription.aiSolvedQuestionNum >=
