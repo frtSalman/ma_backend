@@ -17,8 +17,40 @@ const BUNNY_ZONE = 'teachflow';
 const baseHost = 'storage.bunnycdn.com';
 
 function setDate(date) {
-    const [d, m, y] = date.split('.');
-    return new Date(m + '.' + d + '.' + y).toLocaleDateString();
+    if (date == null || date === '') return null;
+
+    const value = typeof date === 'string' ? date.trim() : '';
+    if (typeof date === 'string' && value === '') return null;
+
+    const localDate = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(value);
+    const isoDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
+    if (!localDate && !isoDate) {
+        throw new Error(
+            'Deneme tarihi GG.AA.YYYY veya YYYY-AA-GG biçiminde olmalıdır.'
+        );
+    }
+
+    const [, day, month, year] = localDate || [
+        null,
+        isoDate[3],
+        isoDate[2],
+        isoDate[1],
+    ];
+    const result = new Date(
+        `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00.000Z`
+    );
+
+    if (
+        Number.isNaN(result.getTime()) ||
+        result.getUTCFullYear() !== Number(year) ||
+        result.getUTCMonth() + 1 !== Number(month) ||
+        result.getUTCDate() !== Number(day)
+    ) {
+        throw new Error('Deneme tarihi geçersiz.');
+    }
+
+    return result;
 }
 
 export const getExamResults = async (req, res) => {
@@ -219,16 +251,31 @@ export const uploadExam = async (req, res) => {
 
         const results = await Promise.allSettled(examPromises);
 
-        await teacher.increment({ aiAnalysedExamNum: results.length });
-
-        if (subscription)
-            await subscription.increment({ aiAnalysedExamNum: results.length });
-
         const successful = results.filter(
             result => result.status === 'fulfilled'
         );
 
         const failed = results.filter(result => result.status === 'rejected');
+
+        results.forEach((result, index) => {
+            if (result.status === 'rejected') {
+                console.error('Deneme sonucu oluşturulamadı:', {
+                    file: req.files[index].originalname || req.files[index].name,
+                    error: result.reason?.message,
+                    databaseCode: result.reason?.original?.code,
+                });
+            }
+        });
+
+        if (successful.length > 0) {
+            await teacher.increment({ aiAnalysedExamNum: successful.length });
+
+            if (subscription) {
+                await subscription.increment({
+                    aiAnalysedExamNum: successful.length,
+                });
+            }
+        }
 
         return res.json({
             success: failed.length === 0,
