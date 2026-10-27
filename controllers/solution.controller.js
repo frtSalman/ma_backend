@@ -102,7 +102,7 @@ export const aiSolution = async (req, res) => {
 
         console.log(result);
 
-        if (result.status === true) {
+        if (result.status === true && teacher.accountType === 'normal') {
             await subscription.increment({ aiSolvedQuestionNum: 1 });
         } else {
             throw new Error('AI çözümü otomasyon hatası.');
