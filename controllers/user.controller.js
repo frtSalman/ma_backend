@@ -184,7 +184,7 @@ export const getBookSources = async (req, res) => {
     }
 };
 
-export const getVideoSources = async (req, res) => {
+/* export const getVideoSources = async (req, res) => {
     const { studentId } = req.params;
     try {
         const student = await Users.findOne({
@@ -210,11 +210,17 @@ export const getVideoSources = async (req, res) => {
             message: 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */
 
 export const uploadBookSource = async (req, res) => {
     // FIX: Pull sourceName from req.body
-    const { studentName, studentId, subject, bookName } = req.body;
+    const {
+        studentName,
+        studentId,
+        subject,
+        bookName,
+        examType = null,
+    } = req.body;
     const file = req.file;
 
     try {
@@ -289,6 +295,7 @@ export const uploadBookSource = async (req, res) => {
             sourceName: finalSourceName,
             url: pullZoneURL, // Will be the URL or null if no file was uploaded
             isChecked: false,
+            examType: examType || null, // Store examType if provided, otherwise null
         });
 
         await Users.update(
@@ -386,7 +393,7 @@ export const deleteBookSource = async (req, res) => {
     }
 };
 
-export const uploadVideoSourceURL = async (req, res) => {
+/* export const uploadVideoSourceURL = async (req, res) => {
     // Destructure the new type and ytId parameters sent from the frontend
     const { studentId, subject, url, type, ytId, name } = req.body;
 
@@ -536,9 +543,9 @@ export const uploadVideoSourceURL = async (req, res) => {
             message: 'Sunucu hatası oluştu.',
         });
     }
-};
+}; */
 
-export const deleteVideoSourceURL = async (req, res) => {
+/* export const deleteVideoSourceURL = async (req, res) => {
     const { url, videoSubject, studentId, playlistId } = req.body;
 
     try {
@@ -600,3 +607,4 @@ export const deleteVideoSourceURL = async (req, res) => {
         });
     }
 };
+ */

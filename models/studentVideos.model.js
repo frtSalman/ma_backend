@@ -33,6 +33,10 @@ const StudentVideos = db.define(
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
+        examType: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         duration: { type: DataTypes.FLOAT, allowNull: true },
         lastConfirmedMoment: { type: DataTypes.FLOAT, allowNull: true },
     },
@@ -46,7 +50,7 @@ const StudentVideos = db.define(
                 fields: [
                     'studentId',
                     'subject',
-                    literal('COALESCE("playList"->>\'id\', \'\')'),
+                    literal("COALESCE(\"playList\"->>'id', '')"),
                     'url',
                 ],
             },

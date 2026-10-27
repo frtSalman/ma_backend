@@ -103,7 +103,15 @@ export const getVideoQuestions = async (req, res) => {
 };
 
 export const uploadVideoSourceURL = async (req, res) => {
-    const { studentId, subject, url, type, ytId, name } = req.body;
+    const {
+        studentId,
+        subject,
+        url,
+        type,
+        ytId,
+        name,
+        examType = null,
+    } = req.body;
 
     try {
         if (!studentId) {
@@ -235,6 +243,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                                                 ' Oynatma Listesi ' +
                                                 playListId,
                                     },
+                                    examType: examType || null,
                                 });
                             }
                         }
@@ -304,6 +313,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                     subject,
                     duration: durationInSeconds,
                     lastConfirmedMoment: 0,
+                    examType: examType || null,
                 });
             } catch (apiError) {
                 return res.status(500).json({
