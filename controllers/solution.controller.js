@@ -214,6 +214,8 @@ export const deleteSolution = async (req, res) => {
             ).pathname.substring(1);
             const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${record?.solutionContentLink}`;
 
+            console.log('Bunny Storage silme isteği gönderiliyor:', deleteUrl);
+
             const bunnyResponse = await fetch(deleteUrl, {
                 method: 'DELETE',
                 headers: {
