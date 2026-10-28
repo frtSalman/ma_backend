@@ -37,6 +37,10 @@ const StudentVideos = db.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        curriculumType: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         duration: { type: DataTypes.FLOAT, allowNull: true },
         lastConfirmedMoment: { type: DataTypes.FLOAT, allowNull: true },
     },

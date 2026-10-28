@@ -111,6 +111,7 @@ export const uploadVideoSourceURL = async (req, res) => {
         ytId,
         name,
         examType = null,
+        curriculumType = null,
     } = req.body;
 
     try {
@@ -244,6 +245,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                                                 playListId,
                                     },
                                     examType: examType || null,
+                                    curriculumType: curriculumType || null,
                                 });
                             }
                         }
@@ -314,6 +316,7 @@ export const uploadVideoSourceURL = async (req, res) => {
                     duration: durationInSeconds,
                     lastConfirmedMoment: 0,
                     examType: examType || null,
+                    curriculumType: curriculumType || null,
                 });
             } catch (apiError) {
                 return res.status(500).json({

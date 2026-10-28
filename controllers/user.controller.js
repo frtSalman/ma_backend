@@ -219,6 +219,7 @@ export const uploadBookSource = async (req, res) => {
         studentId,
         subject,
         bookName,
+        curriculumType = null,
         examType = null,
     } = req.body;
     const file = req.file;
@@ -296,6 +297,7 @@ export const uploadBookSource = async (req, res) => {
             url: pullZoneURL, // Will be the URL or null if no file was uploaded
             isChecked: false,
             examType: examType || null, // Store examType if provided, otherwise null
+            curriculumType: curriculumType || null, // Store curriculumType if provided, otherwise null
         });
 
         await Users.update(
