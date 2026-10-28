@@ -8,6 +8,12 @@ const BUNNY_ZONE = 'teachflow';
 
 const baseHost = 'storage.bunnycdn.com';
 
+const decodeFileName = filename => {
+    if (!filename) return filename;
+
+    return Buffer.from(filename, 'latin1').toString('utf8');
+};
+
 export const getStudents = async (req, res) => {
     const { role, id } = req.params;
 
@@ -248,8 +254,8 @@ export const uploadBookSource = async (req, res) => {
         // FIX: Only process file logic IF a file actually exists
         if (file) {
             // NOTE: If you use Multer, this should be file.originalname.
-            // If express-fileupload, file.name. I'll use file.originalname as it's standard for Multer buffer uploads.
-            const fileNameToUse = file.originalname || file.name;
+            // If express-fileupload, file.name. Decode the filename to fix mojibake (e.g. FÄ±rat -> Fırat).
+            const fileNameToUse = decodeFileName(file.originalname || file.name);
             const uniqueName = `${Date.now()}-${fileNameToUse}`;
 
             const uploadUrl = `https://${baseHost}/${BUNNY_ZONE}/${teacherName}/${studentName}/book_sources/${subject}/${uniqueName}`;
@@ -263,8 +269,10 @@ export const uploadBookSource = async (req, res) => {
             });
         }
 
-        // DETERMINING THE NAME: Use file name if available, otherwise use bookName from body
-        const finalSourceName = file?.originalname || bookName;
+        // DETERMINING THE NAME: Use decoded file name if available, otherwise use bookName from body
+        const finalSourceName = file
+            ? decodeFileName(file.originalname || file.name)
+            : bookName;
 
         if (!finalSourceName) {
             return res.status(400).json({
