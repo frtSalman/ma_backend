@@ -100,10 +100,12 @@ export const aiSolution = async (req, res) => {
         );
         const result = await n8nRes.json();
 
-        console.log(result);
+        console.log('AI Result:', result);
 
-        if (result.status === true && teacher.accountType === 'normal') {
-            await subscription.increment({ aiSolvedQuestionNum: 1 });
+        if (result.status === true) {
+            if (teacher.accountType !== 'admin') {
+                await subscription.increment({ aiSolvedQuestionNum: 1 });
+            }
         } else {
             throw new Error('AI çözümü otomasyon hatası.');
         }
