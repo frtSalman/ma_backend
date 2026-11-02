@@ -212,34 +212,6 @@ export const deleteSolution = async (req, res) => {
             });
         }
 
-        if (record.solutionContentLink) {
-            const deleteUrl = `https://${baseHost}/${BUNNY_ZONE}/${record?.solutionContentLink}`;
-
-            console.log('Bunny Storage silme isteği gönderiliyor:', deleteUrl);
-
-            const bunnyResponse = await fetch(deleteUrl, {
-                method: 'DELETE',
-                headers: {
-                    AccessKey: KEY,
-                },
-            });
-
-            if (!bunnyResponse.ok) {
-                const bunnyError = await bunnyResponse.text();
-
-                console.error('Bunny Storage silme hatası:', {
-                    status: bunnyResponse.status,
-                    statusText: bunnyResponse.statusText,
-                    response: bunnyError,
-                    deleteUrl,
-                });
-
-                throw new Error(
-                    `Bunny Storage ${bunnyResponse.status}: ${bunnyError}`
-                );
-            }
-        }
-
         await Solution.destroy({
             where: { qId },
         });
