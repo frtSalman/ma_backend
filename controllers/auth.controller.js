@@ -14,7 +14,7 @@ import {
 
 const { Users, Invitation, Subscription } = models;
 
-const TRIAL_DURATION_DAYS = 30;
+const TRIAL_DURATION_DAYS = 7;
 
 // creating user only teachers
 export const signup = async (req, res) => {
