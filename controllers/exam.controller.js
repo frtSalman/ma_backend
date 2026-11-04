@@ -260,7 +260,8 @@ export const uploadExam = async (req, res) => {
         results.forEach((result, index) => {
             if (result.status === 'rejected') {
                 console.error('Deneme sonucu oluşturulamadı:', {
-                    file: req.files[index].originalname || req.files[index].name,
+                    file:
+                        req.files[index].originalname || req.files[index].name,
                     error: result.reason?.message,
                     databaseCode: result.reason?.original?.code,
                 });
@@ -370,8 +371,14 @@ export const deleteExamURL = async (req, res) => {
 
 export const updateExam = async (req, res) => {
     const id = req.params.id;
-    const { analysis, scoreSummary, examTitle, examDate, totalPoint } =
-        req.body.data;
+    const {
+        analysis,
+        scoreSummary,
+        examTitle,
+        examDate,
+        totalPoint,
+        examType,
+    } = req.body.data;
 
     try {
         const teacher = await Users.findOne({
@@ -387,6 +394,7 @@ export const updateExam = async (req, res) => {
                 examTitle,
                 examDate,
                 totalPoint,
+                examType,
             },
             { where: { id: id } }
         );
