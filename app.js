@@ -29,6 +29,7 @@ const allowedOrigins = [
     'https://api.teachflow.net',
     'http://192.168.1.104:3000',
     'http://localhost:3000',
+    'https://localhost',
     'https://n8n.teachflow.net:5678',
 ];
 
