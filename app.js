@@ -28,7 +28,7 @@ const allowedOrigins = [
     'https://app.teachflow.net',
     'https://api.teachflow.net',
     'http://192.168.1.104:3000',
-    'http://localhost:3000',
+    'http://localhost:8081',
     'https://localhost',
     'https://n8n.teachflow.net:5678',
 ];
@@ -79,32 +79,6 @@ app.use(
         });
     })
 );
-
-/* app.use(
-    cors({
-        origin: (origin, callback) => {
-            // allow requests with no origin (mobile apps, curl, Postman)
-            if (!origin) return callback(null, true);
-
-            if (allowedOrigins.includes(origin)) {
-                return callback(null, true);
-            }
-
-            console.warn('Blocked CORS for origin:', origin);
-            return callback(new Error('Not allowed by CORS'));
-        },
-        credentials: true,
-        methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
-        allowedHeaders: [
-            'Content-Type',
-            'Authorization',
-            'X-Custom-Header',
-            'AccessKey',
-            'X-CSRF-Token',
-            'X-XSRF-TOKEN',
-        ],
-    })
-); */
 
 app.get('/api/csrf-token', async (req, res) => {
     const csrfToken = generateCSRFToken(res);
